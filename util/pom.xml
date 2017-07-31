@@ -1,0 +1,25 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>net.lizhaoweb</groupId>
+        <artifactId>common</artifactId>
+        <version>JL.COMMON.0.0.0.0.1.0.0</version>
+    </parent>
+
+    <groupId>net.lizhaoweb.common</groupId>
+    <artifactId>util</artifactId>
+    <version>JL.COMMON.1.0.0.0.1.0.0</version>
+
+    <name>Commons Util</name>
+    <description>李召(John.Lee) 个人工具项目组</description>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>base</module>
+        <module>http-client</module>
+        <module>convert</module>
+        <module>argument</module>
+    </modules>
+
+</project>

@@ -1,4 +1,4 @@
-# 通用工具 COMMONS
+# 通用工具 COMMONS NET
 * * *
 * 姓    名 ： 李召
 * 英 文 名 ： John.Lee
@@ -6,7 +6,7 @@
 * 电子邮件 ： 404644381@qq.com
 * * *
 
-**模块 ID 为 ：** _COMMON.0.0.0.0_
+**模块 ID 为 ：** _COMMON.3.0.0.0_
 
 **版本规则：** ID.L1.L2.L3.L4.L5.VF.VM.VFT[-SNAPSHOT]
 <pre><code>

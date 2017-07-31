@@ -1,0 +1,64 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>net.lizhaoweb.common</groupId>
+        <artifactId>util</artifactId>
+        <version>JL.COMMON.1.0.0.0.1.0.0</version>
+    </parent>
+
+    <groupId>net.lizhaoweb.common.util</groupId>
+    <artifactId>http-client</artifactId>
+    <version>JL.COMMON.1.2.0.0.1.0.0-SNAPSHOT</version>
+
+    <name>Commons Util [HttpClient]</name>
+    <description>
+        基于HttpClient-4.5.2、HttpAsyncClient-4.1.2封装的工具类。支持插件式配置Header、插件式配置httpclient对象，这样就可以方便地自定义header信息、配置ssl、配置proxy、Cookie等
+    </description>
+    <packaging>jar</packaging>
+
+    <properties>
+        <!-- 文件拷贝时的编码 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!-- 编译时的编码 -->
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+    </properties>
+
+    <dependencies>
+
+        <!-- Logger -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <!-- 将现有的jakarta commons logging的调用转换成lsf4j的调用。 -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+        </dependency>
+        <!-- Hack：确保commons-logging的jar包不被引入，否则将和jcl-over-slf4j冲突 -->
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- slf4j的实现：logback，用来取代log4j。更快、更强！ -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpasyncclient</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build/>
+</project>
