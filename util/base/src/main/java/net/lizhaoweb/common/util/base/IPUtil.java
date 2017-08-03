@@ -168,7 +168,7 @@ public class IPUtil {
             throw new IllegalArgumentException("Argument 'networkInterfaceNames' is null");
         }
         try {
-            logger.debug("networkInterfaceNames : {}", networkInterfaceNames);
+            logger.trace("networkInterfaceNames : {}", networkInterfaceNames);
             String[] networkInterfaceNameArray = networkInterfaceNames.split(",");
 
             Map<String, SimpleInetAddress> simpleInetAddressMap = new ConcurrentHashMap<>();
