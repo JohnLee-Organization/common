@@ -12,7 +12,9 @@ package net.lizhaoweb.common.util.argument;
 
 import net.lizhaoweb.common.util.argument.model.IArgument;
 import net.lizhaoweb.common.util.argument.util.ArgumentUtil;
+import org.apache.commons.lang.StringUtils;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -67,5 +69,47 @@ public class ArgumentFactory implements IArgumentFactory {
             throw new IllegalArgumentException("Argument 'argument' is null");
         }
         return ArgumentUtil.getParameterValues(parameterMap, argument.getName(), argument.getNullArray());
+    }
+
+    /**
+     * 打印输输入的参数
+     *
+     * @param argument      参数对象
+     * @param argumentValue 参数值
+     */
+    public static void printInputArgument(IArgument argument, String argumentValue) {
+        if (argumentValue != null) {
+            String spaceString = StringUtils.rightPad(" ", 20 - argument.getName().length());
+            String printArgument = String.format("\tInput Argument[%s]%s: %s", argument.getName(), spaceString, argumentValue);
+            System.out.println(printArgument);
+        }
+    }
+
+    /**
+     * 打印输输入的参数
+     *
+     * @param argument           参数对象
+     * @param argumentValueArray 参数值列表
+     */
+    public static void printInputArgument(IArgument argument, String[] argumentValueArray) {
+        if (argumentValueArray != null) {
+            String spaceString = StringUtils.rightPad(" ", 20 - argument.getName().length());
+            String printArgument = String.format("\tInput Argument[%s]%s: %s", argument.getName(), spaceString, StringUtils.join(argumentValueArray, ','));
+            System.out.println(printArgument);
+        }
+    }
+
+    /**
+     * 打印输输入的参数
+     *
+     * @param argument                参数对象
+     * @param argumentValueCollection 参数值集合
+     */
+    public static void printInputArgument(IArgument argument, Collection argumentValueCollection) {
+        if (argumentValueCollection != null) {
+            String spaceString = StringUtils.rightPad(" ", 20 - argument.getName().length());
+            String printArgument = String.format("\tInput Argument[%s]%s: %s", argument.getName(), spaceString, StringUtils.join(argumentValueCollection, ','));
+            System.out.println(printArgument);
+        }
     }
 }
