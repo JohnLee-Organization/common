@@ -88,10 +88,38 @@ public class ArgumentFactory implements IArgumentFactory {
     /**
      * 打印输输入的参数
      *
+     * @param argument 参数对象
+     */
+    public static void printInputArgumentValue(IArgument argument) {
+        String argumentValue = getParameterValue(argument);
+        if (argumentValue != null) {
+            String spaceString = StringUtils.rightPad(" ", 20 - argument.getName().length());
+            String printArgument = String.format("\tInput Argument[%s]%s: %s", argument.getName(), spaceString, argumentValue);
+            System.out.println(printArgument);
+        }
+    }
+
+    /**
+     * 打印输输入的参数
+     *
      * @param argument           参数对象
      * @param argumentValueArray 参数值列表
      */
     public static void printInputArgument(IArgument argument, String[] argumentValueArray) {
+        if (argumentValueArray != null) {
+            String spaceString = StringUtils.rightPad(" ", 20 - argument.getName().length());
+            String printArgument = String.format("\tInput Argument[%s]%s: %s", argument.getName(), spaceString, StringUtils.join(argumentValueArray, ','));
+            System.out.println(printArgument);
+        }
+    }
+
+    /**
+     * 打印输输入的参数
+     *
+     * @param argument 参数对象
+     */
+    public static void printInputArgumentValues(IArgument argument) {
+        String[] argumentValueArray = getParameterValues(argument);
         if (argumentValueArray != null) {
             String spaceString = StringUtils.rightPad(" ", 20 - argument.getName().length());
             String printArgument = String.format("\tInput Argument[%s]%s: %s", argument.getName(), spaceString, StringUtils.join(argumentValueArray, ','));
@@ -110,6 +138,71 @@ public class ArgumentFactory implements IArgumentFactory {
             String spaceString = StringUtils.rightPad(" ", 20 - argument.getName().length());
             String printArgument = String.format("\tInput Argument[%s]%s: %s", argument.getName(), spaceString, StringUtils.join(argumentValueCollection, ','));
             System.out.println(printArgument);
+        }
+    }
+
+    /**
+     * 检查参数值是否为 null 。
+     *
+     * @param argument      参数
+     * @param argumentValue 参数值
+     */
+    public static void checkNullValueForArgument(IArgument argument, String argumentValue) {
+        if (argumentValue == null) {
+            String exceptionMessage = "The argument['" + argument.getName() + "'] for this program is null";
+            throw new IllegalArgumentException(exceptionMessage);
+        }
+    }
+
+    /**
+     * 检查参数值是否为 null 。
+     *
+     * @param argument 参数
+     */
+    public static void checkNullValueForArgument(IArgument argument) {
+        String argumentValue = getParameterValue(argument);
+        if (argumentValue == null) {
+            String exceptionMessage = "The argument['" + argument.getName() + "'] for this program is null";
+            throw new IllegalArgumentException(exceptionMessage);
+        }
+    }
+
+    /**
+     * 检查参数值是否为 null 。
+     *
+     * @param argument           参数
+     * @param argumentValueArray 参数值列表
+     */
+    public static void checkNullValuesForArgument(IArgument argument, String[] argumentValueArray) {
+        if (argumentValueArray == null) {
+            String exceptionMessage = "The argument['" + argument.getName() + "'] for this program is null";
+            throw new IllegalArgumentException(exceptionMessage);
+        }
+    }
+
+    /**
+     * 检查参数值是否为 null 。
+     *
+     * @param argument 参数
+     */
+    public static void checkNullValuesForArgument(IArgument argument) {
+        String[] argumentValueArray = getParameterValues(argument);
+        if (argumentValueArray == null) {
+            String exceptionMessage = "The argument['" + argument.getName() + "'] for this program is null";
+            throw new IllegalArgumentException(exceptionMessage);
+        }
+    }
+
+    /**
+     * 检查参数值是否为 null 。
+     *
+     * @param argument                参数
+     * @param argumentValueCollection 参数值集合
+     */
+    public static void checkNullValuesForArgument(IArgument argument, Collection argumentValueCollection) {
+        if (argumentValueCollection == null) {
+            String exceptionMessage = "The argument['" + argument.getName() + "'] for this program is null";
+            throw new IllegalArgumentException(exceptionMessage);
         }
     }
 }
