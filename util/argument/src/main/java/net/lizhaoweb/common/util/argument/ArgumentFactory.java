@@ -76,11 +76,12 @@ public class ArgumentFactory implements IArgumentFactory {
      *
      * @param argument      参数对象
      * @param argumentValue 参数值
+     * @param hideValue     是否隐藏参数值
      */
-    public static void printInputArgument(IArgument argument, String argumentValue) {
+    public static void printInputArgument(IArgument argument, String argumentValue, boolean hideValue) {
         if (argumentValue != null) {
-            String spaceString = StringUtils.rightPad(" ", 20 - argument.getName().length());
-            String printArgument = String.format("\tInput Argument[%s]%s: %s", argument.getName(), spaceString, argumentValue);
+            String spaceString = StringUtils.rightPad("", 20 - argument.getName().length());
+            String printArgument = String.format("\tInput Argument[%s]%s: %s", argument.getName(), spaceString, hideValue ? "******" : argumentValue);
             System.out.println(printArgument);
         }
     }
@@ -88,15 +89,12 @@ public class ArgumentFactory implements IArgumentFactory {
     /**
      * 打印输输入的参数
      *
-     * @param argument 参数对象
+     * @param argument  参数对象
+     * @param hideValue 是否隐藏参数值
      */
-    public static void printInputArgumentValue(IArgument argument) {
+    public static void printInputArgumentValue(IArgument argument, boolean hideValue) {
         String argumentValue = getParameterValue(argument);
-        if (argumentValue != null) {
-            String spaceString = StringUtils.rightPad(" ", 20 - argument.getName().length());
-            String printArgument = String.format("\tInput Argument[%s]%s: %s", argument.getName(), spaceString, argumentValue);
-            System.out.println(printArgument);
-        }
+        printInputArgument(argument, argumentValue, hideValue);
     }
 
     /**
@@ -120,11 +118,7 @@ public class ArgumentFactory implements IArgumentFactory {
      */
     public static void printInputArgumentValues(IArgument argument) {
         String[] argumentValueArray = getParameterValues(argument);
-        if (argumentValueArray != null) {
-            String spaceString = StringUtils.rightPad(" ", 20 - argument.getName().length());
-            String printArgument = String.format("\tInput Argument[%s]%s: %s", argument.getName(), spaceString, StringUtils.join(argumentValueArray, ','));
-            System.out.println(printArgument);
-        }
+        printInputArgument(argument, argumentValueArray);
     }
 
     /**
@@ -161,10 +155,7 @@ public class ArgumentFactory implements IArgumentFactory {
      */
     public static void checkNullValueForArgument(IArgument argument) {
         String argumentValue = getParameterValue(argument);
-        if (argumentValue == null) {
-            String exceptionMessage = "The argument['" + argument.getName() + "'] for this program is null";
-            throw new IllegalArgumentException(exceptionMessage);
-        }
+        checkNullValueForArgument(argument, argumentValue);
     }
 
     /**
@@ -187,10 +178,7 @@ public class ArgumentFactory implements IArgumentFactory {
      */
     public static void checkNullValuesForArgument(IArgument argument) {
         String[] argumentValueArray = getParameterValues(argument);
-        if (argumentValueArray == null) {
-            String exceptionMessage = "The argument['" + argument.getName() + "'] for this program is null";
-            throw new IllegalArgumentException(exceptionMessage);
-        }
+        checkNullValuesForArgument(argument, argumentValueArray);
     }
 
     /**
