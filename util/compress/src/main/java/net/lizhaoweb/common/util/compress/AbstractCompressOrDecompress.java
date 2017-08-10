@@ -43,17 +43,17 @@ public abstract class AbstractCompressOrDecompress {
         }
     }
 
-    protected void checkAndMakeDirectory(File zipFileOrDir) {
-        if (!zipFileOrDir.exists()) {
-            boolean mkdir = zipFileOrDir.mkdirs();
-            this.printInformation(String.format("The directory[%s] is created : %s", zipFileOrDir, mkdir));
+    protected void checkAndMakeDirectory(File directory) {
+        if (!directory.exists()) {
+            boolean success = directory.mkdirs();
+            this.printInformation(String.format("The directory[%s] is created : %s", directory, success));
         }
     }
 
-    protected void checkAndDelete(File zipFile) {
-        if (zipFile.exists()) {
-            boolean mkdir = zipFile.delete();
-            this.printInformation(String.format("The directory[%s] is deleted : %s", zipFile, mkdir));
+    protected void checkAndDeleteFile(File file) {
+        if (file.exists()) {
+            boolean success = file.delete();
+            this.printInformation(String.format("The directory[%s] is deleted : %s", file, success));
         }
     }
 }

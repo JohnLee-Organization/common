@@ -12,11 +12,14 @@ package net.lizhaoweb.common.util.compress;
 
 import org.apache.commons.io.IOUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 /**
+ * <h1>解压缩工具 - GZip</h1>
+ *
  * @author <a href="http://www.lizhaoweb.cn">李召(John.Lee)</a>
  * @version 1.0.0.0.1
  * @EMAIL 404644381@qq.com
@@ -39,12 +42,12 @@ public class GZipDecompressor extends AbstractCompressOrDecompress {
     /**
      * 解压
      *
-     * @param tarFile 压缩文件
-     * @param tarDir  解压后的文件
+     * @param gzipFile 压缩文件
+     * @param tarFile  解压后的文件
      * @throws Exception 异常
      */
-    public void decompressor(String tarFile, String tarDir) throws Exception {
-        this.decompressor(new File(tarFile), new File(tarDir));
+    public void decompressor(String gzipFile, String tarFile) throws Exception {
+        this.decompressor(new File(gzipFile), new File(tarFile));
     }
 
     /**
@@ -70,35 +73,5 @@ public class GZipDecompressor extends AbstractCompressOrDecompress {
             IOUtils.closeQuietly(fileInputStream);
         }
         this.printInformation(String.format("The file[%s] has been unpacked to the file[%s]", gzipFile, tarFile));
-    }
-
-    public static void main(String[] args) throws IOException {
-        //做准备压缩一个字符文件，注，这里的字符文件要是GBK编码方式的
-        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream("e:/tmp/source.txt"), "GBK"));
-        //使用GZIPOutputStream包装OutputStream流，使其具体压缩特性，最后会生成test.txt.gz压缩包
-        //并且里面有一个名为test.txt的文件
-        BufferedOutputStream out = new BufferedOutputStream(new GZIPOutputStream(new FileOutputStream("test.txt.gz")));
-        System.out.println("开始写压缩文件...");
-        int c;
-        while ((c = in.read()) != -1) {
-
-            /*
-             * 注，这里是压缩一个字符文件，前面是以字符流来读的，不能直接存入c，因为c已是Unicode
-             * 码，这样会丢掉信息的（当然本身编码格式就不对），所以这里要以GBK来解后再存入。
-             */
-            out.write(String.valueOf((char) c).getBytes("GBK"));
-        }
-        in.close();
-        out.close();
-        System.out.println("开始读压缩文件...");
-        //使用GZIPInputStream包装InputStream流，使其具有解压特性
-        BufferedReader in2 = new BufferedReader(new InputStreamReader(
-                new GZIPInputStream(new FileInputStream("test.txt.gz")), "GBK"));
-        String s;
-        //读取压缩文件里的内容
-        while ((s = in2.readLine()) != null) {
-            System.out.println(s);
-        }
-        in2.close();
     }
 }
