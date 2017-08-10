@@ -40,7 +40,7 @@ public class GZipDecompressor extends AbstractCompressOrDecompress {
      * 解压
      *
      * @param tarFile 压缩文件
-     * @param tarDir  目标目录
+     * @param tarDir  解压后的文件
      * @throws Exception 异常
      */
     public void decompressor(String tarFile, String tarDir) throws Exception {

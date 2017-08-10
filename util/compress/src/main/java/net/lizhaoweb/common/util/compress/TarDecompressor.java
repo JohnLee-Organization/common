@@ -90,11 +90,4 @@ public class TarDecompressor extends AbstractCompressOrDecompress {
         }
         this.printInformation(String.format("The file[%s] has been unpacked to the directory[%s]", tarFile, tarDir));
     }
-
-    private void checkAndMakeDirectory(File zipFileOrDir) {
-        if (!zipFileOrDir.exists()) {
-            boolean mkdir = zipFileOrDir.mkdirs();
-            this.printInformation(String.format("The directory[%s] is created : %s", zipFileOrDir, mkdir));
-        }
-    }
 }

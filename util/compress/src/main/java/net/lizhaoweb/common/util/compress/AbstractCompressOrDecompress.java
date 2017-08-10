@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+
 /**
  * <h1>压缩/解压缩工具 - 抽象</h1>
  *
@@ -38,6 +40,20 @@ public abstract class AbstractCompressOrDecompress {
         if (verbose) {
             logger.info(message);
             System.out.println(message);
+        }
+    }
+
+    protected void checkAndMakeDirectory(File zipFileOrDir) {
+        if (!zipFileOrDir.exists()) {
+            boolean mkdir = zipFileOrDir.mkdirs();
+            this.printInformation(String.format("The directory[%s] is created : %s", zipFileOrDir, mkdir));
+        }
+    }
+
+    protected void checkAndDelete(File zipFile) {
+        if (zipFile.exists()) {
+            boolean mkdir = zipFile.delete();
+            this.printInformation(String.format("The directory[%s] is deleted : %s", zipFile, mkdir));
         }
     }
 }

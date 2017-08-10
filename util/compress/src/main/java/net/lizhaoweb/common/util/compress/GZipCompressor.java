@@ -42,8 +42,8 @@ public class GZipCompressor extends AbstractCompressOrDecompress {
     /**
      * 压缩
      *
-     * @param inputFileOrDir 被压缩的文件或目录
-     * @param gzipFile        压缩文件
+     * @param inputFileOrDir 被压缩的文件
+     * @param gzipFile       压缩文件
      * @throws Exception 异常
      */
     public void compress(String inputFileOrDir, String gzipFile) throws Exception {
