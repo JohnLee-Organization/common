@@ -20,6 +20,7 @@
         <module>http-client</module>
         <module>convert</module>
         <module>argument</module>
+        <module>compress</module>
     </modules>
 
 </project>
