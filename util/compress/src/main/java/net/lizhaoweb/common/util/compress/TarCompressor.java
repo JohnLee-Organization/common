@@ -33,6 +33,11 @@ public class TarCompressor extends AbstractCompressOrDecompress {
 
     private int countRecursive = 1; // 定义递归次数变量
 
+    /**
+     * 有参构造
+     *
+     * @param verbose
+     */
     public TarCompressor(boolean verbose) {
         super(verbose);
     }

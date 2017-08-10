@@ -31,6 +31,11 @@ import java.io.FileOutputStream;
  */
 public class TarDecompressor extends AbstractCompressOrDecompress {
 
+    /**
+     * 有参构造
+     *
+     * @param verbose
+     */
     public TarDecompressor(boolean verbose) {
         super(verbose);
     }
