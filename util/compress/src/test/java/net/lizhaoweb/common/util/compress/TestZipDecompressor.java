@@ -24,7 +24,7 @@ import org.junit.Test;
 public class TestZipDecompressor {
 
     @Test
-    public void unzip() {
+    public void decompressor() {
         ZipDecompressor zipDecompressor = new ZipDecompressor(true);
         try {
             zipDecompressor.decompressor("D:\\GreenProfram\\Cygwin64\\opt.zip", "D:\\GreenProfram\\Cygwin64\\test_");

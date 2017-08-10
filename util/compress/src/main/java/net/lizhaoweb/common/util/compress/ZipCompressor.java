@@ -12,7 +12,6 @@ package net.lizhaoweb.common.util.compress;
 
 import org.apache.commons.io.IOUtils;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -64,26 +63,22 @@ public class ZipCompressor extends AbstractCompressOrDecompress {
     public void compress(File inputFileOrDir, File zipFile) throws Exception {
         FileOutputStream fileOutputStream = null;
         ZipOutputStream zipOutputStream = null;
-        BufferedOutputStream bufferedOutputStream = null;
         try {
             this.printInformation(String.format("The file[%s] for zip is compressing ...", zipFile));
             fileOutputStream = new FileOutputStream(zipFile);
             zipOutputStream = new ZipOutputStream(fileOutputStream);
-//            bufferedOutputStream = new BufferedOutputStream(zipOutputStream);
-            this.compress(zipOutputStream, inputFileOrDir, inputFileOrDir.getName(), bufferedOutputStream);
+            this.compress(zipOutputStream, inputFileOrDir, inputFileOrDir.getName());
             zipOutputStream.closeEntry();
-//            bufferedOutputStream.flush();
             zipOutputStream.finish();
             fileOutputStream.flush();
         } finally {
-            IOUtils.closeQuietly(bufferedOutputStream);// 输出流关闭
             IOUtils.closeQuietly(zipOutputStream);// 输出流关闭
             IOUtils.closeQuietly(fileOutputStream);// 输出流关闭
         }
         this.printInformation(String.format("The file[%s] for zip is compressed", zipFile));
     }
 
-    private void compress(ZipOutputStream zipOutputStream, File file, String base, BufferedOutputStream bufferedOutputStream) throws Exception { // 方法重载
+    private void compress(ZipOutputStream zipOutputStream, File file, String base) throws Exception { // 方法重载
         if (file.isDirectory()) {
             File[] files = file.listFiles();
             if (files == null) {
@@ -98,11 +93,10 @@ public class ZipCompressor extends AbstractCompressOrDecompress {
             if (files.length == 0) {
                 ZipEntry zipEntry = new ZipEntry(baseDir);
                 zipOutputStream.putNextEntry(zipEntry); // 创建zip压缩进入点base
-//                zipOutputStream.finish();
                 this.printInformation(baseDir);
             }
             for (File childFile : files) {
-                this.compress(zipOutputStream, childFile, baseDir + childFile.getName(), bufferedOutputStream); // 递归遍历子文件夹
+                this.compress(zipOutputStream, childFile, baseDir + childFile.getName()); // 递归遍历子文件夹
             }
             this.printInformation(String.format("No. %d recursion", countRecursive));
             countRecursive++;
@@ -114,8 +108,6 @@ public class ZipCompressor extends AbstractCompressOrDecompress {
                 this.printInformation(base);
                 fileInputStream = new FileInputStream(file);
                 IOUtils.copy(fileInputStream, zipOutputStream);
-//                bufferedOutputStream.flush();
-//                zipOutputStream.finish();
             } finally {
                 IOUtils.closeQuietly(fileInputStream);// 输入流关闭
             }

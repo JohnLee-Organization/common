@@ -24,10 +24,10 @@ import org.junit.Test;
 public class TestZipCompressor {
 
     @Test
-    public void zip() {
-        ZipCompressor book = new ZipCompressor(true);
+    public void compress() {
+        ZipCompressor zipCompressor = new ZipCompressor(true);
         try {
-            book.compress("D:\\GreenProfram\\Cygwin64\\opt", "D:\\GreenProfram\\Cygwin64\\opt.zip");
+            zipCompressor.compress("D:\\GreenProfram\\Cygwin64\\opt", "D:\\GreenProfram\\Cygwin64\\opt.zip");
         } catch (Exception e) {
             e.printStackTrace();
         }
