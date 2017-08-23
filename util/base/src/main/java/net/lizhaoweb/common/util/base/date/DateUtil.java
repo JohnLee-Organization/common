@@ -135,11 +135,7 @@ public class DateUtil extends DateUtils {
      * @return 返回指定格式的日期字符串。
      */
     public static String calendarToString(Calendar calendar, String formatString) {
-        String dateString = null;
-        if (formatString.matches(Constant.Regex.DATE_FORMAT_REGULAR_EXPRESSION)) {
-            dateString = dateToString(calendar.getTime(), formatString);
-        }
-        return dateString;
+        return dateToString(calendar.getTime(), formatString);
     }
 
     /**
@@ -149,11 +145,7 @@ public class DateUtil extends DateUtils {
      * @return 返回一个 Date 对象。
      */
     public static Date stringToDate(String dateString) {
-        Date date = null;
-        if (dateString.matches(Constant.Regex.DATE_STRING_REGULAR_EXPRESSION)) {
-            date = stringToCalendar(dateString).getTime();
-        }
-        return date;
+        return stringToCalendar(dateString).getTime();
     }
 
     /**
