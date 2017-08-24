@@ -436,6 +436,7 @@ public class HttpClientUtil {
          * 设置等待数据超时时间
          */
         private int soTimeout = 5000;
+        private int socketTimeout = 5000;
         private int sndBufSize = 128 * 1024;
         private int rcvBufSize = 128 * 1024;
         private int backlogSize = 128 * 1024;

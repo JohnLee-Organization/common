@@ -379,6 +379,7 @@ public class ApacheHttpClientTool extends HttpClientTool {
         requestConfigBuilder.setConnectionRequestTimeout(config.getConnectionRequestTimeout());
         requestConfigBuilder.setConnectTimeout(config.getConnectTimeout());
         requestConfigBuilder.setMaxRedirects(config.getMaxRedirects());
+        requestConfigBuilder.setSocketTimeout(config.getSocketTimeout());
         // 在提交请求之前测，试连接是否可用
         requestConfigBuilder.setStaleConnectionCheckEnabled(config.isStaleConnectionCheckEnabled());
         RequestConfig requestConfig = requestConfigBuilder.build();
