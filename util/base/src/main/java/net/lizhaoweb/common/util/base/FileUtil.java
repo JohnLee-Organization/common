@@ -243,23 +243,27 @@ public final class FileUtil extends FileUtils {
     /**
      * 格式化文件路径
      *
-     * @param path 文件路径 。
+     * @param paths 文件路径 。
      * @return 返回格式化的路径。
      */
-    public static final String format(String... path) {
+    public static final String format(String... paths) {
         String result = "";
-        for (String string : path) {
-            result += string;
-        }
-        while (result.indexOf("\\") > -1) {
-            result = result.replace("\\", "/");
-        }
-        while (result.indexOf("//") > -1) {
-            result = result.replace("//", "/");
+        for (String path : paths) {
+            result = String.format("%s%s%s", result, path, File.separator);
         }
         if ("\\".equals(File.separator)) {
-            while (result.indexOf("/") > -1) {
-                result = result.replace("/", File.separator);
+            while (result.contains("/")) {
+                result = result.replace("/", "\\");
+            }
+            while (result.contains("\\\\")) {
+                result = result.replace("\\\\", "\\");
+            }
+        } else {
+            while (result.contains("\\")) {
+                result = result.replace("\\", "/");
+            }
+            while (result.contains("//")) {
+                result = result.replace("//", "/");
             }
         }
         return result;
