@@ -39,7 +39,7 @@ public abstract class AbstractCompressOrDecompress {
     protected void printInformation(String message) {
         if (verbose) {
             logger.info(message);
-            System.out.println(message);
+//            System.out.println(message);
         }
     }
 
