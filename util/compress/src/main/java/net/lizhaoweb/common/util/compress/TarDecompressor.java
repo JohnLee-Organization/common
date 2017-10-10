@@ -43,32 +43,34 @@ public class TarDecompressor extends AbstractCompressOrDecompress {
     /**
      * 解压
      *
-     * @param tarFile 压缩文件
-     * @param tarDir  目标目录
+     * @param tarFile   压缩文件
+     * @param targetDir 目标目录
      * @throws Exception 异常
      */
-    public void decompressor(String tarFile, String tarDir) throws Exception {
-        this.decompressor(new File(tarFile), new File(tarDir));
+    public void decompress(String tarFile, String targetDir) throws Exception {
+        this.decompress(new File(tarFile), new File(targetDir));
     }
 
     /**
      * 解压
      *
-     * @param tarFile 压缩文件
-     * @param tarDir  目标目录
+     * @param tarFile   压缩文件
+     * @param targetDir 目标目录
      * @throws Exception 异常
      */
-    public void decompressor(File tarFile, File tarDir) throws Exception {
+    public void decompress(File tarFile, File targetDir) throws Exception {
+        this.checkCompressionPackForDecompressor(tarFile, "tarFile");
+        this.checkTargetDirectoryForDecompressor(targetDir, "targetDir");
         FileInputStream fileInputStream = null;
         TarArchiveInputStream tarArchiveInputStream = null;
         try {
-            this.checkAndMakeDirectory(tarDir);
+            this.checkAndMakeDirectory(targetDir);
             fileInputStream = new FileInputStream(tarFile);
             tarArchiveInputStream = new TarArchiveInputStream(fileInputStream);
             TarArchiveEntry tarArchiveEntry = null;
 
             while ((tarArchiveEntry = tarArchiveInputStream.getNextTarEntry()) != null) {
-                File zipFileOrDir = new File(tarDir, tarArchiveEntry.getName());
+                File zipFileOrDir = new File(targetDir, tarArchiveEntry.getName());
                 if (tarArchiveEntry.isDirectory()) {
                     this.checkAndMakeDirectory(zipFileOrDir);
                     continue;
@@ -88,6 +90,6 @@ public class TarDecompressor extends AbstractCompressOrDecompress {
             IOUtils.closeQuietly(tarArchiveInputStream);
             IOUtils.closeQuietly(fileInputStream);
         }
-        this.printInformation(String.format("The file[%s] has been unpacked to the directory[%s]", tarFile, tarDir));
+        this.printInformation(String.format("The file[%s] has been unpacked to the directory[%s]", tarFile, targetDir));
     }
 }

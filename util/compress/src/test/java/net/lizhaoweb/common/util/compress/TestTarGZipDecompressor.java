@@ -24,10 +24,10 @@ import org.junit.Test;
 public class TestTarGZipDecompressor {
 
     @Test
-    public void decompressor() {
+    public void decompress() {
         TarGZipDecompressor tarGZipDecompressor = new TarGZipDecompressor(true);
         try {
-            tarGZipDecompressor.decompressor("D:\\GreenProfram\\Cygwin64\\opt.tar.gz", "D:\\GreenProfram\\Cygwin64\\test_");
+            tarGZipDecompressor.decompress("D:\\GreenProfram\\Cygwin64\\opt.tar.gz", "D:\\GreenProfram\\Cygwin64\\test_");
         } catch (Exception e) {
             e.printStackTrace();
         }

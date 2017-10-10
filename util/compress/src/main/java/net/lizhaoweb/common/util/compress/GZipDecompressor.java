@@ -42,29 +42,34 @@ public class GZipDecompressor extends AbstractCompressOrDecompress {
     /**
      * 解压
      *
-     * @param gzipFile 压缩文件
-     * @param tarFile  解压后的文件
+     * @param gzipFile  压缩文件
+     * @param targetDir 解压后的文件
      * @throws Exception 异常
      */
-    public void decompressor(String gzipFile, String tarFile) throws Exception {
-        this.decompressor(new File(gzipFile), new File(tarFile));
+    public void decompress(String gzipFile, String targetDir) throws Exception {
+        this.decompress(new File(gzipFile), new File(targetDir));
     }
 
     /**
      * 解压
      *
-     * @param gzipFile 压缩文件
-     * @param tarFile  解压后的文件
+     * @param gzipFile  压缩文件
+     * @param targetDir 目标目录
      * @throws Exception 异常
      */
-    public void decompressor(File gzipFile, File tarFile) throws Exception {
+    public void decompress(File gzipFile, File targetDir) throws Exception {
+        this.checkCompressionPackForDecompressor(gzipFile, "gzipFile");
+        this.checkTargetDirectoryForDecompressor(targetDir, "targetDir");
         FileInputStream fileInputStream = null;
         GZIPInputStream gzipInputStream = null;
         FileOutputStream fileOutputStream = null;
         try {
+            String gzipFileName = gzipFile.getName();
+            String fileName = gzipFileName.substring(0, gzipFileName.lastIndexOf('.'));
+            File file = new File(targetDir, fileName);
             fileInputStream = new FileInputStream(gzipFile);
             gzipInputStream = new GZIPInputStream(fileInputStream);
-            fileOutputStream = new FileOutputStream(tarFile);
+            fileOutputStream = new FileOutputStream(file);
             IOUtils.copy(gzipInputStream, fileOutputStream);
             fileOutputStream.flush();
         } finally {
@@ -72,6 +77,6 @@ public class GZipDecompressor extends AbstractCompressOrDecompress {
             IOUtils.closeQuietly(gzipInputStream);
             IOUtils.closeQuietly(fileInputStream);
         }
-        this.printInformation(String.format("The file[%s] has been unpacked to the file[%s]", gzipFile, tarFile));
+        this.printInformation(String.format("The file[%s] has been unpacked to the file[%s]", gzipFile, targetDir));
     }
 }

@@ -45,27 +45,29 @@ public class TarGZipDecompressor extends AbstractCompressOrDecompress {
      * 解压
      *
      * @param tarGZipFile 压缩文件
-     * @param tarDir      目标目录
+     * @param targetDir   目标目录
      * @throws Exception 异常
      */
-    public void decompressor(String tarGZipFile, String tarDir) throws Exception {
-        this.decompressor(new File(tarGZipFile), new File(tarDir));
+    public void decompress(String tarGZipFile, String targetDir) throws Exception {
+        this.decompress(new File(tarGZipFile), new File(targetDir));
     }
 
     /**
      * 解压
      *
      * @param tarGZipFile 压缩文件
-     * @param tarDir      目标目录
+     * @param targetDir   目标目录
      * @throws Exception 异常
      */
-    public void decompressor(File tarGZipFile, File tarDir) throws Exception {
+    public void decompress(File tarGZipFile, File targetDir) throws Exception {
+        this.checkCompressionPackForDecompressor(tarGZipFile, "tarGZipFile");
+        this.checkTargetDirectoryForDecompressor(targetDir, "targetDir");
         GZipDecompressor gZipDecompressor = new GZipDecompressor(this.verbose);
         File tarFile = new File(String.format("%s/.__gzip_to_tar.tar", this.osTempDir));
-        gZipDecompressor.decompressor(tarGZipFile, tarFile);
+        gZipDecompressor.decompress(tarGZipFile, tarFile);
 
         TarDecompressor tarDecompressor = new TarDecompressor(this.verbose);
-        tarDecompressor.decompressor(tarFile, tarDir);
+        tarDecompressor.decompress(tarFile, targetDir);
 
         this.checkAndDeleteFile(tarFile);
     }

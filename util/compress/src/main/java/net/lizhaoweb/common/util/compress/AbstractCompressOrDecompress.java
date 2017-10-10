@@ -56,4 +56,42 @@ public abstract class AbstractCompressOrDecompress {
             this.printInformation(String.format("The directory[%s] is deleted : %s", file, success));
         }
     }
+
+    protected void checkCompressionPackForDecompressor(File compressionPack, String argumentName) {
+        if (compressionPack == null) {
+            String message = String.format("The argument[%s] is null", argumentName);
+            throw new IllegalArgumentException(message);
+        }
+        if (!compressionPack.exists()) {
+            String message = String.format("The compression-pack [%s] is not exists", compressionPack);
+            throw new IllegalArgumentException(message);
+        }
+        if (!compressionPack.isFile()) {
+            String message = String.format("The compression-pack [%s] is not a file", compressionPack);
+            throw new IllegalArgumentException(message);
+        }
+        if (!compressionPack.canRead()) {
+            String message = String.format("The compression-pack [%s] can't be read", compressionPack);
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    protected void checkTargetDirectoryForDecompressor(File targetDirectory, String argumentName) {
+        if (targetDirectory == null) {
+            String message = String.format("The argument[%s] is null", argumentName);
+            throw new IllegalArgumentException(message);
+        }
+        if (!targetDirectory.exists()) {
+            String message = String.format("The target-directory [%s] is not exists", targetDirectory);
+            throw new IllegalArgumentException(message);
+        }
+        if (!targetDirectory.isDirectory()) {
+            String message = String.format("The target-directory [%s] is not a directory", targetDirectory);
+            throw new IllegalArgumentException(message);
+        }
+        if (!targetDirectory.canWrite()) {
+            String message = String.format("The target-directory [%s] can't be written", targetDirectory);
+            throw new IllegalArgumentException(message);
+        }
+    }
 }

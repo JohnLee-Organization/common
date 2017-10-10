@@ -43,32 +43,34 @@ public class ZipDecompressor extends AbstractCompressOrDecompress {
     /**
      * 解压
      *
-     * @param zipFile 压缩文件
-     * @param tarDir  目标目录
+     * @param zipFile   压缩文件
+     * @param targetDir 目标目录
      * @throws Exception 异常
      */
-    public void decompressor(String zipFile, String tarDir) throws Exception {
-        this.decompressor(new File(zipFile), new File(tarDir));
+    public void decompress(String zipFile, String targetDir) throws Exception {
+        this.decompress(new File(zipFile), new File(targetDir));
     }
 
     /**
      * 解压
      *
-     * @param zipFile 压缩文件
-     * @param tarDir  目标目录
+     * @param zipFile   压缩文件
+     * @param targetDir 目标目录
      * @throws Exception 异常
      */
-    public void decompressor(File zipFile, File tarDir) throws Exception {
+    public void decompress(File zipFile, File targetDir) throws Exception {
+        this.checkCompressionPackForDecompressor(zipFile, "zipFile");
+        this.checkTargetDirectoryForDecompressor(targetDir, "targetDir");
         FileInputStream fileInputStream = null;
         ZipInputStream zipInputStream = null;
         try {
-            this.checkAndMakeDirectory(tarDir);
+            this.checkAndMakeDirectory(targetDir);
             fileInputStream = new FileInputStream(zipFile);
             zipInputStream = new ZipInputStream(fileInputStream);
             ZipEntry zipEntry = null;
 
             while ((zipEntry = zipInputStream.getNextEntry()) != null) {
-                File zipFileOrDir = new File(tarDir, zipEntry.getName());
+                File zipFileOrDir = new File(targetDir, zipEntry.getName());
                 if (zipEntry.isDirectory()) {
                     this.checkAndMakeDirectory(zipFileOrDir);
                     continue;
@@ -88,6 +90,6 @@ public class ZipDecompressor extends AbstractCompressOrDecompress {
             IOUtils.closeQuietly(zipInputStream);
             IOUtils.closeQuietly(fileInputStream);
         }
-        this.printInformation(String.format("The file[%s] has been unpacked to the directory[%s]", zipFile, tarDir));
+        this.printInformation(String.format("The file[%s] has been unpacked to the directory[%s]", zipFile, targetDir));
     }
 }

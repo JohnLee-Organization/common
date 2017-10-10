@@ -24,10 +24,10 @@ import org.junit.Test;
 public class TestTarDecompressor {
 
     @Test
-    public void decompressor() {
+    public void decompress() {
         TarDecompressor tarDecompressor = new TarDecompressor(true);
         try {
-            tarDecompressor.decompressor("D:\\GreenProfram\\Cygwin64\\opt.tar", "D:\\GreenProfram\\Cygwin64\\test_");
+            tarDecompressor.decompress("D:\\GreenProfram\\Cygwin64\\opt.tar", "D:\\GreenProfram\\Cygwin64\\test_");
         } catch (Exception e) {
             e.printStackTrace();
         }
