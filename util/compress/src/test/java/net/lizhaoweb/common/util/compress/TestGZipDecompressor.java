@@ -10,7 +10,10 @@
  */
 package net.lizhaoweb.common.util.compress;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+
+import java.io.FileInputStream;
 
 /**
  * @author <a href="http://www.lizhaoweb.cn">李召(John.Lee)</a>
@@ -27,7 +30,20 @@ public class TestGZipDecompressor {
     public void decompress() {
         GZipDecompressor gZipDecompressor = new GZipDecompressor(true);
         try {
-            gZipDecompressor.decompress("D:\\GreenProfram\\Cygwin64\\opt.tar.gz", "D:\\GreenProfram\\Cygwin64\\");
+            gZipDecompressor.decompress("F:\\TEst\\1970110017_010_5105.csv.gz", "F:\\TEst");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void aaa() {
+        try {
+            String fileName = "F:\\TEst\\1970110017_010_5105.csv.gz";
+            FileInputStream fileInputStream = new FileInputStream(fileName);
+            byte[] byteArray = IOUtils.toByteArray(fileInputStream);
+            String aaaa = new String(byteArray);
+            System.out.println(aaaa);
         } catch (Exception e) {
             e.printStackTrace();
         }
