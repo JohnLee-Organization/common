@@ -23,7 +23,7 @@ import java.io.File;
  * Author of last commit:$Author$<br>
  * Date of last commit:$Date$<br>
  */
-public class TarGZipDecompressor extends AbstractCompressOrDecompress {
+public class TarGZipDecompressor extends AbstractCompressOrDecompress implements IDecompressor {
 
     private boolean verbose;
     private String userHome;

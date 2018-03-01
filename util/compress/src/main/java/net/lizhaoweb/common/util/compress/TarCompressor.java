@@ -29,7 +29,7 @@ import java.io.FileOutputStream;
  * Author of last commit:$Author$<br>
  * Date of last commit:$Date$<br>
  */
-public class TarCompressor extends AbstractCompressOrDecompress {
+public class TarCompressor extends AbstractCompressOrDecompress implements ICompressor {
 
     private int countRecursive = 1; // 定义递归次数变量
 

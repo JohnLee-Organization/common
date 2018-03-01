@@ -29,7 +29,7 @@ import java.io.FileOutputStream;
  * Author of last commit:$Author$<br>
  * Date of last commit:$Date$<br>
  */
-public class TarDecompressor extends AbstractCompressOrDecompress {
+public class TarDecompressor extends AbstractCompressOrDecompress implements IDecompressor {
 
     /**
      * 有参构造

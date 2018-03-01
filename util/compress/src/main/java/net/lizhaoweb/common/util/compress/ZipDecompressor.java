@@ -29,7 +29,7 @@ import java.util.zip.ZipInputStream;
  * Author of last commit:$Author$<br>
  * Date of last commit:$Date$<br>
  */
-public class ZipDecompressor extends AbstractCompressOrDecompress {
+public class ZipDecompressor extends AbstractCompressOrDecompress implements IDecompressor {
 
     /**
      * 有参构造

@@ -28,7 +28,7 @@ import java.util.zip.GZIPOutputStream;
  * Author of last commit:$Author$<br>
  * Date of last commit:$Date$<br>
  */
-public class GZipCompressor extends AbstractCompressOrDecompress {
+public class GZipCompressor extends AbstractCompressOrDecompress implements ICompressor {
 
     /**
      * 有参构造

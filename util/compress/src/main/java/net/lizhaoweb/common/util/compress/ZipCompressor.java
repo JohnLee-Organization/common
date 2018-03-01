@@ -29,7 +29,7 @@ import java.util.zip.ZipOutputStream;
  * Author of last commit:$Author$<br>
  * Date of last commit:$Date$<br>
  */
-public class ZipCompressor extends AbstractCompressOrDecompress {
+public class ZipCompressor extends AbstractCompressOrDecompress implements ICompressor {
 
     private int countRecursive = 1; // 定义递归次数变量
 

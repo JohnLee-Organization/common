@@ -23,7 +23,7 @@ import java.io.File;
  * Author of last commit:$Author$<br>
  * Date of last commit:$Date$<br>
  */
-public class TarGZipCompressor extends AbstractCompressOrDecompress {
+public class TarGZipCompressor extends AbstractCompressOrDecompress implements ICompressor {
 
     private boolean verbose;
     private String userHome;
@@ -38,7 +38,7 @@ public class TarGZipCompressor extends AbstractCompressOrDecompress {
         super(verbose);
         this.verbose = verbose;
         this.userHome = System.getProperties().getProperty("user.home");
-        this.osTempDir=System.getProperty("java.io.tmpdir");
+        this.osTempDir = System.getProperty("java.io.tmpdir");
     }
 
     /**
