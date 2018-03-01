@@ -29,6 +29,7 @@ import java.util.zip.GZIPOutputStream;
  * Date of last commit:$Date$<br>
  */
 public class GZipCompressor extends AbstractCompressOrDecompress implements ICompressor {
+    private static final int BLOCK_SIZE = 4096;
 
     /**
      * 有参构造
@@ -65,8 +66,8 @@ public class GZipCompressor extends AbstractCompressOrDecompress implements ICom
             this.printInformation(String.format("The file[%s] for zip is compressing ...", gzipFile));
             fileInputStream = new FileInputStream(inputFile);
             fileOutputStream = new FileOutputStream(gzipFile);
-            gzipOutputStream = new GZIPOutputStream(fileOutputStream);
-            IOUtils.copy(fileInputStream, gzipOutputStream);
+            gzipOutputStream = new GZIPOutputStream(fileOutputStream, BLOCK_SIZE);
+            IOUtils.copy(fileInputStream, gzipOutputStream, BLOCK_SIZE);
         } finally {
             IOUtils.closeQuietly(gzipOutputStream);// 输出流关闭
             IOUtils.closeQuietly(fileOutputStream);// 输出流关闭

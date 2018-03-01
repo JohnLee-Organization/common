@@ -30,6 +30,7 @@ import java.util.zip.ZipInputStream;
  * Date of last commit:$Date$<br>
  */
 public class ZipDecompressor extends AbstractCompressOrDecompress implements IDecompressor {
+    private static final int BLOCK_SIZE = 512;
 
     /**
      * 有参构造
@@ -79,7 +80,7 @@ public class ZipDecompressor extends AbstractCompressOrDecompress implements IDe
                 FileOutputStream fileOutputStream = null;
                 try {
                     fileOutputStream = new FileOutputStream(zipFileOrDir);
-                    IOUtils.copy(zipInputStream, fileOutputStream);
+                    IOUtils.copy(zipInputStream, fileOutputStream, BLOCK_SIZE);
                     fileOutputStream.flush();
                 } finally {
                     IOUtils.closeQuietly(fileOutputStream);

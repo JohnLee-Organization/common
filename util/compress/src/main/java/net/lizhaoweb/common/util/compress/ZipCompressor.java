@@ -30,6 +30,7 @@ import java.util.zip.ZipOutputStream;
  * Date of last commit:$Date$<br>
  */
 public class ZipCompressor extends AbstractCompressOrDecompress implements ICompressor {
+    private static final int BLOCK_SIZE = 512;
 
     private int countRecursive = 1; // 定义递归次数变量
 
@@ -107,7 +108,7 @@ public class ZipCompressor extends AbstractCompressOrDecompress implements IComp
                 zipOutputStream.putNextEntry(zipEntry); // 创建zip压缩进入点base
                 this.printInformation(base);
                 fileInputStream = new FileInputStream(file);
-                IOUtils.copy(fileInputStream, zipOutputStream);
+                IOUtils.copy(fileInputStream, zipOutputStream, BLOCK_SIZE);
             } finally {
                 IOUtils.closeQuietly(fileInputStream);// 输入流关闭
             }

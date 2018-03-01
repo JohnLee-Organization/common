@@ -30,6 +30,7 @@ import java.io.FileOutputStream;
  * Date of last commit:$Date$<br>
  */
 public class TarCompressor extends AbstractCompressOrDecompress implements ICompressor {
+    private static final int BLOCK_SIZE = 4096;
 
     private int countRecursive = 1; // 定义递归次数变量
 
@@ -66,7 +67,7 @@ public class TarCompressor extends AbstractCompressOrDecompress implements IComp
         try {
             this.printInformation(String.format("The file[%s] for zip is compressing ...", tarFile));
             fileOutputStream = new FileOutputStream(tarFile);
-            tarArchiveOutputStream = new TarArchiveOutputStream(fileOutputStream);
+            tarArchiveOutputStream = new TarArchiveOutputStream(fileOutputStream, BLOCK_SIZE);
             this.compress(tarArchiveOutputStream, inputFileOrDir, inputFileOrDir.getName());
 //            tarArchiveOutputStream.flush();
 //            tarArchiveOutputStream.finish();
@@ -109,7 +110,7 @@ public class TarCompressor extends AbstractCompressOrDecompress implements IComp
                 tarArchiveOutputStream.putArchiveEntry(tarArchiveEntry);
                 this.printInformation(base);
                 fileInputStream = new FileInputStream(file);
-                IOUtils.copy(fileInputStream, tarArchiveOutputStream);
+                IOUtils.copy(fileInputStream, tarArchiveOutputStream, BLOCK_SIZE);
             } finally {
                 IOUtils.closeQuietly(fileInputStream);// 输入流关闭
                 tarArchiveOutputStream.closeArchiveEntry();

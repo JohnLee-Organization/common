@@ -29,6 +29,7 @@ import java.util.zip.GZIPInputStream;
  * Date of last commit:$Date$<br>
  */
 public class GZipDecompressor extends AbstractCompressOrDecompress implements IDecompressor {
+    private static final int BLOCK_SIZE = 4096;
 
     /**
      * 有参构造
@@ -68,9 +69,9 @@ public class GZipDecompressor extends AbstractCompressOrDecompress implements ID
             String fileName = gzipFileName.substring(0, gzipFileName.lastIndexOf('.'));
             File file = new File(targetDir, fileName);
             fileInputStream = new FileInputStream(gzipFile);
-            gzipInputStream = new GZIPInputStream(fileInputStream);
+            gzipInputStream = new GZIPInputStream(fileInputStream, BLOCK_SIZE);
             fileOutputStream = new FileOutputStream(file);
-            IOUtils.copy(gzipInputStream, fileOutputStream);
+            IOUtils.copy(gzipInputStream, fileOutputStream, BLOCK_SIZE);
             fileOutputStream.flush();
         } finally {
             IOUtils.closeQuietly(fileOutputStream);
