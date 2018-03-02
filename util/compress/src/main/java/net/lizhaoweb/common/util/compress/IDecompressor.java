@@ -11,6 +11,7 @@
 package net.lizhaoweb.common.util.compress;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * <h1>压缩工具 [接口]</h1>
@@ -25,7 +26,7 @@ import java.io.File;
  */
 public interface IDecompressor {
 
-    void decompress(String gzipFile, String targetDir) throws Exception;
+    void decompress(String gzipFile, String targetDir) throws IOException;
 
-    void decompress(File gzipFile, File targetDir) throws Exception;
+    void decompress(File gzipFile, File targetDir) throws IOException;
 }

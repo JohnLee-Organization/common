@@ -15,6 +15,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -48,9 +49,9 @@ public class ZipCompressor extends AbstractCompressOrDecompress implements IComp
      *
      * @param inputFileOrDir 被压缩的文件或目录
      * @param zipFile        压缩文件
-     * @throws Exception 异常
+     * @throws IOException 输入输出异常
      */
-    public void compress(String inputFileOrDir, String zipFile) throws Exception {
+    public void compress(String inputFileOrDir, String zipFile) throws IOException {
         this.compress(new File(inputFileOrDir), new File(zipFile));
     }
 
@@ -59,9 +60,9 @@ public class ZipCompressor extends AbstractCompressOrDecompress implements IComp
      *
      * @param inputFileOrDir 被压缩的文件或目录
      * @param zipFile        压缩文件
-     * @throws Exception 异常
+     * @throws IOException 输入输出异常
      */
-    public void compress(File inputFileOrDir, File zipFile) throws Exception {
+    public void compress(File inputFileOrDir, File zipFile) throws IOException {
         FileOutputStream fileOutputStream = null;
         ZipOutputStream zipOutputStream = null;
         try {
@@ -72,6 +73,9 @@ public class ZipCompressor extends AbstractCompressOrDecompress implements IComp
             zipOutputStream.closeEntry();
             zipOutputStream.finish();
             fileOutputStream.flush();
+        } catch (Exception e) {
+            String errorMessage = String.format("An exception occurs when the file[%s] is compressing.: %s", zipFile, e.getMessage());
+            throw new IllegalStateException(errorMessage, e);
         } finally {
             IOUtils.closeQuietly(zipOutputStream);// 输出流关闭
             IOUtils.closeQuietly(fileOutputStream);// 输出流关闭

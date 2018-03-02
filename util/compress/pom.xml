@@ -11,7 +11,7 @@
 
     <groupId>net.lizhaoweb.common.util</groupId>
     <artifactId>compress</artifactId>
-    <version>JL.COMMON.1.5.0.0.1.0.2</version>
+    <version>JL.COMMON.1.5.0.0.1.0.3-SNAPSHOT</version>
 
     <name>Commons Util [Compress]</name>
     <description>李召(John.Lee) 个人通用工具项目 - 压缩/解压</description>

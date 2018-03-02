@@ -11,6 +11,7 @@
 package net.lizhaoweb.common.util.compress;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * <h1>解压缩工具 - Tar.GZip</h1>
@@ -46,9 +47,9 @@ public class TarGZipDecompressor extends AbstractCompressOrDecompress implements
      *
      * @param tarGZipFile 压缩文件
      * @param targetDir   目标目录
-     * @throws Exception 异常
+     * @throws IOException 输入输出异常
      */
-    public void decompress(String tarGZipFile, String targetDir) throws Exception {
+    public void decompress(String tarGZipFile, String targetDir) throws IOException {
         this.decompress(new File(tarGZipFile), new File(targetDir));
     }
 
@@ -57,9 +58,9 @@ public class TarGZipDecompressor extends AbstractCompressOrDecompress implements
      *
      * @param tarGZipFile 压缩文件
      * @param targetDir   目标目录
-     * @throws Exception 异常
+     * @throws IOException 输入输出异常
      */
-    public void decompress(File tarGZipFile, File targetDir) throws Exception {
+    public void decompress(File tarGZipFile, File targetDir) throws IOException {
         this.checkCompressionPackForDecompressor(tarGZipFile, "tarGZipFile");
         this.checkTargetDirectoryForDecompressor(targetDir, "targetDir");
         GZipDecompressor gZipDecompressor = new GZipDecompressor(this.verbose);

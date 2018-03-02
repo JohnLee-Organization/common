@@ -17,6 +17,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * <h1>解压缩工具 - Tar</h1>
@@ -46,9 +47,9 @@ public class TarDecompressor extends AbstractCompressOrDecompress implements IDe
      *
      * @param tarFile   压缩文件
      * @param targetDir 目标目录
-     * @throws Exception 异常
+     * @throws IOException 输入输出异常
      */
-    public void decompress(String tarFile, String targetDir) throws Exception {
+    public void decompress(String tarFile, String targetDir) throws IOException {
         this.decompress(new File(tarFile), new File(targetDir));
     }
 
@@ -57,9 +58,9 @@ public class TarDecompressor extends AbstractCompressOrDecompress implements IDe
      *
      * @param tarFile   压缩文件
      * @param targetDir 目标目录
-     * @throws Exception 异常
+     * @throws IOException 输入输出异常
      */
-    public void decompress(File tarFile, File targetDir) throws Exception {
+    public void decompress(File tarFile, File targetDir) throws IOException {
         this.checkCompressionPackForDecompressor(tarFile, "tarFile");
         this.checkTargetDirectoryForDecompressor(targetDir, "targetDir");
         FileInputStream fileInputStream = null;
@@ -87,6 +88,9 @@ public class TarDecompressor extends AbstractCompressOrDecompress implements IDe
                 }
                 this.printInformation(String.format("The file[%s] decompression successful", zipFileOrDir));
             }
+        } catch (Exception e) {
+            String errorMessage = String.format("An exception occurs when the file[%s] is decompressing.: %s", tarFile, e.getMessage());
+            throw new IllegalStateException(errorMessage, e);
         } finally {
             IOUtils.closeQuietly(tarArchiveInputStream);
             IOUtils.closeQuietly(fileInputStream);

@@ -15,6 +15,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -45,9 +46,9 @@ public class GZipDecompressor extends AbstractCompressOrDecompress implements ID
      *
      * @param gzipFile  压缩文件
      * @param targetDir 解压后的文件
-     * @throws Exception 异常
+     * @throws IOException 输入输出异常
      */
-    public void decompress(String gzipFile, String targetDir) throws Exception {
+    public void decompress(String gzipFile, String targetDir) throws IOException {
         this.decompress(new File(gzipFile), new File(targetDir));
     }
 
@@ -56,9 +57,9 @@ public class GZipDecompressor extends AbstractCompressOrDecompress implements ID
      *
      * @param gzipFile  压缩文件
      * @param targetDir 目标目录
-     * @throws Exception 异常
+     * @throws IOException 输入输出异常
      */
-    public void decompress(File gzipFile, File targetDir) throws Exception {
+    public void decompress(File gzipFile, File targetDir) throws IOException {
         this.checkCompressionPackForDecompressor(gzipFile, "gzipFile");
         this.checkTargetDirectoryForDecompressor(targetDir, "targetDir");
         FileInputStream fileInputStream = null;
@@ -73,6 +74,9 @@ public class GZipDecompressor extends AbstractCompressOrDecompress implements ID
             fileOutputStream = new FileOutputStream(file);
             IOUtils.copy(gzipInputStream, fileOutputStream, BLOCK_SIZE);
             fileOutputStream.flush();
+        } catch (Exception e) {
+            String errorMessage = String.format("An exception occurs when the file[%s] is decompressing.: %s", gzipFile, e.getMessage());
+            throw new IllegalStateException(errorMessage, e);
         } finally {
             IOUtils.closeQuietly(fileOutputStream);
             IOUtils.closeQuietly(gzipInputStream);

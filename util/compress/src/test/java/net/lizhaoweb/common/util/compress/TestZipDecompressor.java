@@ -12,6 +12,13 @@ package net.lizhaoweb.common.util.compress;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 /**
  * @author <a href="http://www.lizhaoweb.cn">李召(John.Lee)</a>
  * @version 1.0.0.0.1
@@ -25,11 +32,33 @@ public class TestZipDecompressor {
 
     @Test
     public void decompress() {
-        ZipDecompressor zipDecompressor = new ZipDecompressor(true);
-        try {
-            zipDecompressor.decompress("D:\\GreenProfram\\Cygwin64\\opt.zip", "D:\\GreenProfram\\Cygwin64\\test_");
-        } catch (Exception e) {
-            e.printStackTrace();
+        final ZipDecompressor zipDecompressor = new ZipDecompressor(true);
+        ExecutorService executorService = Executors.newFixedThreadPool(100);
+        List<Future<Boolean>> futureList = new ArrayList<>();
+
+        for (int index = 0; index < 100; index++) {
+            final int aaa = ++index;
+            Future<Boolean> future = executorService.submit(new Callable<Boolean>() {
+                @Override
+                public Boolean call() throws Exception {
+                    try {
+                        System.out.println(aaa);
+                        zipDecompressor.decompress("D:\\GreenProfram\\Cygwin64\\opt\\jvm-app-0.zip", "D:\\GreenProfram\\Cygwin64\\opt");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    return false;
+                }
+            });
+            futureList.add(future);
+        }
+
+        for (Future<Boolean> future : futureList) {
+            try {
+                System.out.println(future.get());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

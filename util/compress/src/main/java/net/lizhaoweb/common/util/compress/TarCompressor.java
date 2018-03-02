@@ -17,6 +17,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * <h1>压缩工具 - Tar</h1>
@@ -48,9 +49,9 @@ public class TarCompressor extends AbstractCompressOrDecompress implements IComp
      *
      * @param inputFileOrDir 被压缩的文件或目录
      * @param tarFile        压缩文件
-     * @throws Exception 异常
+     * @throws IOException 输入输出异常
      */
-    public void compress(String inputFileOrDir, String tarFile) throws Exception {
+    public void compress(String inputFileOrDir, String tarFile) throws IOException {
         this.compress(new File(inputFileOrDir), new File(tarFile));
     }
 
@@ -59,9 +60,9 @@ public class TarCompressor extends AbstractCompressOrDecompress implements IComp
      *
      * @param inputFileOrDir 被压缩的文件或目录
      * @param tarFile        压缩文件
-     * @throws Exception 异常
+     * @throws IOException 输入输出异常
      */
-    public void compress(File inputFileOrDir, File tarFile) throws Exception {
+    public void compress(File inputFileOrDir, File tarFile) throws IOException {
         FileOutputStream fileOutputStream = null;
         TarArchiveOutputStream tarArchiveOutputStream = null;
         try {
@@ -72,6 +73,9 @@ public class TarCompressor extends AbstractCompressOrDecompress implements IComp
 //            tarArchiveOutputStream.flush();
 //            tarArchiveOutputStream.finish();
 //            tarArchiveOutputStream.closeArchiveEntry();
+        } catch (Exception e) {
+            String errorMessage = String.format("An exception occurs when the file[%s] is compressing.: %s", tarFile, e.getMessage());
+            throw new IllegalStateException(errorMessage, e);
         } finally {
             IOUtils.closeQuietly(tarArchiveOutputStream);// 输出流关闭
             IOUtils.closeQuietly(fileOutputStream);// 输出流关闭

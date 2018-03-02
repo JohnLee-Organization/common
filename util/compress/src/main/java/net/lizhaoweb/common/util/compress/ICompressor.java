@@ -11,6 +11,7 @@
 package net.lizhaoweb.common.util.compress;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * <h1>压缩工具 [接口]</h1>
@@ -25,7 +26,7 @@ import java.io.File;
  */
 public interface ICompressor {
 
-    void compress(String inputFileOrDir, String gzipFile) throws Exception;
+    void compress(String inputFileOrDir, String gzipFile) throws IOException;
 
-    void compress(File inputFile, File gzipFile) throws Exception;
+    void compress(File inputFile, File gzipFile) throws IOException;
 }

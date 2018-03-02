@@ -11,6 +11,7 @@
 package net.lizhaoweb.common.util.compress;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * <h1>压缩工具 - Tar.GZip</h1>
@@ -46,9 +47,9 @@ public class TarGZipCompressor extends AbstractCompressOrDecompress implements I
      *
      * @param inputFileOrDir 被压缩的文件或目录
      * @param tarGZipFile    压缩文件
-     * @throws Exception 异常
+     * @throws IOException 输入输出异常
      */
-    public void compress(String inputFileOrDir, String tarGZipFile) throws Exception {
+    public void compress(String inputFileOrDir, String tarGZipFile) throws IOException {
         this.compress(new File(inputFileOrDir), new File(tarGZipFile));
     }
 
@@ -57,9 +58,9 @@ public class TarGZipCompressor extends AbstractCompressOrDecompress implements I
      *
      * @param inputFileOrDir 被压缩的文件或目录
      * @param tarGZipFile    压缩文件
-     * @throws Exception 异常
+     * @throws IOException 输入输出异常
      */
-    public void compress(File inputFileOrDir, File tarGZipFile) throws Exception {
+    public void compress(File inputFileOrDir, File tarGZipFile) throws IOException {
         TarCompressor tarCompressor = new TarCompressor(this.verbose);
         File tarFile = new File(String.format("%s/.__tar_to_gzip.tar", this.osTempDir));
         tarCompressor.compress(inputFileOrDir, tarFile);

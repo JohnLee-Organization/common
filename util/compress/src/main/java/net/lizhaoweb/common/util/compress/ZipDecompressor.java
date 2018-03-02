@@ -15,6 +15,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -46,9 +47,9 @@ public class ZipDecompressor extends AbstractCompressOrDecompress implements IDe
      *
      * @param zipFile   压缩文件
      * @param targetDir 目标目录
-     * @throws Exception 异常
+     * @throws IOException 输入输出异常
      */
-    public void decompress(String zipFile, String targetDir) throws Exception {
+    public void decompress(String zipFile, String targetDir) throws IOException {
         this.decompress(new File(zipFile), new File(targetDir));
     }
 
@@ -57,9 +58,9 @@ public class ZipDecompressor extends AbstractCompressOrDecompress implements IDe
      *
      * @param zipFile   压缩文件
      * @param targetDir 目标目录
-     * @throws Exception 异常
+     * @throws IOException 输入输出异常
      */
-    public void decompress(File zipFile, File targetDir) throws Exception {
+    public void decompress(File zipFile, File targetDir) throws IOException {
         this.checkCompressionPackForDecompressor(zipFile, "zipFile");
         this.checkTargetDirectoryForDecompressor(targetDir, "targetDir");
         FileInputStream fileInputStream = null;
@@ -87,6 +88,9 @@ public class ZipDecompressor extends AbstractCompressOrDecompress implements IDe
                 }
                 this.printInformation(String.format("The file[%s] decompression successful", zipFileOrDir));
             }
+        } catch (Exception e) {
+            String errorMessage = String.format("An exception occurs when the file[%s] is decompressing.FileInputStream=%s ZipInputStream=%s: %s", zipFile, fileInputStream, zipInputStream, e.getMessage());
+            throw new IllegalStateException(errorMessage, e);
         } finally {
             IOUtils.closeQuietly(zipInputStream);
             IOUtils.closeQuietly(fileInputStream);
