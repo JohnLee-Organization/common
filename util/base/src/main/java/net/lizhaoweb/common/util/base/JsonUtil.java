@@ -14,12 +14,14 @@ package net.lizhaoweb.common.util.base;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonGenerator.Feature;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import net.lizhaoweb.common.util.base.date.DateConstant;
+import net.lizhaoweb.common.util.exception.JsonAnalysisException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,8 +61,8 @@ public class JsonUtil {
     /**
      * 获取 ObjectMapper 实例。
      *
-     * @param feature
-     * @param state
+     * @param feature 特征。
+     * @param state   状态。
      * @return 返回 ObjectMapper 实例。
      */
     public static ObjectMapper getInstance(Feature feature, boolean state) {
@@ -128,13 +130,13 @@ public class JsonUtil {
      * @return JSON 字符串。
      */
     public static String toJson(Object object) {
-        String result = null;
+        String result;
         try {
             logger.trace("[Object]{}", object);
             ObjectMapper mapper = getInstance();
             result = mapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            throw new net.lizhaoweb.common.util.exception.JsonProcessingException(e);
+            throw new JsonAnalysisException(e);
         }
         return result;
     }
@@ -146,16 +148,19 @@ public class JsonUtil {
      * @return 字节数组。
      */
     public static byte[] toBytes(Object object) {
-        byte[] result = null;
+        byte[] result;
         try {
             logger.trace("[Object]{}", object);
             ObjectMapper mapper = getInstance();
             result = mapper.writeValueAsBytes(object);
         } catch (JsonProcessingException e) {
-            throw new net.lizhaoweb.common.util.exception.JsonProcessingException(e);
+            throw new JsonAnalysisException(e);
         }
         return result;
     }
+
+
+    // ==================================== toBean ====================================
 
     /**
      * Json 字符串转对象
@@ -166,13 +171,13 @@ public class JsonUtil {
      * @return Java Bean 。
      */
     public static <T> T toBean(String json, Class<T> clazz) {
-        T result = null;
+        T result;
         try {
             logger.trace("[Json]{} [Class]{}", json, clazz);
             ObjectMapper mapper = getInstance();
             result = mapper.readValue(json, clazz);
         } catch (IOException e) {
-            throw new net.lizhaoweb.common.util.exception.JsonProcessingException(e);
+            throw new JsonAnalysisException(e);
         }
         return result;
     }
@@ -186,12 +191,93 @@ public class JsonUtil {
      * @return Java Bean 。
      */
     public static <T> T toBean(byte[] jsonBytes, Class<T> clazz) {
-        T result = null;
+        T result;
         try {
+            logger.trace("[Bytes]{} [Class]{}", jsonBytes, clazz);
             ObjectMapper mapper = getInstance();
             result = mapper.readValue(jsonBytes, clazz);
         } catch (IOException e) {
-            throw new net.lizhaoweb.common.util.exception.JsonProcessingException(e);
+            throw new JsonAnalysisException(e);
+        }
+        return result;
+    }
+
+    /**
+     * Json 字符串转对象
+     *
+     * @param json     JSON 字符串。
+     * @param javaType 类型标记。对于类型标记类用来包含信息和密钥的反序列化。
+     * @param <T>      对象的类型。
+     * @return Java Bean 。
+     */
+    public static <T> T toBean(String json, JavaType javaType) {
+        T result;
+        try {
+            logger.trace("[Json]{} [JavaType]{}", json, javaType);
+            ObjectMapper mapper = getInstance();
+            result = mapper.readValue(json, javaType);
+        } catch (IOException e) {
+            throw new JsonAnalysisException(e);
+        }
+        return result;
+    }
+
+    /**
+     * Json 的字节数组转对象
+     *
+     * @param jsonBytes JSON 的字节数组。
+     * @param javaType  类型标记。对于类型标记类用来包含信息和密钥的反序列化。
+     * @param <T>       对象的类型。
+     * @return Java Bean 。
+     */
+    public static <T> T toBean(byte[] jsonBytes, JavaType javaType) {
+        T result;
+        try {
+            logger.trace("[Bytes]{} [JavaType]{}", jsonBytes, javaType);
+            ObjectMapper mapper = getInstance();
+            result = mapper.readValue(jsonBytes, javaType);
+        } catch (IOException e) {
+            throw new JsonAnalysisException(e);
+        }
+        return result;
+    }
+
+    /**
+     * Json 字符串转对象
+     *
+     * @param json         JSON 字符串。
+     * @param valueTypeRef 通用的抽象类。这个通用的抽象类的子类用于获取完整的泛型类型信息。
+     * @param <T>          对象的类型。
+     * @return Java Bean 。
+     */
+    public static <T> T toBean(String json, TypeReference<T> valueTypeRef) {
+        T result;
+        try {
+            logger.trace("[Json]{} [TypeReference]{}", json, valueTypeRef);
+            ObjectMapper mapper = getInstance();
+            result = mapper.readValue(json, valueTypeRef);
+        } catch (IOException e) {
+            throw new JsonAnalysisException(e);
+        }
+        return result;
+    }
+
+    /**
+     * Json 的字节数组转对象
+     *
+     * @param jsonBytes    JSON 的字节数组。
+     * @param valueTypeRef 通用的抽象类。这个通用的抽象类的子类用于获取完整的泛型类型信息。
+     * @param <T>          对象的类型。
+     * @return Java Bean 。
+     */
+    public static <T> T toBean(byte[] jsonBytes, TypeReference<T> valueTypeRef) {
+        T result;
+        try {
+            logger.trace("[Bytes]{} [TypeReference]{}", jsonBytes, valueTypeRef);
+            ObjectMapper mapper = getInstance();
+            result = mapper.readValue(jsonBytes, valueTypeRef);
+        } catch (IOException e) {
+            throw new JsonAnalysisException(e);
         }
         return result;
     }
@@ -201,19 +287,19 @@ public class JsonUtil {
      *
      * @param json             JSON 字符串。
      * @param parametrized     外层对象的 Class 。
-     * @param parameterClasses 内层对象的 Class 。
+     * @param parameterClasses 集合内层对象的 Class 。
      * @param <T>              对象的类型。
      * @return Java Bean 。
      */
     public static <T> T toBean(String json, Class<T> parametrized, Class... parameterClasses) {
-        T result = null;
+        T result;
         try {
-            logger.trace("[Json]{} [parametrized]{} [parameterClasses]", json, parametrized, parameterClasses);
+            logger.trace("[Json]{} [parametrized]{} [parameterClasses]{}", json, parametrized, parameterClasses);
             ObjectMapper mapper = getInstance();
             JavaType javaType = getCollectionType(mapper, parametrized, parameterClasses);
             result = mapper.readValue(json, javaType);
         } catch (IOException e) {
-            throw new net.lizhaoweb.common.util.exception.JsonProcessingException(e);
+            throw new JsonAnalysisException(e);
         }
         return result;
     }
@@ -223,21 +309,25 @@ public class JsonUtil {
      *
      * @param jsonBytes        JSON 的字节数组。
      * @param parametrized     外层对象的 Class 。
-     * @param parameterClasses 内层对象的 Class 。
+     * @param parameterClasses 集合内层对象的 Class 。
      * @param <T>              对象的类型。
      * @return Java Bean 。
      */
     public static <T> T toBean(byte[] jsonBytes, Class<T> parametrized, Class... parameterClasses) {
-        T result = null;
+        T result;
         try {
+            logger.trace("[Bytes]{} [parametrized]{} [parameterClasses]{}", jsonBytes, parametrized, parameterClasses);
             ObjectMapper mapper = getInstance();
             JavaType javaType = getCollectionType(mapper, parametrized, parameterClasses);
             result = mapper.readValue(jsonBytes, javaType);
         } catch (IOException e) {
-            throw new net.lizhaoweb.common.util.exception.JsonProcessingException(e);
+            throw new JsonAnalysisException(e);
         }
         return result;
     }
+
+
+    // ==================================== toList ====================================
 
     /**
      * Json 字符串转列表
@@ -248,14 +338,14 @@ public class JsonUtil {
      * @return 对象列表。
      */
     public static <T> List<T> toList(String json, Class<T> clazz) {
-        List<T> result = null;
+        List<T> result;
         try {
             logger.trace("[Json]{} [Class]{}", json, clazz);
             ObjectMapper mapper = getInstance();
             JavaType javaType = getCollectionType(mapper, ArrayList.class, clazz);
             result = mapper.readValue(json, javaType);
         } catch (IOException e) {
-            throw new net.lizhaoweb.common.util.exception.JsonProcessingException(e);
+            throw new JsonAnalysisException(e);
         }
         return result;
     }
@@ -269,13 +359,13 @@ public class JsonUtil {
      * @return 对象列表。
      */
     public static <T> List<T> toList(byte[] jsonByte, Class<T> clazz) {
-        List<T> result = null;
+        List<T> result;
         try {
             ObjectMapper mapper = getInstance();
             JavaType javaType = getCollectionType(mapper, ArrayList.class, clazz);
             result = mapper.readValue(jsonByte, javaType);
         } catch (IOException e) {
-            throw new net.lizhaoweb.common.util.exception.JsonProcessingException(e);
+            throw new JsonAnalysisException(e);
         }
         return result;
     }
