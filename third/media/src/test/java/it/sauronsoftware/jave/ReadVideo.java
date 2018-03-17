@@ -7,7 +7,7 @@ import java.io.File;
  */
 public class ReadVideo {
     public static void main(String[] args) {
-        File source = new File("D:\\AV\\HardX - Eager To Please - Kylie Page.mp4");
+        File source = new File("D:\\AV\\最新一本道041914_793-成宫ルリ AV女优联络电话 宅访问.avi");
         Encoder encoder = new Encoder();
         try {
             MultimediaInfo m = encoder.getInfo(source);
