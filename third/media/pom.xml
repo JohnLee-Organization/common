@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>third</artifactId>
+        <groupId>net.lizhaoweb.common</groupId>
+        <version>JL.COMMON.4.0.0.0.1.0.0</version>
+    </parent>
+
+    <groupId>net.lizhaoweb.common.third</groupId>
+    <artifactId>media</artifactId>
+    <version>JL.COMMON.4.1.0.0.1.0.0</version>
+
+    <name>Commons Third [JAVE]</name>
+    <description>
+        李召(John.Lee) 第三方媒体操作项目
+        项目名： JAVE(Java Audio Video Encoder)。
+        原网址： http://www.sauronsoftware.it/projects/jave/index.php
+    </description>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+</project>

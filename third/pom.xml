@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>common</artifactId>
+        <groupId>net.lizhaoweb</groupId>
+        <version>JL.COMMON.0.0.0.0.1.0.0</version>
+    </parent>
+
+    <groupId>net.lizhaoweb.common</groupId>
+    <artifactId>third</artifactId>
+    <version>JL.COMMON.4.0.0.0.1.0.0</version>
+
+    <name>Commons Third</name>
+    <description>李召(John.Lee) 第三方项目组</description>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>media</module>
+    </modules>
+
+</project>

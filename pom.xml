@@ -532,5 +532,6 @@
         <module>util</module>
         <module>translate</module>
         <module>net</module>
+        <module>third</module>
     </modules>
 </project>
