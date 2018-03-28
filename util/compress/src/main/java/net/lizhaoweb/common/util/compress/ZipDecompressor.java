@@ -20,7 +20,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- * <h1>解压缩工具 - Zip</h1>
+ * <h1>解压缩器 [实现] - Zip</h1>
  *
  * @author <a href="http://www.lizhaoweb.cn">李召(John.Lee)</a>
  * @version 1.0.0.0.1
@@ -43,36 +43,28 @@ public class ZipDecompressor extends AbstractCompressOrDecompress implements IDe
     }
 
     /**
-     * 解压
-     *
-     * @param zipFile   压缩文件
-     * @param targetDir 目标目录
-     * @throws IOException 输入输出异常
+     * {@inheritDoc}
      */
-    public void decompress(String zipFile, String targetDir) throws IOException {
-        this.decompress(new File(zipFile), new File(targetDir));
+    public void decompress(String compressedFile, String decompressedPath) throws IOException {
+        this.decompress(new File(compressedFile), new File(decompressedPath));
     }
 
     /**
-     * 解压
-     *
-     * @param zipFile   压缩文件
-     * @param targetDir 目标目录
-     * @throws IOException 输入输出异常
+     * {@inheritDoc}
      */
-    public void decompress(File zipFile, File targetDir) throws IOException {
-        this.checkCompressionPackForDecompressor(zipFile, "zipFile");
-        this.checkTargetDirectoryForDecompressor(targetDir, "targetDir");
+    public void decompress(File compressedFile, File decompressedPath) throws IOException {
+        this.checkCompressionPackForDecompressor(compressedFile, "compressedFile");
+        this.checkTargetDirectoryForDecompressor(decompressedPath, "decompressedPath");
         FileInputStream fileInputStream = null;
         ZipInputStream zipInputStream = null;
         try {
-            this.checkAndMakeDirectory(targetDir);
-            fileInputStream = new FileInputStream(zipFile);
+            this.checkAndMakeDirectory(decompressedPath);
+            fileInputStream = new FileInputStream(compressedFile);
             zipInputStream = new ZipInputStream(fileInputStream);
             ZipEntry zipEntry = null;
 
             while ((zipEntry = zipInputStream.getNextEntry()) != null) {
-                File zipFileOrDir = new File(targetDir, zipEntry.getName());
+                File zipFileOrDir = new File(decompressedPath, zipEntry.getName());
                 if (zipEntry.isDirectory()) {
                     this.checkAndMakeDirectory(zipFileOrDir);
                     continue;
@@ -86,15 +78,15 @@ public class ZipDecompressor extends AbstractCompressOrDecompress implements IDe
                 } finally {
                     IOUtils.closeQuietly(fileOutputStream);
                 }
-                this.printInformation(String.format("The file[%s] decompression successful", zipFileOrDir));
+                this.printInformation(String.format("The file[%s] is decompressed", zipFileOrDir));
             }
         } catch (Exception e) {
-            String errorMessage = String.format("An exception occurs when the file[%s] is decompressing.FileInputStream=%s ZipInputStream=%s: %s", zipFile, fileInputStream, zipInputStream, e.getMessage());
+            String errorMessage = String.format("An exception occurs when the file[%s] is decompressing.FileInputStream=%s ZipInputStream=%s: %s", compressedFile, fileInputStream, zipInputStream, e.getMessage());
             throw new IllegalStateException(errorMessage, e);
         } finally {
             IOUtils.closeQuietly(zipInputStream);
             IOUtils.closeQuietly(fileInputStream);
         }
-        this.printInformation(String.format("The file[%s] has been unpacked to the directory[%s]", zipFile, targetDir));
+        this.printInformation(String.format("The file[%s] has been unpacked to the directory[%s]", compressedFile, decompressedPath));
     }
 }

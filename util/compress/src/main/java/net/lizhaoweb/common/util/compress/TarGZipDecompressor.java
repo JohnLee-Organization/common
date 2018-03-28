@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * <h1>解压缩工具 - Tar.GZip</h1>
+ * <h1>解压缩器 [实现] - Tar.GZip</h1>
  *
  * @author <a href="http://www.lizhaoweb.cn">李召(John.Lee)</a>
  * @version 1.0.0.0.1
@@ -43,32 +43,24 @@ public class TarGZipDecompressor extends AbstractCompressOrDecompress implements
     }
 
     /**
-     * 解压
-     *
-     * @param tarGZipFile 压缩文件
-     * @param targetDir   目标目录
-     * @throws IOException 输入输出异常
+     * {@inheritDoc}
      */
-    public void decompress(String tarGZipFile, String targetDir) throws IOException {
-        this.decompress(new File(tarGZipFile), new File(targetDir));
+    public void decompress(String compressedFile, String decompressedPath) throws IOException {
+        this.decompress(new File(compressedFile), new File(decompressedPath));
     }
 
     /**
-     * 解压
-     *
-     * @param tarGZipFile 压缩文件
-     * @param targetDir   目标目录
-     * @throws IOException 输入输出异常
+     * {@inheritDoc}
      */
-    public void decompress(File tarGZipFile, File targetDir) throws IOException {
-        this.checkCompressionPackForDecompressor(tarGZipFile, "tarGZipFile");
-        this.checkTargetDirectoryForDecompressor(targetDir, "targetDir");
+    public void decompress(File compressedFile, File decompressedPath) throws IOException {
+        this.checkCompressionPackForDecompressor(compressedFile, "compressedFile");
+        this.checkTargetDirectoryForDecompressor(decompressedPath, "decompressedPath");
         GZipDecompressor gZipDecompressor = new GZipDecompressor(this.verbose);
         File tarFile = new File(String.format("%s/.__gzip_to_tar.tar", this.osTempDir));
-        gZipDecompressor.decompress(tarGZipFile, tarFile);
+        gZipDecompressor.decompress(compressedFile, tarFile);
 
         TarDecompressor tarDecompressor = new TarDecompressor(this.verbose);
-        tarDecompressor.decompress(tarFile, targetDir);
+        tarDecompressor.decompress(tarFile, decompressedPath);
 
         this.checkAndDeleteFile(tarFile);
     }

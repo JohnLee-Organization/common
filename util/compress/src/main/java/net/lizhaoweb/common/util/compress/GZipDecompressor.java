@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 
 /**
- * <h1>解压缩工具 - GZip</h1>
+ * <h1>解压缩器 [实现] - GZip</h1>
  *
  * @author <a href="http://www.lizhaoweb.cn">李召(John.Lee)</a>
  * @version 1.0.0.0.1
@@ -42,46 +42,38 @@ public class GZipDecompressor extends AbstractCompressOrDecompress implements ID
     }
 
     /**
-     * 解压
-     *
-     * @param gzipFile  压缩文件
-     * @param targetDir 解压后的文件
-     * @throws IOException 输入输出异常
+     * {@inheritDoc}
      */
-    public void decompress(String gzipFile, String targetDir) throws IOException {
-        this.decompress(new File(gzipFile), new File(targetDir));
+    public void decompress(String compressedFile, String decompressedPath) throws IOException {
+        this.decompress(new File(compressedFile), new File(decompressedPath));
     }
 
     /**
-     * 解压
-     *
-     * @param gzipFile  压缩文件
-     * @param targetDir 目标目录
-     * @throws IOException 输入输出异常
+     * {@inheritDoc}
      */
-    public void decompress(File gzipFile, File targetDir) throws IOException {
-        this.checkCompressionPackForDecompressor(gzipFile, "gzipFile");
-        this.checkTargetDirectoryForDecompressor(targetDir, "targetDir");
+    public void decompress(File compressedFile, File decompressedPath) throws IOException {
+        this.checkCompressionPackForDecompressor(compressedFile, "compressedFile");
+        this.checkTargetDirectoryForDecompressor(decompressedPath, "decompressedPath");
         FileInputStream fileInputStream = null;
         GZIPInputStream gzipInputStream = null;
         FileOutputStream fileOutputStream = null;
         try {
-            String gzipFileName = gzipFile.getName();
+            String gzipFileName = compressedFile.getName();
             String fileName = gzipFileName.substring(0, gzipFileName.lastIndexOf('.'));
-            File file = new File(targetDir, fileName);
-            fileInputStream = new FileInputStream(gzipFile);
+            File file = new File(decompressedPath, fileName);
+            fileInputStream = new FileInputStream(compressedFile);
             gzipInputStream = new GZIPInputStream(fileInputStream, BLOCK_SIZE);
             fileOutputStream = new FileOutputStream(file);
             IOUtils.copy(gzipInputStream, fileOutputStream, BLOCK_SIZE);
             fileOutputStream.flush();
         } catch (Exception e) {
-            String errorMessage = String.format("An exception occurs when the file[%s] is decompressing.: %s", gzipFile, e.getMessage());
+            String errorMessage = String.format("An exception occurs when the file[%s] is decompressing.: %s", compressedFile, e.getMessage());
             throw new IllegalStateException(errorMessage, e);
         } finally {
             IOUtils.closeQuietly(fileOutputStream);
             IOUtils.closeQuietly(gzipInputStream);
             IOUtils.closeQuietly(fileInputStream);
         }
-        this.printInformation(String.format("The file[%s] has been unpacked to the file[%s]", gzipFile, targetDir));
+        this.printInformation(String.format("The file[%s] has been unpacked to the file[%s]", compressedFile, decompressedPath));
     }
 }

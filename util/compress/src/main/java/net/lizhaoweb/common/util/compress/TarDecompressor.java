@@ -20,7 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
- * <h1>解压缩工具 - Tar</h1>
+ * <h1>解压缩器 [实现] - Tar</h1>
  *
  * @author <a href="http://www.lizhaoweb.cn">李召(John.Lee)</a>
  * @version 1.0.0.0.1
@@ -43,36 +43,28 @@ public class TarDecompressor extends AbstractCompressOrDecompress implements IDe
     }
 
     /**
-     * 解压
-     *
-     * @param tarFile   压缩文件
-     * @param targetDir 目标目录
-     * @throws IOException 输入输出异常
+     * {@inheritDoc}
      */
-    public void decompress(String tarFile, String targetDir) throws IOException {
-        this.decompress(new File(tarFile), new File(targetDir));
+    public void decompress(String compressedFile, String decompressedPath) throws IOException {
+        this.decompress(new File(compressedFile), new File(decompressedPath));
     }
 
     /**
-     * 解压
-     *
-     * @param tarFile   压缩文件
-     * @param targetDir 目标目录
-     * @throws IOException 输入输出异常
+     * {@inheritDoc}
      */
-    public void decompress(File tarFile, File targetDir) throws IOException {
-        this.checkCompressionPackForDecompressor(tarFile, "tarFile");
-        this.checkTargetDirectoryForDecompressor(targetDir, "targetDir");
+    public void decompress(File compressedFile, File decompressedPath) throws IOException {
+        this.checkCompressionPackForDecompressor(compressedFile, "compressedFile");
+        this.checkTargetDirectoryForDecompressor(decompressedPath, "decompressedPath");
         FileInputStream fileInputStream = null;
         TarArchiveInputStream tarArchiveInputStream = null;
         try {
-            this.checkAndMakeDirectory(targetDir);
-            fileInputStream = new FileInputStream(tarFile);
+            this.checkAndMakeDirectory(decompressedPath);
+            fileInputStream = new FileInputStream(compressedFile);
             tarArchiveInputStream = new TarArchiveInputStream(fileInputStream, BLOCK_SIZE);
             TarArchiveEntry tarArchiveEntry = null;
 
             while ((tarArchiveEntry = tarArchiveInputStream.getNextTarEntry()) != null) {
-                File zipFileOrDir = new File(targetDir, tarArchiveEntry.getName());
+                File zipFileOrDir = new File(decompressedPath, tarArchiveEntry.getName());
                 if (tarArchiveEntry.isDirectory()) {
                     this.checkAndMakeDirectory(zipFileOrDir);
                     continue;
@@ -86,15 +78,15 @@ public class TarDecompressor extends AbstractCompressOrDecompress implements IDe
                 } finally {
                     IOUtils.closeQuietly(fileOutputStream);
                 }
-                this.printInformation(String.format("The file[%s] decompression successful", zipFileOrDir));
+                this.printInformation(String.format("The file[%s] is decompressed", zipFileOrDir));
             }
         } catch (Exception e) {
-            String errorMessage = String.format("An exception occurs when the file[%s] is decompressing.: %s", tarFile, e.getMessage());
+            String errorMessage = String.format("An exception occurs when the file[%s] is decompressing.: %s", compressedFile, e.getMessage());
             throw new IllegalStateException(errorMessage, e);
         } finally {
             IOUtils.closeQuietly(tarArchiveInputStream);
             IOUtils.closeQuietly(fileInputStream);
         }
-        this.printInformation(String.format("The file[%s] has been unpacked to the directory[%s]", tarFile, targetDir));
+        this.printInformation(String.format("The file[%s] has been unpacked to the directory[%s]", compressedFile, decompressedPath));
     }
 }

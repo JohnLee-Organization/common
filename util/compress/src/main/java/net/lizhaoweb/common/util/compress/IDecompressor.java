@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * <h1>压缩工具 [接口]</h1>
+ * <h1>压缩器 [接口]</h1>
  *
  * @author <a href="http://www.lizhaoweb.cn">李召(John.Lee)</a>
  * @version 1.0.0.0.1
@@ -26,7 +26,21 @@ import java.io.IOException;
  */
 public interface IDecompressor {
 
-    void decompress(String gzipFile, String targetDir) throws IOException;
+    /**
+     * 解压
+     *
+     * @param compressedFile   压缩文件
+     * @param decompressedPath 解压后的文件路径
+     * @throws IOException 输入输出异常
+     */
+    void decompress(String compressedFile, String decompressedPath) throws IOException;
 
-    void decompress(File gzipFile, File targetDir) throws IOException;
+    /**
+     * 解压
+     *
+     * @param compressedFile   压缩文件
+     * @param decompressedPath 解压后的文件路径
+     * @throws IOException 输入输出异常
+     */
+    void decompress(File compressedFile, File decompressedPath) throws IOException;
 }

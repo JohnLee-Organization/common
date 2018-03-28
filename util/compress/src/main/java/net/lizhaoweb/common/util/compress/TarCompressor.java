@@ -20,7 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
- * <h1>压缩工具 - Tar</h1>
+ * <h1>压缩器 [实现] - Tar</h1>
  *
  * @author <a href="http://www.lizhaoweb.cn">李召(John.Lee)</a>
  * @version 1.0.0.0.1
@@ -45,42 +45,34 @@ public class TarCompressor extends AbstractCompressOrDecompress implements IComp
     }
 
     /**
-     * 压缩
-     *
-     * @param inputFileOrDir 被压缩的文件或目录
-     * @param tarFile        压缩文件
-     * @throws IOException 输入输出异常
+     * {@inheritDoc}
      */
-    public void compress(String inputFileOrDir, String tarFile) throws IOException {
-        this.compress(new File(inputFileOrDir), new File(tarFile));
+    public void compress(String inputFileOrDir, String compressedFile) throws IOException {
+        this.compress(new File(inputFileOrDir), new File(compressedFile));
     }
 
     /**
-     * 压缩
-     *
-     * @param inputFileOrDir 被压缩的文件或目录
-     * @param tarFile        压缩文件
-     * @throws IOException 输入输出异常
+     * {@inheritDoc}
      */
-    public void compress(File inputFileOrDir, File tarFile) throws IOException {
+    public void compress(File inputFileOrDir, File compressedFile) throws IOException {
         FileOutputStream fileOutputStream = null;
         TarArchiveOutputStream tarArchiveOutputStream = null;
         try {
-            this.printInformation(String.format("The file[%s] for zip is compressing ...", tarFile));
-            fileOutputStream = new FileOutputStream(tarFile);
+            this.printInformation(String.format("The file[%s] for tar is compressing ...", compressedFile));
+            fileOutputStream = new FileOutputStream(compressedFile);
             tarArchiveOutputStream = new TarArchiveOutputStream(fileOutputStream, BLOCK_SIZE);
             this.compress(tarArchiveOutputStream, inputFileOrDir, inputFileOrDir.getName());
 //            tarArchiveOutputStream.flush();
 //            tarArchiveOutputStream.finish();
 //            tarArchiveOutputStream.closeArchiveEntry();
         } catch (Exception e) {
-            String errorMessage = String.format("An exception occurs when the file[%s] is compressing.: %s", tarFile, e.getMessage());
+            String errorMessage = String.format("An exception occurs when the file[%s] is compressing.: %s", compressedFile, e.getMessage());
             throw new IllegalStateException(errorMessage, e);
         } finally {
             IOUtils.closeQuietly(tarArchiveOutputStream);// 输出流关闭
             IOUtils.closeQuietly(fileOutputStream);// 输出流关闭
         }
-        this.printInformation(String.format("The file[%s] for zip is compressed", tarFile));
+        this.printInformation(String.format("The file[%s] for tar is compressed", compressedFile));
     }
 
     private void compress(TarArchiveOutputStream tarArchiveOutputStream, File file, String base) throws Exception { // 方法重载

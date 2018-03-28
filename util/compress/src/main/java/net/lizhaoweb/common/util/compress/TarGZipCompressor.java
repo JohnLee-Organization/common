@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * <h1>压缩工具 - Tar.GZip</h1>
+ * <h1>压缩器 [实现] - Tar.GZip</h1>
  *
  * @author <a href="http://www.lizhaoweb.cn">李召(John.Lee)</a>
  * @version 1.0.0.0.1
@@ -43,30 +43,22 @@ public class TarGZipCompressor extends AbstractCompressOrDecompress implements I
     }
 
     /**
-     * 压缩
-     *
-     * @param inputFileOrDir 被压缩的文件或目录
-     * @param tarGZipFile    压缩文件
-     * @throws IOException 输入输出异常
+     * {@inheritDoc}
      */
-    public void compress(String inputFileOrDir, String tarGZipFile) throws IOException {
-        this.compress(new File(inputFileOrDir), new File(tarGZipFile));
+    public void compress(String inputFileOrDir, String compressedFile) throws IOException {
+        this.compress(new File(inputFileOrDir), new File(compressedFile));
     }
 
     /**
-     * 压缩
-     *
-     * @param inputFileOrDir 被压缩的文件或目录
-     * @param tarGZipFile    压缩文件
-     * @throws IOException 输入输出异常
+     * {@inheritDoc}
      */
-    public void compress(File inputFileOrDir, File tarGZipFile) throws IOException {
+    public void compress(File inputFileOrDir, File compressedFile) throws IOException {
         TarCompressor tarCompressor = new TarCompressor(this.verbose);
         File tarFile = new File(String.format("%s/.__tar_to_gzip.tar", this.osTempDir));
         tarCompressor.compress(inputFileOrDir, tarFile);
 
         GZipCompressor gZipCompressor = new GZipCompressor(this.verbose);
-        gZipCompressor.compress(tarFile, tarGZipFile);
+        gZipCompressor.compress(tarFile, compressedFile);
 
         this.checkAndDeleteFile(tarFile);
     }

@@ -20,7 +20,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 /**
- * <h1>压缩工具 - Zip</h1>
+ * <h1>压缩器 [实现] - Zip</h1>
  *
  * @author <a href="http://www.lizhaoweb.cn">李召(John.Lee)</a>
  * @version 1.0.0.0.1
@@ -45,42 +45,34 @@ public class ZipCompressor extends AbstractCompressOrDecompress implements IComp
     }
 
     /**
-     * 压缩
-     *
-     * @param inputFileOrDir 被压缩的文件或目录
-     * @param zipFile        压缩文件
-     * @throws IOException 输入输出异常
+     * {@inheritDoc}
      */
-    public void compress(String inputFileOrDir, String zipFile) throws IOException {
-        this.compress(new File(inputFileOrDir), new File(zipFile));
+    public void compress(String inputFileOrDir, String compressedFile) throws IOException {
+        this.compress(new File(inputFileOrDir), new File(compressedFile));
     }
 
     /**
-     * 压缩
-     *
-     * @param inputFileOrDir 被压缩的文件或目录
-     * @param zipFile        压缩文件
-     * @throws IOException 输入输出异常
+     * {@inheritDoc}
      */
-    public void compress(File inputFileOrDir, File zipFile) throws IOException {
+    public void compress(File inputFileOrDir, File compressedFile) throws IOException {
         FileOutputStream fileOutputStream = null;
         ZipOutputStream zipOutputStream = null;
         try {
-            this.printInformation(String.format("The file[%s] for zip is compressing ...", zipFile));
-            fileOutputStream = new FileOutputStream(zipFile);
+            this.printInformation(String.format("The file[%s] for zip is compressing ...", compressedFile));
+            fileOutputStream = new FileOutputStream(compressedFile);
             zipOutputStream = new ZipOutputStream(fileOutputStream);
             this.compress(zipOutputStream, inputFileOrDir, inputFileOrDir.getName());
             zipOutputStream.closeEntry();
             zipOutputStream.finish();
             fileOutputStream.flush();
         } catch (Exception e) {
-            String errorMessage = String.format("An exception occurs when the file[%s] is compressing.: %s", zipFile, e.getMessage());
+            String errorMessage = String.format("An exception occurs when the file[%s] is compressing.: %s", compressedFile, e.getMessage());
             throw new IllegalStateException(errorMessage, e);
         } finally {
             IOUtils.closeQuietly(zipOutputStream);// 输出流关闭
             IOUtils.closeQuietly(fileOutputStream);// 输出流关闭
         }
-        this.printInformation(String.format("The file[%s] for zip is compressed", zipFile));
+        this.printInformation(String.format("The file[%s] for zip is compressed", compressedFile));
     }
 
     private void compress(ZipOutputStream zipOutputStream, File file, String base) throws Exception { // 方法重载

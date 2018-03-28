@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.zip.GZIPOutputStream;
 
 /**
- * <h1>压缩工具 - GZip</h1>
+ * <h1>压缩器 [实现] - GZip</h1>
  *
  * @author <a href="http://www.lizhaoweb.cn">李召(John.Lee)</a>
  * @version 1.0.0.0.1
@@ -42,40 +42,32 @@ public class GZipCompressor extends AbstractCompressOrDecompress implements ICom
     }
 
     /**
-     * 压缩
-     *
-     * @param inputFileOrDir 被压缩的文件
-     * @param gzipFile       压缩文件
-     * @throws IOException 输入输出异常
+     * {@inheritDoc}
      */
-    public void compress(String inputFileOrDir, String gzipFile) throws IOException {
-        this.compress(new File(inputFileOrDir), new File(gzipFile));
+    public void compress(String inputFileOrDir, String compressedFile) throws IOException {
+        this.compress(new File(inputFileOrDir), new File(compressedFile));
     }
 
     /**
-     * 压缩
-     *
-     * @param inputFile 被压缩的文件
-     * @param gzipFile  压缩文件
-     * @throws IOException 输入输出异常
+     * {@inheritDoc}
      */
-    public void compress(File inputFile, File gzipFile) throws IOException {
+    public void compress(File inputFileOrDir, File compressedFile) throws IOException {
         FileInputStream fileInputStream = null;
         FileOutputStream fileOutputStream = null;
         GZIPOutputStream gzipOutputStream = null;
         try {
-            this.printInformation(String.format("The file[%s] for zip is compressing ...", gzipFile));
-            fileInputStream = new FileInputStream(inputFile);
-            fileOutputStream = new FileOutputStream(gzipFile);
+            this.printInformation(String.format("The file[%s] for gzip is compressing ...", compressedFile));
+            fileInputStream = new FileInputStream(inputFileOrDir);
+            fileOutputStream = new FileOutputStream(compressedFile);
             gzipOutputStream = new GZIPOutputStream(fileOutputStream, BLOCK_SIZE);
             IOUtils.copy(fileInputStream, gzipOutputStream, BLOCK_SIZE);
         } catch (Exception e) {
-            String errorMessage = String.format("An exception occurs when the file[%s] is compressing.: %s", gzipFile, e.getMessage());
+            String errorMessage = String.format("An exception occurs when the file[%s] is compressing.: %s", compressedFile, e.getMessage());
             throw new IllegalStateException(errorMessage, e);
         } finally {
             IOUtils.closeQuietly(gzipOutputStream);// 输出流关闭
             IOUtils.closeQuietly(fileOutputStream);// 输出流关闭
         }
-        this.printInformation(String.format("The file[%s] for zip is compressed", gzipFile));
+        this.printInformation(String.format("The file[%s] for gzip is compressed", compressedFile));
     }
 }
