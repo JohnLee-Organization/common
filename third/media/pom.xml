@@ -16,7 +16,7 @@
     <name>Commons Third [JAVE]</name>
     <description>
         李召(John.Lee) 第三方媒体操作项目
-        项目名： JAVE(Java Audio Video Encoder)。
+        项目名： JAVE(Java Audio Video Encoder)
         原网址： http://www.sauronsoftware.it/projects/jave/index.php
     </description>
     <packaging>jar</packaging>
