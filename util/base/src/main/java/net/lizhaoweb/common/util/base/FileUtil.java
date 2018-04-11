@@ -532,12 +532,13 @@ public final class FileUtil extends FileUtils {
         }
     }
 
-    /*
+    /**
      * 获取系统中指定类型的盘符。 ------ Windows
+     *
      * @param driveType 盘符类型
      * @return File[]
      */
-    private static File[] listRootsForWindows(int driveType) {
+    public static File[] listRootsForWindows(int driveType) {
         List<File> rootList = new ArrayList<>();
         FileWriter fileWriter = null;
         InputStream inputStream = null;
