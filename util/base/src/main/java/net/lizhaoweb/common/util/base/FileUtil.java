@@ -30,6 +30,8 @@ import java.util.regex.Pattern;
  */
 public final class FileUtil extends FileUtils {
 
+    public static final int USB = 2;
+
     private FileUtil() {
         super();
     }
@@ -516,5 +518,71 @@ public final class FileUtil extends FileUtils {
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    /**
+     * 获取系统中指定类型的盘符。
+     *
+     * @param driveType 盘符类型
+     * @return File[]
+     */
+    public static File[] listRoots(int driveType) {
+        if (OSUtil.isWindows()) {
+            return listRootsForWindows(driveType);
+        } else {
+            return null;
+        }
+    }
+
+    /*
+     * 获取系统中指定类型的盘符。 ------ Windows
+     * @param driveType 盘符类型
+     * @return File[]
+     */
+    private static File[] listRootsForWindows(int driveType) {
+        List<File> rootList = new ArrayList<>();
+        FileWriter fileWriter = null;
+        InputStream inputStream = null;
+        InputStreamReader inputStreamReader = null;
+        BufferedReader bufferedReader = null;
+        try {
+            File scriptFile = File.createTempFile("listRoots", ".cmd");
+            scriptFile.deleteOnExit();
+            fileWriter = new FileWriter(scriptFile);
+
+            StringBuilder scriptContent = new StringBuilder();
+            scriptContent.append("Wmic Logicaldisk Where \"DriveType=").append(driveType).append("\" Get DeviceID");
+            fileWriter.write(scriptContent.toString());
+            fileWriter.flush();
+            fileWriter.close();
+
+            Process process = Runtime.getRuntime().exec(scriptFile.getPath());
+            inputStream = process.getInputStream();
+            inputStreamReader = new InputStreamReader(inputStream, OSUtil.ENCODING);
+            bufferedReader = new BufferedReader(inputStreamReader);
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                if (line.contains("Wmic Logicaldisk Where \"DriveType=")) {
+                    continue;
+                }
+                if (line.contains("DeviceID")) {
+                    continue;
+                }
+                if (StringUtil.isBlank(line)) {
+                    continue;
+                }
+                File root = new File(line.trim(), File.separator);
+                rootList.add(root);
+            }
+            bufferedReader.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            IOUtil.close(bufferedReader);
+            IOUtil.close(inputStreamReader);
+            IOUtil.close(inputStream);
+            IOUtil.close(fileWriter);
+        }
+        return rootList.toArray(new File[0]);
     }
 }

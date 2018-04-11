@@ -1096,4 +1096,8 @@ public interface Constant extends DateConstant {
             public static final String WRITE = "w";
         }
     }
+
+    public static interface DriveType {
+        public static final int USB = 2;
+    }
 }

@@ -30,6 +30,7 @@ import net.lizhaoweb.common.util.base.bean.OSPlatform;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OSUtil {
     private static String OS_NAME = System.getProperty("os.name").toLowerCase();
+    public static final String ENCODING = System.getProperty("sun.jnu.encoding");
 
     private static OSUtil _instance = new OSUtil();
 
@@ -147,9 +148,5 @@ public class OSUtil {
             _instance.platform = OSPlatform.Others;
         }
         return _instance.platform;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(getOSname());
     }
 }
