@@ -1097,34 +1097,42 @@ public interface Constant extends DateConstant {
         }
     }
 
+    /**
+     * 磁盘类型
+     */
     public static interface DriveType {
         /**
-         * The drive type cannot be determined.
+         * Windows
          */
-        public static final int UNKNOWN = 0;
-        /**
-         * The root path is invalid; for example, there is no volume mounted at the specified path.
-         */
-        public static final int NO_ROOT_DIR = 1;
-        /**
-         * The drive has removable media; for example, a floppy drive, thumb drive, or flash card reader.
-         */
-        public static final int REMOVABLE = 2;
-        /**
-         * The drive has fixed media; for example, a hard disk drive or flash drive.
-         */
-        public static final int FIXED = 3;
-        /**
-         * The drive is a remote (network) drive.
-         */
-        public static final int REMOTE = 4;
-        /**
-         * The drive is a CD-ROM drive.
-         */
-        public static final int CDROM = 5;
-        /**
-         * The drive is a RAM disk.
-         */
-        public static final int RAMDISK = 6;
+        public static interface Windows {
+            /**
+             * The drive type cannot be determined.
+             */
+            public static final int UNKNOWN = 0;
+            /**
+             * The root path is invalid; for example, there is no volume mounted at the specified path.
+             */
+            public static final int NO_ROOT_DIR = 1;
+            /**
+             * The drive has removable media; for example, a floppy drive, thumb drive, or flash card reader.
+             */
+            public static final int REMOVABLE = 2;
+            /**
+             * The drive has fixed media; for example, a hard disk drive or flash drive.
+             */
+            public static final int FIXED = 3;
+            /**
+             * The drive is a remote (network) drive.
+             */
+            public static final int REMOTE = 4;
+            /**
+             * The drive is a CD-ROM drive.
+             */
+            public static final int CDROM = 5;
+            /**
+             * The drive is a RAM disk.
+             */
+            public static final int RAMDISK = 6;
+        }
     }
 }

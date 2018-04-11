@@ -27,7 +27,7 @@ public class TestFileUtil {
 
     @Test
     public void listRoots() {
-        File[] roots = FileUtil.listRoots(Constant.DriveType.REMOVABLE);
+        File[] roots = FileUtil.listRoots(Constant.DriveType.Windows.REMOVABLE);
 
         for (File file : roots) {
             System.out.println(file.getPath());
