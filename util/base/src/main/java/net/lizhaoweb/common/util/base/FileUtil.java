@@ -30,8 +30,6 @@ import java.util.regex.Pattern;
  */
 public final class FileUtil extends FileUtils {
 
-    public static final int USB = 2;
-
     private FileUtil() {
         super();
     }
