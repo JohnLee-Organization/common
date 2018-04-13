@@ -30,6 +30,11 @@ import java.util.regex.Pattern;
  */
 public final class FileUtil extends FileUtils {
 
+    /**
+     * The file move buffer size (30 MB)
+     */
+    private static final long FILE_MOVE_BUFFER_SIZE = ONE_MB * 30;
+
     private FileUtil() {
         super();
     }
@@ -583,5 +588,214 @@ public final class FileUtil extends FileUtils {
             IOUtil.close(fileWriter);
         }
         return rootList.toArray(new File[0]);
+    }
+
+    /**
+     * Moves a filtered directory to a new location.
+     * <p>
+     * This method moves the contents of the specified source directory
+     * to within the specified destination directory.
+     * <p>
+     * The destination directory is created if it does not exist.
+     * If the destination directory did exist, then this method merges
+     * the source with the destination, with the source taking precedence.
+     * <p>
+     * <strong>Note:</strong> Setting <code>preserveFileDate</code> to
+     * {@code true} tries to preserve the files' last modified
+     * date/times using {@link File#setLastModified(long)}, however it is
+     * not guaranteed that those operations will succeed.
+     * If the modification operation fails, no indication is provided.
+     * </p>
+     * <h3>Example: Move directories only</h3>
+     * <pre>
+     *  // only move the directory structure
+     *  FileUtils.moveDirectory(srcDir, destDir, DirectoryFileFilter.DIRECTORY, false);
+     *  </pre>
+     * <p>
+     * <h3>Example: Move directories and txt files</h3>
+     * <pre>
+     *  // Create a filter for ".txt" files
+     *  IOFileFilter txtSuffixFilter = FileFilterUtils.suffixFileFilter(".txt");
+     *  IOFileFilter txtFiles = FileFilterUtils.andFileFilter(FileFileFilter.FILE, txtSuffixFilter);
+     *
+     *  // Create a filter for either directories or ".txt" files
+     *  FileFilter filter = FileFilterUtils.orFileFilter(DirectoryFileFilter.DIRECTORY, txtFiles);
+     *
+     *  // Move using the filter
+     *  FileUtils.moveDirectory(srcDir, destDir, filter, false);
+     *  </pre>
+     *
+     * @param srcDir           an existing directory to move, must not be {@code null}
+     * @param destDir          the new directory, must not be {@code null}
+     * @param filter           the filter to apply, null means move all directories and files
+     * @param preserveFileDate true if the file date of the move
+     *                         should be the same as the original
+     * @throws NullPointerException if source or destination is {@code null}
+     * @throws IOException          if source or destination is invalid
+     * @throws IOException          if an IO error occurs during moving
+     * @since 1.4
+     */
+    public static void moveDirectory(final File srcDir, final File destDir, final FileFilter filter, final boolean preserveFileDate) throws IOException {
+        checkFileRequirements(srcDir, destDir);
+        if (!srcDir.isDirectory()) {
+            throw new IOException("Source '" + srcDir + "' exists but is not a directory");
+        }
+        if (srcDir.getCanonicalPath().equals(destDir.getCanonicalPath())) {
+            throw new IOException("Source '" + srcDir + "' and destination '" + destDir + "' are the same");
+        }
+
+        // Cater for destination being directory within the source directory (see IO-141)
+        List<String> exclusionList = null;
+        if (destDir.getCanonicalPath().startsWith(srcDir.getCanonicalPath())) {
+            final File[] srcFiles = filter == null ? srcDir.listFiles() : srcDir.listFiles(filter);
+            if (srcFiles != null && srcFiles.length > 0) {
+                exclusionList = new ArrayList<String>(srcFiles.length);
+                for (final File srcFile : srcFiles) {
+                    final File copiedFile = new File(destDir, srcFile.getName());
+                    exclusionList.add(copiedFile.getCanonicalPath());
+                }
+            }
+        }
+        doMoveDirectory(srcDir, destDir, filter, preserveFileDate, exclusionList);
+    }
+
+    /**
+     * Moves a filtered directory to a new location preserving the file dates.
+     * <p>
+     * This method moves the contents of the specified source directory
+     * to within the specified destination directory.
+     * <p>
+     * The destination directory is created if it does not exist.
+     * If the destination directory did exist, then this method merges
+     * the source with the destination, with the source taking precedence.
+     * <p>
+     * <strong>Note:</strong> This method tries to preserve the files' last
+     * modified date/times using {@link File#setLastModified(long)}, however
+     * it is not guaranteed that those operations will succeed.
+     * If the modification operation fails, no indication is provided.
+     * </p>
+     * <h3>Example: Move directories only</h3>
+     * <pre>
+     *  // only move the directory structure
+     *  FileUtils.moveDirectory(srcDir, destDir, DirectoryFileFilter.DIRECTORY);
+     *  </pre>
+     * <p>
+     * <h3>Example: Move directories and txt files</h3>
+     * <pre>
+     *  // Create a filter for ".txt" files
+     *  IOFileFilter txtSuffixFilter = FileFilterUtils.suffixFileFilter(".txt");
+     *  IOFileFilter txtFiles = FileFilterUtils.andFileFilter(FileFileFilter.FILE, txtSuffixFilter);
+     *
+     *  // Create a filter for either directories or ".txt" files
+     *  FileFilter filter = FileFilterUtils.orFileFilter(DirectoryFileFilter.DIRECTORY, txtFiles);
+     *
+     *  // Move using the filter
+     *  FileUtils.moveDirectory(srcDir, destDir, filter);
+     *  </pre>
+     *
+     * @param srcDir  an existing directory to move, must not be {@code null}
+     * @param destDir the new directory, must not be {@code null}
+     * @param filter  the filter to apply, null means move all directories and files
+     *                should be the same as the original
+     * @throws NullPointerException if source or destination is {@code null}
+     * @throws IOException          if source or destination is invalid
+     * @throws IOException          if an IO error occurs during moving
+     * @since 1.4
+     */
+    public static void moveDirectory(final File srcDir, final File destDir, final FileFilter filter) throws IOException {
+        moveDirectory(srcDir, destDir, filter, true);
+    }
+
+    /**
+     * Internal move file method.
+     * This caches the original file length, and throws an IOException
+     * if the output file length is different from the current input file length.
+     * So it may fail if the file changes size.
+     * It may also fail with "IllegalArgumentException: Negative size" if the input file is truncated part way
+     * through moving the data and the new file size is less than the current position.
+     *
+     * @param srcFile          the validated source file, must not be {@code null}
+     * @param destFile         the validated destination file, must not be {@code null}
+     * @param preserveFileDate whether to preserve the file date
+     * @throws IOException              if an error occurs
+     * @throws IOException              if the output file length is not the same as the input file length after the
+     *                                  move completes
+     * @throws IllegalArgumentException "Negative size" if the file is truncated so that the size is less than the
+     *                                  position
+     */
+    private static void doMoveFile(final File srcFile, final File destFile, final boolean preserveFileDate) throws IOException {
+        if (destFile.exists() && destFile.isDirectory()) {
+            throw new IOException("Destination '" + destFile + "' exists but is a directory");
+        }
+        if (preserveFileDate) {
+            srcFile.renameTo(destFile);
+        } else {
+            destFile.setLastModified(System.currentTimeMillis());
+        }
+    }
+
+    /**
+     * Internal move directory method.
+     *
+     * @param srcDir           the validated source directory, must not be {@code null}
+     * @param destDir          the validated destination directory, must not be {@code null}
+     * @param filter           the filter to apply, null means move all directories and files
+     * @param preserveFileDate whether to preserve the file date
+     * @param exclusionList    List of files and directories to exclude from the move, may be null
+     * @throws IOException if an error occurs
+     * @since 1.1
+     */
+    private static void doMoveDirectory(final File srcDir, final File destDir, final FileFilter filter, final boolean preserveFileDate, final List<String> exclusionList) throws IOException {
+        // recurse
+        final File[] srcFiles = filter == null ? srcDir.listFiles() : srcDir.listFiles(filter);
+        if (srcFiles == null) {  // null if abstract pathname does not denote a directory, or if an I/O error occurs
+            throw new IOException("Failed to list contents of " + srcDir);
+        }
+        if (destDir.exists()) {
+            if (!destDir.isDirectory()) {
+                throw new IOException("Destination '" + destDir + "' exists but is not a directory");
+            }
+        } else {
+            if (!destDir.mkdirs() && !destDir.isDirectory()) {
+                throw new IOException("Destination '" + destDir + "' directory cannot be created");
+            }
+        }
+        if (!destDir.canWrite()) {
+            throw new IOException("Destination '" + destDir + "' cannot be written to");
+        }
+        for (final File srcFile : srcFiles) {
+            final File dstFile = new File(destDir, srcFile.getName());
+            if (exclusionList == null || !exclusionList.contains(srcFile.getCanonicalPath())) {
+                if (srcFile.isDirectory()) {
+                    doMoveDirectory(srcFile, dstFile, filter, preserveFileDate, exclusionList);
+                } else {
+                    doMoveFile(srcFile, dstFile, preserveFileDate);
+                }
+            }
+        }
+
+        // Do this last, as the above has probably affected directory metadata
+        if (preserveFileDate) {
+            destDir.setLastModified(srcDir.lastModified());
+        }
+    }
+
+    /**
+     * checks requirements for file move
+     *
+     * @param src  the source file
+     * @param dest the destination
+     * @throws FileNotFoundException if the destination does not exist
+     */
+    private static void checkFileRequirements(File src, File dest) throws FileNotFoundException {
+        if (src == null) {
+            throw new NullPointerException("Source must not be null");
+        }
+        if (dest == null) {
+            throw new NullPointerException("Destination must not be null");
+        }
+        if (!src.exists()) {
+            throw new FileNotFoundException("Source '" + src + "' does not exist");
+        }
     }
 }

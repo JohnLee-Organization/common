@@ -33,4 +33,11 @@ public class TestFileUtil {
             System.out.println(file.getPath());
         }
     }
+
+    @Test
+    public void rename() {
+        File src = new File("E:\\data\\upload\\standalone_v1\\2017111018236__701.csv.gz");
+        File tar = new File("E:\\data\\upload\\standalone_v3\\2017111018236__701.csv.gz");
+        src.renameTo(tar);
+    }
 }
