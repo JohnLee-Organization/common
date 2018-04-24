@@ -561,6 +561,7 @@ public final class FileUtil extends FileUtils {
             fileWriter.close();
 
             Process process = Runtime.getRuntime().exec(scriptFile.getPath());
+            scriptFile.deleteOnExit();
             inputStream = process.getInputStream();
             inputStreamReader = new InputStreamReader(inputStream, OSUtil.ENCODING);
             bufferedReader = new BufferedReader(inputStreamReader);

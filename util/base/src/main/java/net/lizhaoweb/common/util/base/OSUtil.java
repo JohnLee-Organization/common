@@ -14,6 +14,8 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.lizhaoweb.common.util.base.bean.OSPlatform;
 
+import java.io.*;
+
 /**
  * <h1>工具 - 操作系统</h1>
  * <p>
@@ -31,6 +33,7 @@ import net.lizhaoweb.common.util.base.bean.OSPlatform;
 public class OSUtil {
     private static String OS_NAME = System.getProperty("os.name").toLowerCase();
     public static final String ENCODING = System.getProperty("sun.jnu.encoding");
+    public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     private static OSUtil _instance = new OSUtil();
 
@@ -148,5 +151,123 @@ public class OSUtil {
             _instance.platform = OSPlatform.Others;
         }
         return _instance.platform;
+    }
+
+    /**
+     * 校准系统时间。
+     *
+     * @param url 校准时间的 URL 地址
+     */
+    public static void correctingOSTimeForWindows(String url) {
+        if (StringUtil.isBlank(url)) {
+            throw new IllegalArgumentException("The url for synchronization time must not be empty");
+        }
+        OutputStreamWriter outputStreamWriter = null;
+        FileOutputStream fileOutputStream = null;
+        InputStream inputStream = null;
+        InputStreamReader inputStreamReader = null;
+        BufferedReader bufferedReader = null;
+        try {
+            File scriptFile = File.createTempFile("correctingOSTime", ".vbs");
+            scriptFile.deleteOnExit();
+            fileOutputStream = new FileOutputStream(scriptFile);
+            outputStreamWriter = new OutputStreamWriter(fileOutputStream, ENCODING);
+
+            StringBuilder scriptContent = new StringBuilder();
+            scriptContent.append("On Error Resume Next").append(CRLF.WINDOWS).append("").append(CRLF.WINDOWS)
+                    .append("WScript.Echo \"正在校准计算机时间 ……\"").append(CRLF.WINDOWS).append(CRLF.WINDOWS);
+            scriptContent.append("timeSyncURL=\"").append(url).append("\"").append(CRLF.WINDOWS)
+                    .append("WScript.Echo \"时间校准地址 ： \" & timeSyncURL").append(CRLF.WINDOWS).append(CRLF.WINDOWS);
+            scriptContent.append("call runAsAdmin()").append(CRLF.WINDOWS).append("If Err.Number <> 0 Then")
+                    .append(CRLF.WINDOWS).append("\tWScript.Quit Err.Number").append(CRLF.WINDOWS).append("End If")
+                    .append(CRLF.WINDOWS).append(CRLF.WINDOWS);
+            scriptContent.append("timeStamp = getTimeFromInternet()").append(CRLF.WINDOWS).append("If Err.Number <> 0 Then")
+                    .append(CRLF.WINDOWS).append("\tWScript.Quit Err.Number").append(CRLF.WINDOWS).append("End If")
+                    .append(CRLF.WINDOWS).append(CRLF.WINDOWS);
+            scriptContent.append("strNewDateTime = convertDateTime(timeStamp)").append(CRLF.WINDOWS).append("If Err.Number <> 0 Then")
+                    .append(CRLF.WINDOWS).append("\tWScript.Quit Err.Number").append(CRLF.WINDOWS).append("End If").append(CRLF.WINDOWS)
+                    .append(CRLF.WINDOWS);
+            scriptContent.append("call syncDateTime(strNewDateTime, Now())").append(CRLF.WINDOWS).append("If Err.Number <> 0 Then")
+                    .append(CRLF.WINDOWS).append("\tWScript.Quit Err.Number").append(CRLF.WINDOWS).append("End If")
+                    .append(CRLF.WINDOWS).append(CRLF.WINDOWS);
+            scriptContent.append("WScript.Echo \"计算机时间校准完成\"").append(CRLF.WINDOWS).append(CRLF.WINDOWS).append(CRLF.WINDOWS);
+            scriptContent.append("Function getTimeFromInternet()").append(CRLF.WINDOWS).append("\tDim strUrl, strText")
+                    .append(CRLF.WINDOWS).append("\tstrUrl = timeSyncURL").append(CRLF.WINDOWS).append("\tWith CreateObject(\"MSXML2.XmlHttp\")")
+                    .append(CRLF.WINDOWS).append("\t\t.Open \"GET\", strUrl, False").append(CRLF.WINDOWS).append("\t\t.Send()")
+                    .append(CRLF.WINDOWS).append("\t\tstrText = .responseText").append(CRLF.WINDOWS).append("\tEnd With")
+                    .append(CRLF.WINDOWS).append("\tIf len(strText) >= 13 Then").append(CRLF.WINDOWS)
+                    .append("\t\tgetTimeFromInternet = Int(Left(strText, 13)/1000)").append(CRLF.WINDOWS)
+                    .append("\tElseIf len(strText) < 13 And len(strText) >= 10 Then").append(CRLF.WINDOWS)
+                    .append("\t\tgetTimeFromInternet = Int(Left(strText, 10))").append(CRLF.WINDOWS).append("\tEnd If")
+                    .append(CRLF.WINDOWS).append("\tIf Err.Number <> 0 Then WScript.Quit Err.Number").append(CRLF.WINDOWS)
+                    .append("End Function").append(CRLF.WINDOWS).append(CRLF.WINDOWS);
+            scriptContent.append("Function convertDateTime(intUnixTime)").append(CRLF.WINDOWS).append("\tDim objWMI, colOSes, objOS, tmZone")
+                    .append(CRLF.WINDOWS).append("\tSet objWMI = GetObject(\"winmgmts:\\\\.\\root\\cimv2\")").append(CRLF.WINDOWS)
+                    .append("\tSet colOSes =objWMI.ExecQuery(\"Select * from Win32_OperatingSystem\")").append(CRLF.WINDOWS)
+                    .append("\tFor Each objOS in colOSes").append(CRLF.WINDOWS).append("\t\ttmZone = objOS.CurrentTimeZone")
+                    .append(CRLF.WINDOWS).append("\tNext").append(CRLF.WINDOWS).append("\tintUnixTime = intUnixTime + tmZone * 60")
+                    .append(CRLF.WINDOWS).append("\tconvertDateTime = DateAdd(\"s\", intUnixTime, \"1970-1-1 00:00:00\")")
+                    .append(CRLF.WINDOWS).append("End Function").append(CRLF.WINDOWS).append(CRLF.WINDOWS);
+            scriptContent.append("Sub syncDateTime(ByVal strNewDateTime, strOldDateTime)").append(CRLF.WINDOWS)
+                    .append("\tDim ss, objDateTime, dtmNewDateTime").append(CRLF.WINDOWS).append("\tss = DateDiff(\"s\", strOldDateTime, strNewDateTime)")
+                    .append(CRLF.WINDOWS).append("\tIf Abs(ss) < 1 Then").append(CRLF.WINDOWS)
+                    .append("\t\tWScript.Echo \"本机时间非常准确无需校对！\"").append(CRLF.WINDOWS).append("\t\tExit Sub")
+                    .append(CRLF.WINDOWS).append("\tEnd If").append(CRLF.WINDOWS).append(CRLF.WINDOWS)
+                    .append("\tSet objDateTime = CreateObject(\"WbemScripting.SWbemDateTime\")").append(CRLF.WINDOWS)
+                    .append("\tobjDateTime.SetVarDate strNewDateTime, true ").append(CRLF.WINDOWS).append("\tdtmNewDateTime = objDateTime.Value")
+                    .append(CRLF.WINDOWS).append(CRLF.WINDOWS).append("\tDim objWMI, colOSes, objOS").append(CRLF.WINDOWS)
+                    .append("\tSet objWMI = GetObject(\"winmgmts:{(Systemtime)}\\\\.\\root\\cimv2\")").append(CRLF.WINDOWS)
+                    .append("\tSet colOSes =objWMI.ExecQuery(\"Select * from Win32_OperatingSystem\")").append(CRLF.WINDOWS)
+                    .append("\tFor Each objOS in colOSes").append(CRLF.WINDOWS).append("\t\tobjOS.SetDateTime dtmNewDateTime")
+                    .append(CRLF.WINDOWS).append("\tNext").append(CRLF.WINDOWS)
+                    .append("\tWScript.Echo \"校准前：\" & strOldDateTime & vbLf & \"\t校准后：\" & Now()")
+                    .append(CRLF.WINDOWS).append("End Sub").append(CRLF.WINDOWS).append(CRLF.WINDOWS);
+            scriptContent.append("Sub runAsAdmin()").append(CRLF.WINDOWS).append("\tDim objWMI, colOSes, objOS, strVer")
+                    .append(CRLF.WINDOWS).append("\tSet objWMI = GetObject(\"winmgmts:\\\\.\\root\\cimv2\") ").append(CRLF.WINDOWS)
+                    .append("\tSet colOSes =objWMI.ExecQuery(\"Select * from Win32_OperatingSystem\")").append(CRLF.WINDOWS)
+                    .append("\tFor Each objOS in colOSes").append(CRLF.WINDOWS).append("\t\tstrVer = Split(objOS.Version, \".\")(0)")
+                    .append(CRLF.WINDOWS).append("\tNext").append(CRLF.WINDOWS).append("\tIf CInt(strVer) >= 6 Then")
+                    .append(CRLF.WINDOWS).append("\t\tDim objShell").append(CRLF.WINDOWS)
+                    .append("\t\tSet objShell = CreateObject(\"Shell.Application\")").append(CRLF.WINDOWS)
+                    .append("\t\tIf WScript.Arguments.Count = 0 Then").append(CRLF.WINDOWS)
+                    .append("\t\t\tobjShell.ShellExecute \"WScript.exe\", _").append(CRLF.WINDOWS)
+                    .append("\t\t\t\t\"\"\"\" & WScript.ScriptFullName & \"\"\" OK\", , \"runAs\", 1")
+                    .append(CRLF.WINDOWS).append("\t\t\tSet objShell = Nothing").append(CRLF.WINDOWS)
+                    .append("\t\t\tWScript.Quit").append(CRLF.WINDOWS).append("\t\tEnd If").append(CRLF.WINDOWS)
+                    .append("\tEnd If").append(CRLF.WINDOWS).append("End Sub").append(CRLF.WINDOWS).append(CRLF.WINDOWS);
+            outputStreamWriter.write(scriptContent.toString());
+            outputStreamWriter.flush();
+            outputStreamWriter.close();
+
+            Process process = Runtime.getRuntime().exec(String.format("CScript //NoLogo %s", scriptFile.getPath()));
+            scriptFile.deleteOnExit();
+            inputStream = process.getInputStream();
+            inputStreamReader = new InputStreamReader(inputStream, ENCODING);
+            bufferedReader = new BufferedReader(inputStreamReader);
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                System.out.println(line);
+            }
+            bufferedReader.close();
+        } catch (Exception e) {
+//            try {
+//                String exceptionMessage = new String(e.getMessage().getBytes(ENCODING));
+//                throw new RuntimeException(exceptionMessage, e);
+//            } catch (UnsupportedEncodingException e1) {
+            throw new RuntimeException(e);
+//            }
+        } finally {
+            IOUtil.close(bufferedReader);
+            IOUtil.close(inputStreamReader);
+            IOUtil.close(inputStream);
+            IOUtil.close(fileOutputStream);
+            IOUtil.close(outputStreamWriter);
+        }
+    }
+
+    public static class CRLF {
+        public static final String WINDOWS = "\r\n";
+        public static final String LINUX = "\r";
+        public static final String MAC = "\n";
     }
 }

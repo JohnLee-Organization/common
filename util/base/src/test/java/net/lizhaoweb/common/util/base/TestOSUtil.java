@@ -28,4 +28,10 @@ public class TestOSUtil {
         System.out.println(OSUtil.getOSname());
         System.out.println(OSUtil.ENCODING);
     }
+
+    @Test
+    public void correctingOSTimeForWindows() {
+        String url = "http://mobile.littlehotspot.com/systemtime.php";
+        OSUtil.correctingOSTimeForWindows(url);
+    }
 }
