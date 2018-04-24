@@ -174,10 +174,10 @@ public class OSUtil {
             outputStreamWriter = new OutputStreamWriter(fileOutputStream, ENCODING);
 
             StringBuilder scriptContent = new StringBuilder();
-            scriptContent.append("On Error Resume Next").append(CRLF.WINDOWS).append("").append(CRLF.WINDOWS)
-                    .append("WScript.Echo \"正在校准计算机时间 ……\"").append(CRLF.WINDOWS).append(CRLF.WINDOWS);
+            scriptContent.append("On Error Resume Next").append(CRLF.WINDOWS).append(CRLF.WINDOWS)
+                    .append("'WScript.Echo \"正在校准计算机时间 ……\"").append(CRLF.WINDOWS).append(CRLF.WINDOWS);
             scriptContent.append("timeSyncURL=\"").append(url).append("\"").append(CRLF.WINDOWS)
-                    .append("WScript.Echo \"时间校准地址 ： \" & timeSyncURL").append(CRLF.WINDOWS).append(CRLF.WINDOWS);
+                    .append("'WScript.Echo \"时间校准地址 ： \" & timeSyncURL").append(CRLF.WINDOWS).append(CRLF.WINDOWS);
             scriptContent.append("call runAsAdmin()").append(CRLF.WINDOWS).append("If Err.Number <> 0 Then")
                     .append(CRLF.WINDOWS).append("\tWScript.Quit Err.Number").append(CRLF.WINDOWS).append("End If")
                     .append(CRLF.WINDOWS).append(CRLF.WINDOWS);
@@ -190,7 +190,7 @@ public class OSUtil {
             scriptContent.append("call syncDateTime(strNewDateTime, Now())").append(CRLF.WINDOWS).append("If Err.Number <> 0 Then")
                     .append(CRLF.WINDOWS).append("\tWScript.Quit Err.Number").append(CRLF.WINDOWS).append("End If")
                     .append(CRLF.WINDOWS).append(CRLF.WINDOWS);
-            scriptContent.append("WScript.Echo \"计算机时间校准完成\"").append(CRLF.WINDOWS).append(CRLF.WINDOWS).append(CRLF.WINDOWS);
+            scriptContent.append("'WScript.Echo \"计算机时间校准完成\"").append(CRLF.WINDOWS).append(CRLF.WINDOWS).append(CRLF.WINDOWS);
             scriptContent.append("Function getTimeFromInternet()").append(CRLF.WINDOWS).append("\tDim strUrl, strText")
                     .append(CRLF.WINDOWS).append("\tstrUrl = timeSyncURL").append(CRLF.WINDOWS).append("\tWith CreateObject(\"MSXML2.XmlHttp\")")
                     .append(CRLF.WINDOWS).append("\t\t.Open \"GET\", strUrl, False").append(CRLF.WINDOWS).append("\t\t.Send()")
@@ -211,7 +211,7 @@ public class OSUtil {
             scriptContent.append("Sub syncDateTime(ByVal strNewDateTime, strOldDateTime)").append(CRLF.WINDOWS)
                     .append("\tDim ss, objDateTime, dtmNewDateTime").append(CRLF.WINDOWS).append("\tss = DateDiff(\"s\", strOldDateTime, strNewDateTime)")
                     .append(CRLF.WINDOWS).append("\tIf Abs(ss) < 1 Then").append(CRLF.WINDOWS)
-                    .append("\t\tWScript.Echo \"本机时间非常准确无需校对！\"").append(CRLF.WINDOWS).append("\t\tExit Sub")
+                    .append("\t\t'WScript.Echo \"本机时间非常准确无需校对！\"").append(CRLF.WINDOWS).append("\t\tExit Sub")
                     .append(CRLF.WINDOWS).append("\tEnd If").append(CRLF.WINDOWS).append(CRLF.WINDOWS)
                     .append("\tSet objDateTime = CreateObject(\"WbemScripting.SWbemDateTime\")").append(CRLF.WINDOWS)
                     .append("\tobjDateTime.SetVarDate strNewDateTime, true ").append(CRLF.WINDOWS).append("\tdtmNewDateTime = objDateTime.Value")
@@ -220,7 +220,7 @@ public class OSUtil {
                     .append("\tSet colOSes =objWMI.ExecQuery(\"Select * from Win32_OperatingSystem\")").append(CRLF.WINDOWS)
                     .append("\tFor Each objOS in colOSes").append(CRLF.WINDOWS).append("\t\tobjOS.SetDateTime dtmNewDateTime")
                     .append(CRLF.WINDOWS).append("\tNext").append(CRLF.WINDOWS)
-                    .append("\tWScript.Echo \"校准前：\" & strOldDateTime & vbLf & \"\t校准后：\" & Now()")
+                    .append("\t'WScript.Echo \"校准前：\" & strOldDateTime & vbLf & \"\t校准后：\" & Now()")
                     .append(CRLF.WINDOWS).append("End Sub").append(CRLF.WINDOWS).append(CRLF.WINDOWS);
             scriptContent.append("Sub runAsAdmin()").append(CRLF.WINDOWS).append("\tDim objWMI, colOSes, objOS, strVer")
                     .append(CRLF.WINDOWS).append("\tSet objWMI = GetObject(\"winmgmts:\\\\.\\root\\cimv2\") ").append(CRLF.WINDOWS)
