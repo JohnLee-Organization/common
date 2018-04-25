@@ -57,12 +57,12 @@ public class MapUtil {
      * @param map 要排序的 Map。
      * @return 排序后的 Map 。
      */
-    public static Map<String, Object> sortMapByKey(Map<String, Object> map) {
+    public static Map<String, Object> sortMapByKey(Map<String, ?> map) {
         if (map == null || map.isEmpty()) {
             return null;
         }
 
-        Map<String, Object> sortMap = new TreeMap<String, Object>(new StringKeyComparator());
+        Map<String, Object> sortMap = new TreeMap<>(new StringKeyComparator());
         sortMap.putAll(map);
         return sortMap;
     }
