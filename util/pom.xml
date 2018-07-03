@@ -21,6 +21,7 @@
         <module>convert</module>
         <module>argument</module>
         <module>compress</module>
+        <module>operating-system</module>
     </modules>
 
 </project>
