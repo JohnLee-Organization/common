@@ -15,10 +15,6 @@ import net.lizhaoweb.common.translate.baidu.model.Language;
 import net.lizhaoweb.common.translate.model.TranslationRequest;
 import net.lizhaoweb.common.translate.model.TranslationResponse;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * <h1>测试 - 百度翻译</h1>
@@ -31,13 +27,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * Date of last commit:$Date$<br>
  * <p/>
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({
-        "classpath*:/schema/spring/spring-translate-baidu.xml"
-})
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration({
+//        "classpath*:/schema/spring/spring-translate-baidu.xml"
+//})
 public class TestTranslator {
 
-    @Autowired
+    //    @Autowired
     private ITranslator translator;
 
     @Test
