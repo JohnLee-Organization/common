@@ -6,12 +6,12 @@
     <parent>
         <groupId>net.lizhaoweb.common</groupId>
         <artifactId>translate</artifactId>
-        <version>JL.COMMON.2.0.0.0.1.0.0</version>
+        <version>JL.COMMON.2.0.0.0.1.0.1-SNAPSHOT</version>
     </parent>
 
     <groupId>net.lizhaoweb.common.translate</groupId>
     <artifactId>api</artifactId>
-    <version>JL.COMMON.2.1.0.0.1.0.0</version>
+    <version>JL.COMMON.2.1.0.0.1.0.1-SNAPSHOT</version>
 
     <name>Commons Translate [API]</name>
     <description>李召(John.Lee) 个人翻译 API 项目</description>

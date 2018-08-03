@@ -6,12 +6,12 @@
     <parent>
         <artifactId>common</artifactId>
         <groupId>net.lizhaoweb</groupId>
-        <version>JL.COMMON.0.0.0.0.1.0.0</version>
+        <version>JL.COMMON.0.0.0.0.1.0.1-SNAPSHOT</version>
     </parent>
 
     <groupId>net.lizhaoweb.common</groupId>
     <artifactId>third</artifactId>
-    <version>JL.COMMON.4.0.0.0.1.0.0</version>
+    <version>JL.COMMON.4.0.0.0.1.0.1-SNAPSHOT</version>
 
     <name>Commons Third</name>
     <description>李召(John.Lee) 第三方项目组</description>

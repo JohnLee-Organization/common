@@ -6,8 +6,8 @@ package net.lizhaoweb.common.util.base;
  */
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.math.NumberUtils;
-import org.springframework.util.Assert;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -22,10 +22,10 @@ import java.util.Set;
  * @author <a href="http://www.lizhaoweb.cn">李召(Jhon.Lee)</a>
  * @version 1.0.0.0.1
  * @notes Created on 2014-10-23<br>
- *        Revision of last commit:$Revision$<br>
- *        Author of last commit:$Author$<br>
- *        Date of last commit:$Date$<br>
- *        <p />
+ * Revision of last commit:$Revision$<br>
+ * Author of last commit:$Author$<br>
+ * Date of last commit:$Date$<br>
+ * <p/>
  */
 public final class CookieUtil {
 
@@ -36,12 +36,9 @@ public final class CookieUtil {
     /**
      * 增加一个COOKIE。
      *
-     * @param response
-     *            响应对象。
-     * @param name
-     *            COOKIE名。
-     * @param value
-     *            COOKIE值。
+     * @param response 响应对象。
+     * @param name     COOKIE名。
+     * @param value    COOKIE值。
      */
     public static final void addCookie(HttpServletResponse response, String name, String value) {
         Cookie cookie = new Cookie(name, value);// name为从登录界面取得的用户名，把它加入到cookie里面
@@ -58,10 +55,8 @@ public final class CookieUtil {
     /**
      * 增加一批COOKIE。
      *
-     * @param response
-     *            响应对象。
-     * @param cookies
-     *            MAP对象。
+     * @param response 响应对象。
+     * @param cookies  MAP对象。
      */
     public static final void addCookies(HttpServletResponse response, Map<String, String> cookies) {
         if (cookies != null && cookies.size() > 0) {
@@ -77,10 +72,8 @@ public final class CookieUtil {
     /**
      * 移除COOKIE.
      *
-     * @param request
-     *            请求对象。
-     * @param name
-     *            COOKIE名。
+     * @param request 请求对象。
+     * @param name    COOKIE名。
      */
     public static final void removeCookie(HttpServletRequest request, String name) {
         Cookie[] cookies = request.getCookies();
@@ -96,15 +89,14 @@ public final class CookieUtil {
 
     /**
      * 获得cookie的每页条数
-     *
+     * <p>
      * 使用_cookie_page_size作为cookie name
      *
-     * @param request
-     *            HttpServletRequest
+     * @param request HttpServletRequest
      * @return default:20 max:200
      */
     public static int getPageSize(HttpServletRequest request) {
-        Assert.notNull(request);
+        Validate.notNull(request);
         Cookie cookie = getCookie(request, Constant.Cookie.Page.Size.KEY);
         int count = 0;
         if (cookie != null) {
@@ -123,14 +115,12 @@ public final class CookieUtil {
     /**
      * 获得cookie
      *
-     * @param request
-     *            HttpServletRequest
-     * @param name
-     *            cookie name
+     * @param request HttpServletRequest
+     * @param name    cookie name
      * @return if exist return cookie, else return null.
      */
     public static Cookie getCookie(HttpServletRequest request, String name) {
-        Assert.notNull(request);
+        Validate.notNull(request);
         Cookie[] cookies = request.getCookies();
         if (cookies != null && cookies.length > 0) {
             for (Cookie c : cookies) {
@@ -145,18 +135,12 @@ public final class CookieUtil {
     /**
      * 根据部署路径，将cookie保存在根目录。
      *
-     * @param request
-     *            请求对象。
-     * @param response
-     *            响应对象。
-     * @param name
-     *            Cookie名。
-     * @param value
-     *            Cookie值。
-     * @param expiry
-     *            失效时间。
-     * @param domain
-     *            储存域。
+     * @param request  请求对象。
+     * @param response 响应对象。
+     * @param name     Cookie名。
+     * @param value    Cookie值。
+     * @param expiry   失效时间。
+     * @param domain   储存域。
      * @return 返回Cookie对象
      */
     public static Cookie addCookie(HttpServletRequest request, HttpServletResponse response, String name, String value, Integer expiry, String domain) {
@@ -166,20 +150,13 @@ public final class CookieUtil {
     /**
      * 根据部署路径，将cookie保存在指定目录。
      *
-     * @param request
-     *            请求对象。
-     * @param response
-     *            响应对象。
-     * @param name
-     *            Cookie名。
-     * @param value
-     *            Cookie值。
-     * @param expiry
-     *            失效时间。
-     * @param domain
-     *            储存域。
-     * @param path
-     *            指定COOKIE路径。
+     * @param request  请求对象。
+     * @param response 响应对象。
+     * @param name     Cookie名。
+     * @param value    Cookie值。
+     * @param expiry   失效时间。
+     * @param domain   储存域。
+     * @param path     指定COOKIE路径。
      * @return 返回Cookie对象
      */
     public static Cookie addCookie(HttpServletRequest request, HttpServletResponse response, String name, String value, Integer expiry, String domain, String path) {
@@ -202,14 +179,10 @@ public final class CookieUtil {
     /**
      * 取消cookie
      *
-     * @param request
-     *            请求对象。
-     * @param response
-     *            响应对象。
-     * @param name
-     *            Cookie名。
-     * @param domain
-     *            储存域。
+     * @param request  请求对象。
+     * @param response 响应对象。
+     * @param name     Cookie名。
+     * @param domain   储存域。
      */
     public static void cancleCookie(HttpServletRequest request, HttpServletResponse response, String name, String domain) {
         cancleCookie(request, response, name, domain, null);
@@ -218,16 +191,11 @@ public final class CookieUtil {
     /**
      * 取消cookie
      *
-     * @param request
-     *            请求对象。
-     * @param response
-     *            响应对象。
-     * @param name
-     *            Cookie名。
-     * @param domain
-     *            储存域。
-     * @param path
-     *            指定COOKIE路径。
+     * @param request  请求对象。
+     * @param response 响应对象。
+     * @param name     Cookie名。
+     * @param domain   储存域。
+     * @param path     指定COOKIE路径。
      */
     public static void cancleCookie(HttpServletRequest request, HttpServletResponse response, String name, String domain, String path) {
         Cookie cookie = new Cookie(name, "");

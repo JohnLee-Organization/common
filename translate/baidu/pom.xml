@@ -6,12 +6,12 @@
     <parent>
         <groupId>net.lizhaoweb.common</groupId>
         <artifactId>translate</artifactId>
-        <version>JL.COMMON.2.0.0.0.1.0.0</version>
+        <version>JL.COMMON.2.0.0.0.1.0.1-SNAPSHOT</version>
     </parent>
 
     <groupId>net.lizhaoweb.common.translate</groupId>
     <artifactId>baidu</artifactId>
-    <version>JL.COMMON.2.2.0.0.1.0.0</version>
+    <version>JL.COMMON.2.2.0.0.1.0.1-SNAPSHOT</version>
 
     <name>Commons Translate [BaiDu]</name>
     <description>李召(John.Lee) 个人翻译项目 - 百度翻译</description>
@@ -58,20 +58,20 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!--  Spring  -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
+        <!--&lt;!&ndash;  Spring  &ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>org.springframework</groupId>-->
+            <!--<artifactId>spring-beans</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.springframework</groupId>-->
+            <!--<artifactId>spring-context</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.springframework</groupId>-->
+            <!--<artifactId>spring-test</artifactId>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
 
         <!--自定义插件-->
         <dependency>
@@ -82,7 +82,7 @@
         <dependency>
             <groupId>net.lizhaoweb.common.translate</groupId>
             <artifactId>api</artifactId>
-            <version>JL.COMMON.2.1.0.0.1.0.0</version>
+            <version>JL.COMMON.2.1.0.0.1.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

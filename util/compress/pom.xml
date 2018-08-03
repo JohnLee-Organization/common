@@ -5,7 +5,7 @@
     <parent>
         <artifactId>util</artifactId>
         <groupId>net.lizhaoweb.common</groupId>
-        <version>JL.COMMON.1.0.0.0.1.0.0</version>
+        <version>JL.COMMON.1.0.0.0.1.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

@@ -6,12 +6,12 @@
     <parent>
         <artifactId>third</artifactId>
         <groupId>net.lizhaoweb.common</groupId>
-        <version>JL.COMMON.4.0.0.0.1.0.0</version>
+        <version>JL.COMMON.4.0.0.0.1.0.1-SNAPSHOT</version>
     </parent>
 
     <groupId>net.lizhaoweb.common.third</groupId>
     <artifactId>media</artifactId>
-    <version>JL.COMMON.4.1.0.0.1.0.0</version>
+    <version>JL.COMMON.4.1.0.0.1.0.1-SNAPSHOT</version>
 
     <name>Commons Third [JAVE]</name>
     <description>

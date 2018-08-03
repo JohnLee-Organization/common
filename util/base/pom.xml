@@ -4,7 +4,7 @@
     <parent>
         <groupId>net.lizhaoweb.common</groupId>
         <artifactId>util</artifactId>
-        <version>JL.COMMON.1.0.0.0.1.0.0</version>
+        <version>JL.COMMON.1.0.0.0.1.0.1-SNAPSHOT</version>
     </parent>
 
     <groupId>net.lizhaoweb.common.util</groupId>
@@ -72,11 +72,11 @@
             <artifactId>jsp-api</artifactId>
         </dependency>
 
-        <!-- Spring -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-        </dependency>
+        <!--&lt;!&ndash; Spring &ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>org.springframework</groupId>-->
+            <!--<artifactId>spring-core</artifactId>-->
+        <!--</dependency>-->
 
         <!-- Jackson -->
         <dependency>
