@@ -12,10 +12,7 @@ package net.lizhaoweb.common.util.compress;
 
 import org.apache.commons.io.IOUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.zip.GZIPOutputStream;
 
 /**
@@ -54,20 +51,31 @@ public class GZipCompressor extends AbstractCompressOrDecompress implements ICom
     public void compress(File inputFileOrDir, File compressedFile) throws IOException {
         FileInputStream fileInputStream = null;
         FileOutputStream fileOutputStream = null;
-        GZIPOutputStream gzipOutputStream = null;
         try {
             this.printInformation(String.format("The file[%s] for gzip is compressing ...", compressedFile));
             fileInputStream = new FileInputStream(inputFileOrDir);
             fileOutputStream = new FileOutputStream(compressedFile);
-            gzipOutputStream = new GZIPOutputStream(fileOutputStream, BLOCK_SIZE);
-            IOUtils.copy(fileInputStream, gzipOutputStream, BLOCK_SIZE);
-        } catch (Exception e) {
-            String errorMessage = String.format("An exception occurs when the file[%s] is compressing.: %s", compressedFile, e.getMessage());
-            throw new IllegalStateException(errorMessage, e);
+            this.compress(fileInputStream, fileOutputStream);
         } finally {
-            IOUtils.closeQuietly(gzipOutputStream);// 输出流关闭
+            IOUtils.closeQuietly(fileOutputStream);// 输出流关闭
             IOUtils.closeQuietly(fileOutputStream);// 输出流关闭
         }
         this.printInformation(String.format("The file[%s] for gzip is compressed", compressedFile));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void compress(InputStream inputStream, OutputStream outputStream) throws IOException {
+        GZIPOutputStream gzipOutputStream = null;
+        try {
+            gzipOutputStream = new GZIPOutputStream(outputStream, BLOCK_SIZE);
+            IOUtils.copy(inputStream, gzipOutputStream, BLOCK_SIZE);
+            gzipOutputStream.finish();
+            gzipOutputStream.flush();
+        } finally {
+            IOUtils.closeQuietly(gzipOutputStream);// GZIP输出流关闭
+        }
     }
 }

@@ -16,6 +16,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -31,6 +34,7 @@ import java.util.zip.ZipInputStream;
  * Date of last commit:$Date$<br>
  */
 public class ZipDecompressor extends AbstractCompressOrDecompress implements IDecompressor {
+
     private static final int BLOCK_SIZE = 512;
 
     /**
@@ -62,14 +66,18 @@ public class ZipDecompressor extends AbstractCompressOrDecompress implements IDe
             fileInputStream = new FileInputStream(compressedFile);
             zipInputStream = new ZipInputStream(fileInputStream);
             ZipEntry zipEntry = null;
+            Map<File, Long> dirAndTime = new ConcurrentHashMap<>();
 
             while ((zipEntry = zipInputStream.getNextEntry()) != null) {
+                long modificationTime = zipEntry.getTime();
                 File zipFileOrDir = new File(decompressedPath, zipEntry.getName());
                 if (zipEntry.isDirectory()) {
                     this.checkAndMakeDirectory(zipFileOrDir);
+                    dirAndTime.put(zipFileOrDir, modificationTime);
                     continue;
                 }
                 this.checkAndMakeDirectory(zipFileOrDir.getParentFile());
+                dirAndTime.put(zipFileOrDir.getParentFile(), modificationTime);
                 FileOutputStream fileOutputStream = null;
                 try {
                     fileOutputStream = new FileOutputStream(zipFileOrDir);
@@ -77,8 +85,16 @@ public class ZipDecompressor extends AbstractCompressOrDecompress implements IDe
                     fileOutputStream.flush();
                 } finally {
                     IOUtils.closeQuietly(fileOutputStream);
+                    this.modifyTime(zipFileOrDir, modificationTime);
                 }
                 this.printInformation(String.format("The file[%s] is decompressed", zipFileOrDir));
+            }
+
+            if (this.isModifyTime()) {
+                Set<Map.Entry<File, Long>> dirAndTimeEntrySet = dirAndTime.entrySet();
+                for (Map.Entry<File, Long> dirAndTimeEntry : dirAndTimeEntrySet) {
+                    this.modifyTime(dirAndTimeEntry.getKey(), dirAndTimeEntry.getValue());
+                }
             }
         } catch (Exception e) {
             String errorMessage = String.format("An exception occurs when the file[%s] is decompressing.FileInputStream=%s ZipInputStream=%s: %s", compressedFile, fileInputStream, zipInputStream, e.getMessage());

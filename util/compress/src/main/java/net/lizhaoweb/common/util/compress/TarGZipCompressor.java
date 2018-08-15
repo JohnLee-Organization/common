@@ -12,6 +12,8 @@ package net.lizhaoweb.common.util.compress;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * <h1>压缩器 [实现] - Tar.GZip</h1>
@@ -61,5 +63,10 @@ public class TarGZipCompressor extends AbstractCompressOrDecompress implements I
         gZipCompressor.compress(tarFile, compressedFile);
 
         this.checkAndDeleteFile(tarFile);
+    }
+
+    @Override
+    public void compress(InputStream inputStream, OutputStream outputStream) throws IOException {
+
     }
 }

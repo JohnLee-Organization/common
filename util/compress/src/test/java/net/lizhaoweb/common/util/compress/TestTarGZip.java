@@ -6,14 +6,11 @@
  * @Package : net.lizhaoweb.common.util.compress
  * @author <a href="http://www.lizhaoweb.net">李召(John.Lee)</a>
  * @EMAIL 404644381@qq.com
- * @Time : 21:23
+ * @Time : 21:55
  */
 package net.lizhaoweb.common.util.compress;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.Test;
-
-import java.io.FileInputStream;
 
 /**
  * @author <a href="http://www.lizhaoweb.cn">李召(John.Lee)</a>
@@ -24,26 +21,29 @@ import java.io.FileInputStream;
  * Author of last commit:$Author$<br>
  * Date of last commit:$Date$<br>
  */
-public class TestGZipDecompressor {
+public class TestTarGZip {
 
+    /**
+     * 压缩
+     */
     @Test
-    public void decompress() {
-        GZipDecompressor gZipDecompressor = new GZipDecompressor(true);
+    public void compress() {
+        TarGZipCompressor tarGZipCompressor = new TarGZipCompressor(true);
         try {
-            gZipDecompressor.decompress("F:\\TEst\\1970110017_010_5105.csv.gz", "F:\\TEst");
+            tarGZipCompressor.compress("D:\\GreenProfram\\Cygwin64\\opt", "D:\\GreenProfram\\Cygwin64\\opt.tar.gz");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * 解压
+     */
     @Test
-    public void aaa() {
+    public void decompress() {
+        TarGZipDecompressor tarGZipDecompressor = new TarGZipDecompressor(true);
         try {
-            String fileName = "F:\\TEst\\1970110017_010_5105.csv.gz";
-            FileInputStream fileInputStream = new FileInputStream(fileName);
-            byte[] byteArray = IOUtils.toByteArray(fileInputStream);
-            String aaaa = new String(byteArray);
-            System.out.println(aaaa);
+            tarGZipDecompressor.decompress("D:\\GreenProfram\\Cygwin64\\opt\\shell.tar.gz", "D:\\GreenProfram\\Cygwin64\\opt");
         } catch (Exception e) {
             e.printStackTrace();
         }

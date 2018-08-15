@@ -14,10 +14,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.io.IOUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * <h1>压缩器 [实现] - Tar</h1>
@@ -31,9 +28,9 @@ import java.io.IOException;
  * Date of last commit:$Date$<br>
  */
 public class TarCompressor extends AbstractCompressOrDecompress implements ICompressor {
-    private static final int BLOCK_SIZE = 4096;
+    private static final int CACHE_SIZE = 1024 * 4;
 
-    private int countRecursive = 1; // 定义递归次数变量
+//    private int countRecursive = 1; // 定义递归次数变量
 
     /**
      * 有参构造
@@ -60,14 +57,9 @@ public class TarCompressor extends AbstractCompressOrDecompress implements IComp
         try {
             this.printInformation(String.format("The file[%s] for tar is compressing ...", compressedFile));
             fileOutputStream = new FileOutputStream(compressedFile);
-            tarArchiveOutputStream = new TarArchiveOutputStream(fileOutputStream, BLOCK_SIZE);
-            this.compress(tarArchiveOutputStream, inputFileOrDir, inputFileOrDir.getName());
-//            tarArchiveOutputStream.flush();
-//            tarArchiveOutputStream.finish();
-//            tarArchiveOutputStream.closeArchiveEntry();
-        } catch (Exception e) {
-            String errorMessage = String.format("An exception occurs when the file[%s] is compressing.: %s", compressedFile, e.getMessage());
-            throw new IllegalStateException(errorMessage, e);
+            tarArchiveOutputStream = new TarArchiveOutputStream(fileOutputStream, CACHE_SIZE);
+            this.recursionCompress(tarArchiveOutputStream, inputFileOrDir, inputFileOrDir.getName());
+            tarArchiveOutputStream.finish();
         } finally {
             IOUtils.closeQuietly(tarArchiveOutputStream);// 输出流关闭
             IOUtils.closeQuietly(fileOutputStream);// 输出流关闭
@@ -75,42 +67,124 @@ public class TarCompressor extends AbstractCompressOrDecompress implements IComp
         this.printInformation(String.format("The file[%s] for tar is compressed", compressedFile));
     }
 
-    private void compress(TarArchiveOutputStream tarArchiveOutputStream, File file, String base) throws Exception { // 方法重载
+    @Override
+    public void compress(InputStream inputStream, OutputStream outputStream) throws IOException {
+        TarArchiveOutputStream tarArchiveOutputStream = null;
+        try {
+            tarArchiveOutputStream = new TarArchiveOutputStream(outputStream, CACHE_SIZE);
+            this.compressToTar(inputStream, tarArchiveOutputStream);
+            tarArchiveOutputStream.finish();
+        } finally {
+            IOUtils.closeQuietly(inputStream);// 输入流关闭
+            IOUtils.closeQuietly(tarArchiveOutputStream);// 输出流关闭
+            IOUtils.closeQuietly(inputStream);// 输出流关闭
+        }
+    }
+
+//    private void compress(TarArchiveOutputStream tarArchiveOutputStream, File file, String base) throws Exception { // 方法重载
+//        if (file.isDirectory()) {
+//            File[] files = file.listFiles();
+//            if (files == null) {
+//                return;
+//            }
+//            String baseDir = null;
+//            if (base.endsWith("/")) {
+//                baseDir = base;
+//            } else {
+//                baseDir = String.format("%s/", base);
+//            }
+//            if (files.length == 0) {
+//                TarArchiveEntry tarArchiveEntry = new TarArchiveEntry(baseDir);
+//                tarArchiveOutputStream.putArchiveEntry(tarArchiveEntry);
+//                tarArchiveOutputStream.closeArchiveEntry();
+//                this.printInformation(baseDir);
+//            }
+//            for (File childFile : files) {
+//                this.compress(tarArchiveOutputStream, childFile, baseDir + childFile.getName()); // 递归遍历子文件夹
+//            }
+//            this.printInformation(String.format("No. %d recursion", countRecursive));
+//            countRecursive++;
+//        } else {
+//            FileInputStream fileInputStream = null;
+//            try {
+//                TarArchiveEntry tarArchiveEntry = new TarArchiveEntry(base);
+//                tarArchiveEntry.setSize(file.length());
+//                tarArchiveOutputStream.putArchiveEntry(tarArchiveEntry);
+//                this.printInformation(base);
+//                fileInputStream = new FileInputStream(file);
+//                IOUtils.copy(fileInputStream, tarArchiveOutputStream, BLOCK_SIZE);
+//            } finally {
+//                IOUtils.closeQuietly(fileInputStream);// 输入流关闭
+//                tarArchiveOutputStream.closeArchiveEntry();
+//            }
+//        }
+//    }
+
+    private void recursionCompress(TarArchiveOutputStream tarArchiveOutputStream, File file, String tarArchivePath) throws IOException {
+//        this.printInformation(String.format("No. %d recursion", countRecursive));
+
+        // 目录处理
         if (file.isDirectory()) {
             File[] files = file.listFiles();
             if (files == null) {
                 return;
             }
             String baseDir = null;
-            if (base.endsWith("/")) {
-                baseDir = base;
+            if (tarArchivePath.endsWith("/")) {
+                baseDir = tarArchivePath;
             } else {
-                baseDir = String.format("%s/", base);
+                baseDir = String.format("%s/", tarArchivePath);
             }
             if (files.length == 0) {
-                TarArchiveEntry tarArchiveEntry = new TarArchiveEntry(baseDir);
-                tarArchiveOutputStream.putArchiveEntry(tarArchiveEntry);
-                tarArchiveOutputStream.closeArchiveEntry();
-                this.printInformation(baseDir);
+                this.addTarArchiveDirectory(tarArchiveOutputStream, file, baseDir);
+                return;
             }
             for (File childFile : files) {
-                this.compress(tarArchiveOutputStream, childFile, baseDir + childFile.getName()); // 递归遍历子文件夹
+                this.recursionCompress(tarArchiveOutputStream, childFile, baseDir + childFile.getName()); // 递归遍历子文件夹
             }
-            this.printInformation(String.format("No. %d recursion", countRecursive));
-            countRecursive++;
-        } else {
-            FileInputStream fileInputStream = null;
-            try {
-                TarArchiveEntry tarArchiveEntry = new TarArchiveEntry(base);
-                tarArchiveEntry.setSize(file.length());
-                tarArchiveOutputStream.putArchiveEntry(tarArchiveEntry);
-                this.printInformation(base);
-                fileInputStream = new FileInputStream(file);
-                IOUtils.copy(fileInputStream, tarArchiveOutputStream, BLOCK_SIZE);
-            } finally {
-                IOUtils.closeQuietly(fileInputStream);// 输入流关闭
-                tarArchiveOutputStream.closeArchiveEntry();
-            }
+//            countRecursive++;
+            return;
         }
+
+        // 文件处理
+        this.addTarArchiveFile(tarArchiveOutputStream, file, tarArchivePath);
+    }
+
+    // 文件归档
+    private void addTarArchiveFile(TarArchiveOutputStream tarArchiveOutputStream, File file, String tarArchiveName) throws IOException {
+        FileInputStream fileInputStream = null;
+        try {
+            fileInputStream = new FileInputStream(file);
+            this.addTarArchiveEntry(tarArchiveOutputStream, file, tarArchiveName);
+            this.printInformation(tarArchiveName);
+            this.compressToTar(fileInputStream, tarArchiveOutputStream);
+            tarArchiveOutputStream.closeArchiveEntry();
+        } finally {
+            IOUtils.closeQuietly(fileInputStream);// 输入流关闭
+        }
+    }
+
+    // 目录归档
+    private void addTarArchiveDirectory(TarArchiveOutputStream tarArchiveOutputStream, File file, String tarArchiveName) throws IOException {
+        this.addTarArchiveEntry(tarArchiveOutputStream, file, tarArchiveName);
+        this.printInformation(tarArchiveName);
+        tarArchiveOutputStream.closeArchiveEntry();
+    }
+
+    // 创建 TAR 的归档实体，并加入到输入流中
+    private void addTarArchiveEntry(TarArchiveOutputStream tarArchiveOutputStream, File file, String tarArchiveName) throws IOException {
+        TarArchiveEntry tarArchiveEntry = new TarArchiveEntry(tarArchiveName);
+        tarArchiveEntry.setSize(file.length());
+        if (this.isModifyTime()) {
+            tarArchiveEntry.setModTime(file.lastModified());
+        }
+        tarArchiveOutputStream.putArchiveEntry(tarArchiveEntry);
+    }
+
+    // 把输入到输出到 TAR 流中
+    private void compressToTar(InputStream inputStream, TarArchiveOutputStream tarArchiveOutputStream) throws IOException {
+        IOUtils.copy(inputStream, tarArchiveOutputStream, CACHE_SIZE);
+//        tarArchiveOutputStream.closeArchiveEntry();
+        tarArchiveOutputStream.flush();
     }
 }

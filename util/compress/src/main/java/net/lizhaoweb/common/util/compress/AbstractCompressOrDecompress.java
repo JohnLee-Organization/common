@@ -10,8 +10,10 @@
  */
 package net.lizhaoweb.common.util.compress;
 
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +38,13 @@ public abstract class AbstractCompressOrDecompress {
     @NonNull
     private boolean verbose;
 
+    /**
+     * 修改最近修改时间为原文件的
+     */
+    @Setter
+    @Getter
+    private boolean modifyTime = true;
+
     protected void printInformation(String message) {
         if (verbose) {
             logger.info(message);
@@ -47,6 +56,19 @@ public abstract class AbstractCompressOrDecompress {
         if (!directory.exists()) {
             boolean success = directory.mkdirs();
             this.printInformation(String.format("The directory[%s] is created : %s", directory, success));
+        }
+    }
+
+    protected void modifyTime(File file, long time) {
+        if (!this.isModifyTime()) {
+            return;
+        }
+        if (time < 0) {
+            return;
+        }
+        if (file.exists() && file.lastModified() != time) {
+            boolean success = file.setLastModified(time);
+            this.printInformation(String.format("Modify time for the file[%s] is  %s", file, success));
         }
     }
 
@@ -82,15 +104,15 @@ public abstract class AbstractCompressOrDecompress {
             throw new IllegalArgumentException(message);
         }
         if (!targetDirectory.exists()) {
-            String message = String.format("The target-directory [%s] is not exists", targetDirectory);
+            String message = String.format("The target-directory[%s] is not exists", targetDirectory);
             throw new IllegalArgumentException(message);
         }
         if (!targetDirectory.isDirectory()) {
-            String message = String.format("The target-directory [%s] is not a directory", targetDirectory);
+            String message = String.format("The target-directory[%s] is not a directory", targetDirectory);
             throw new IllegalArgumentException(message);
         }
         if (!targetDirectory.canWrite()) {
-            String message = String.format("The target-directory [%s] can't be written", targetDirectory);
+            String message = String.format("The target-directory[%s] can't be written", targetDirectory);
             throw new IllegalArgumentException(message);
         }
     }

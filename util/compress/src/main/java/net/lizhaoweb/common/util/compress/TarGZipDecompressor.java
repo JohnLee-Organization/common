@@ -55,9 +55,18 @@ public class TarGZipDecompressor extends AbstractCompressOrDecompress implements
     public void decompress(File compressedFile, File decompressedPath) throws IOException {
         this.checkCompressionPackForDecompressor(compressedFile, "compressedFile");
         this.checkTargetDirectoryForDecompressor(decompressedPath, "decompressedPath");
+        String compressedFileName = compressedFile.getName();
+        if (!compressedFileName.endsWith(".tar.gz")) {
+            String message = String.format("The suffix of the file[%s] is not '.tar.gz'", compressedFileName);
+            throw new IllegalArgumentException(message);
+        }
         GZipDecompressor gZipDecompressor = new GZipDecompressor(this.verbose);
-        File tarFile = new File(String.format("%s/.__gzip_to_tar.tar", this.osTempDir));
-        gZipDecompressor.decompress(compressedFile, tarFile);
+        File tarFile = new File(
+                String.format("%s/java_gzip_to_tar_by_john_lee.tmp", this.osTempDir),
+                String.format("__%s_%d.tar", compressedFileName.substring(0, compressedFileName.lastIndexOf(".tar.gz")), System.currentTimeMillis())
+        );
+        this.checkAndMakeDirectory(tarFile.getParentFile());
+        gZipDecompressor.decompressFile(compressedFile, tarFile);
 
         TarDecompressor tarDecompressor = new TarDecompressor(this.verbose);
         tarDecompressor.decompress(tarFile, decompressedPath);

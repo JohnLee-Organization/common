@@ -6,7 +6,7 @@
  * @Package : net.lizhaoweb.common.util.compress
  * @author <a href="http://www.lizhaoweb.net">李召(John.Lee)</a>
  * @EMAIL 404644381@qq.com
- * @Time : 20:32
+ * @Time : 20:41
  */
 package net.lizhaoweb.common.util.compress;
 
@@ -21,13 +21,31 @@ import org.junit.Test;
  * Author of last commit:$Author$<br>
  * Date of last commit:$Date$<br>
  */
-public class TestTarCompressor {
+public class TestTar {
 
+    /**
+     * 压缩
+     */
     @Test
     public void compress() {
         TarCompressor tarCompressor = new TarCompressor(true);
         try {
-            tarCompressor.compress("D:\\GreenProfram\\Cygwin64\\opt", "D:\\GreenProfram\\Cygwin64\\opt.tar");
+            tarCompressor.compress("D:\\GreenProfram\\Cygwin64\\application", "D:\\GreenProfram\\Cygwin64\\application.tar");
+//            tarCompressor.compress("D:\\GreenProfram\\Cygwin64\\application\\shell\\bin", "D:\\GreenProfram\\Cygwin64\\application\\shell\\bin.tar");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 解压
+     */
+    @Test
+    public void decompress() {
+        TarDecompressor tarDecompressor = new TarDecompressor(true);
+        try {
+//            tarDecompressor.setModifyTime(true);
+            tarDecompressor.decompress("D:\\GreenProfram\\Cygwin64\\opt\\pip-1.5.5.tar", "D:\\GreenProfram\\Cygwin64\\opt");
         } catch (Exception e) {
             e.printStackTrace();
         }

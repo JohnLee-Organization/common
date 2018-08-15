@@ -54,26 +54,35 @@ public class GZipDecompressor extends AbstractCompressOrDecompress implements ID
     public void decompress(File compressedFile, File decompressedPath) throws IOException {
         this.checkCompressionPackForDecompressor(compressedFile, "compressedFile");
         this.checkTargetDirectoryForDecompressor(decompressedPath, "decompressedPath");
-        FileInputStream fileInputStream = null;
-        GZIPInputStream gzipInputStream = null;
-        FileOutputStream fileOutputStream = null;
         try {
             String gzipFileName = compressedFile.getName();
             String fileName = gzipFileName.substring(0, gzipFileName.lastIndexOf('.'));
             File file = new File(decompressedPath, fileName);
-            fileInputStream = new FileInputStream(compressedFile);
-            gzipInputStream = new GZIPInputStream(fileInputStream, BLOCK_SIZE);
-            fileOutputStream = new FileOutputStream(file);
-            IOUtils.copy(gzipInputStream, fileOutputStream, BLOCK_SIZE);
-            fileOutputStream.flush();
+
+            this.decompressFile(compressedFile, file);
         } catch (Exception e) {
             String errorMessage = String.format("An exception occurs when the file[%s] is decompressing.: %s", compressedFile, e.getMessage());
             throw new IllegalStateException(errorMessage, e);
+        }
+        this.printInformation(String.format("The file[%s] has been unpacked to the file[%s]", compressedFile, decompressedPath));
+    }
+
+    void decompressFile(File compressedFile, File tarFile) throws IOException {
+        this.checkCompressionPackForDecompressor(compressedFile, "compressedFile");
+        FileInputStream fileInputStream = null;
+        GZIPInputStream gzipInputStream = null;
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileInputStream = new FileInputStream(compressedFile);
+            gzipInputStream = new GZIPInputStream(fileInputStream, BLOCK_SIZE);
+            fileOutputStream = new FileOutputStream(tarFile);
+            IOUtils.copy(gzipInputStream, fileOutputStream, BLOCK_SIZE);
+            fileOutputStream.flush();
         } finally {
             IOUtils.closeQuietly(fileOutputStream);
             IOUtils.closeQuietly(gzipInputStream);
             IOUtils.closeQuietly(fileInputStream);
         }
-        this.printInformation(String.format("The file[%s] has been unpacked to the file[%s]", compressedFile, decompressedPath));
+        this.printInformation(String.format("The file[%s] has been unpacked to the file[%s]", compressedFile, tarFile));
     }
 }

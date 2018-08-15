@@ -28,10 +28,39 @@ import java.util.concurrent.Future;
  * Author of last commit:$Author$<br>
  * Date of last commit:$Date$<br>
  */
-public class TestZipDecompressor {
+public class TestZip {
 
+    /**
+     * 压缩
+     */
+    @Test
+    public void compress() {
+        ZipCompressor zipCompressor = new ZipCompressor(true);
+        try {
+            zipCompressor.compress("D:\\GreenProfram\\Cygwin64\\opt", "D:\\GreenProfram\\Cygwin64\\opt.zip");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 解压
+     */
     @Test
     public void decompress() {
+        final ZipDecompressor zipDecompressor = new ZipDecompressor(true);
+        try {
+            zipDecompressor.decompress("D:\\GreenProfram\\Cygwin64\\opt\\aliyun-mns-python-sdk-1.1.4.zip", "D:\\GreenProfram\\Cygwin64\\opt");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 批量解压
+     */
+    @Test
+    public void decompress_() {
         final ZipDecompressor zipDecompressor = new ZipDecompressor(true);
         ExecutorService executorService = Executors.newFixedThreadPool(100);
         List<Future<Boolean>> futureList = new ArrayList<>();

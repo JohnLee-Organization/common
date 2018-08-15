@@ -12,10 +12,7 @@ package net.lizhaoweb.common.util.compress;
 
 import org.apache.commons.io.IOUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -73,6 +70,11 @@ public class ZipCompressor extends AbstractCompressOrDecompress implements IComp
             IOUtils.closeQuietly(fileOutputStream);// 输出流关闭
         }
         this.printInformation(String.format("The file[%s] for zip is compressed", compressedFile));
+    }
+
+    @Override
+    public void compress(InputStream inputStream, OutputStream outputStream) throws IOException {
+
     }
 
     private void compress(ZipOutputStream zipOutputStream, File file, String base) throws Exception { // 方法重载
