@@ -30,6 +30,7 @@ public class TestTar {
     public void compress() {
         TarCompressor tarCompressor = new TarCompressor(true);
         try {
+//            tarCompressor.setModifyTime(false);
             tarCompressor.compress("D:\\GreenProfram\\Cygwin64\\application", "D:\\GreenProfram\\Cygwin64\\application.tar");
 //            tarCompressor.compress("D:\\GreenProfram\\Cygwin64\\application\\shell\\bin", "D:\\GreenProfram\\Cygwin64\\application\\shell\\bin.tar");
         } catch (Exception e) {

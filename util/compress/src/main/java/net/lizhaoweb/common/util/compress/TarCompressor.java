@@ -113,7 +113,6 @@ public class TarCompressor extends AbstractCompressOrDecompress implements IComp
     private void addTarArchiveFile(TarArchiveOutputStream tarArchiveOutputStream, File file, String tarArchiveName) throws IOException {
         FileInputStream fileInputStream = null;
         try {
-
             this.addTarArchiveEntry(tarArchiveOutputStream, file, tarArchiveName);
             this.printInformation(tarArchiveName);
             fileInputStream = new FileInputStream(file);
@@ -133,12 +132,9 @@ public class TarCompressor extends AbstractCompressOrDecompress implements IComp
 
     // 创建 TAR 的归档实体，并加入到输入流中
     private void addTarArchiveEntry(TarArchiveOutputStream tarArchiveOutputStream, File file, String tarArchiveName) throws IOException {
-        TarArchiveEntry tarArchiveEntry = null;
-        if (this.isModifyTime()) {
-            tarArchiveEntry = new TarArchiveEntry(file, tarArchiveName);
-        } else {
-            tarArchiveEntry = new TarArchiveEntry(tarArchiveName);
-            tarArchiveEntry.setSize(file.length());
+        TarArchiveEntry tarArchiveEntry = new TarArchiveEntry(file, tarArchiveName);
+        if (!this.isModifyTime()) {
+            tarArchiveEntry.setModTime(System.currentTimeMillis());
         }
         tarArchiveOutputStream.putArchiveEntry(tarArchiveEntry);
     }
