@@ -45,9 +45,12 @@ public class TestZip {
     public void init() {
         verbose = true;
         modifyTime = true;
-        compressPath = "D:\\GreenProfram\\Cygwin64\\Cygwin.ico";
-        compressedFile = "D:\\GreenProfram\\Cygwin64\\Cygwin.zip";
-        decompressPath = "D:\\GreenProfram\\Cygwin64\\opt";
+        compressPath = "D:\\GreenProfram\\Cygwin64\\application";
+        compressedFile = "D:\\GreenProfram\\Cygwin64\\application.zip";
+        decompressPath = "D:\\GreenProfram\\Cygwin64";
+//        compressPath = "D:\\GreenProfram\\Cygwin64\\Cygwin.ico";
+//        compressedFile = "D:\\GreenProfram\\Cygwin64\\Cygwin.zip";
+//        decompressPath = "D:\\GreenProfram\\Cygwin64\\opt";
     }
 
     /**

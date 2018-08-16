@@ -39,6 +39,9 @@ public class TestTar {
         compressPath = "D:\\GreenProfram\\Cygwin64\\application";
         compressedFile = "D:\\GreenProfram\\Cygwin64\\application.tar";
         decompressPath = "D:\\GreenProfram\\Cygwin64";
+//        compressPath = "D:\\GreenProfram\\Cygwin64\\Cygwin.ico";
+//        compressedFile = "D:\\GreenProfram\\Cygwin64\\Cygwin.tar";
+//        decompressPath = "D:\\GreenProfram\\Cygwin64\\opt";
     }
 
     /**

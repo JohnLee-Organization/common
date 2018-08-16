@@ -10,6 +10,7 @@
  */
 package net.lizhaoweb.common.util.compress;
 
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -22,16 +23,34 @@ import org.junit.Test;
  * Date of last commit:$Date$<br>
  */
 public class TestTarGZip {
+    private boolean verbose;
+    private boolean modifyTime;
+
+    private String compressPath;
+    private String compressedFile;
+    private String decompressPath;
+
+    @Before
+    public void init() {
+        verbose = true;
+        modifyTime = true;
+//        compressPath = "D:\\GreenProfram\\Cygwin64\\application";
+//        compressedFile = "D:\\GreenProfram\\Cygwin64\\application.tar.gz";
+//        decompressPath = "D:\\GreenProfram\\Cygwin64";
+        compressPath = "D:\\GreenProfram\\Cygwin64\\Cygwin.ico";
+        compressedFile = "D:\\GreenProfram\\Cygwin64\\Cygwin.tar.gz";
+        decompressPath = "D:\\GreenProfram\\Cygwin64\\opt";
+    }
 
     /**
      * 压缩
      */
     @Test
     public void compress() {
-        TarGZipCompressor tarGZipCompressor = new TarGZipCompressor(true);
+        TarGZipCompressor tarGZipCompressor = new TarGZipCompressor(verbose);
         try {
-//            tarCompressor.setModifyTime(false);
-            tarGZipCompressor.compress("D:\\GreenProfram\\Cygwin64\\application", "D:\\GreenProfram\\Cygwin64\\application.tar.gz");
+            tarGZipCompressor.setModifyTime(modifyTime);
+            tarGZipCompressor.compress(compressPath, compressedFile);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -42,9 +61,10 @@ public class TestTarGZip {
      */
     @Test
     public void decompress() {
-        TarGZipDecompressor tarGZipDecompressor = new TarGZipDecompressor(true);
+        TarGZipDecompressor tarGZipDecompressor = new TarGZipDecompressor(verbose);
         try {
-            tarGZipDecompressor.decompress("D:\\GreenProfram\\Cygwin64\\opt\\shell.tar.gz", "D:\\GreenProfram\\Cygwin64\\opt");
+            tarGZipDecompressor.setModifyTime(modifyTime);
+            tarGZipDecompressor.decompress(compressedFile, decompressPath);
         } catch (Exception e) {
             e.printStackTrace();
         }

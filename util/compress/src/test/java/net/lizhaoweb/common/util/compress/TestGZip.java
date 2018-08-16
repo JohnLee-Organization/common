@@ -11,6 +11,7 @@
 package net.lizhaoweb.common.util.compress;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.FileInputStream;
@@ -25,15 +26,31 @@ import java.io.FileInputStream;
  * Date of last commit:$Date$<br>
  */
 public class TestGZip {
+    private boolean verbose;
+    private boolean modifyTime;
+
+    private String compressPath;
+    private String compressedFile;
+    private String decompressPath;
+
+    @Before
+    public void init() {
+        verbose = true;
+        modifyTime = true;
+        compressPath = "D:\\GreenProfram\\Cygwin64\\Cygwin.ico";
+        compressedFile = "D:\\GreenProfram\\Cygwin64\\Cygwin.gz";
+        decompressPath = "D:\\GreenProfram\\Cygwin64\\opt";
+    }
 
     /**
      * 压缩
      */
     @Test
     public void compress() {
-        GZipCompressor gZipCompressor = new GZipCompressor(true);
+        GZipCompressor gZipCompressor = new GZipCompressor(verbose);
         try {
-            gZipCompressor.compress("D:\\GreenProfram\\Cygwin64\\opt.tar", "D:\\GreenProfram\\Cygwin64\\opt.tar.gz");
+            gZipCompressor.setModifyTime(modifyTime);
+            gZipCompressor.compress(compressPath, compressedFile);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -44,9 +61,10 @@ public class TestGZip {
      */
     @Test
     public void decompress() {
-        GZipDecompressor gZipDecompressor = new GZipDecompressor(true);
+        GZipDecompressor gZipDecompressor = new GZipDecompressor(verbose);
         try {
-            gZipDecompressor.decompress("D:\\TEst\\201811810217_010_4604.csv.gz", "D:\\TEst");
+            gZipDecompressor.setModifyTime(modifyTime);
+            gZipDecompressor.decompress(compressedFile, decompressPath);
         } catch (Exception e) {
             e.printStackTrace();
         }
