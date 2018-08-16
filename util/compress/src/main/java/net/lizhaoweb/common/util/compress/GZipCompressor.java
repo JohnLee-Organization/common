@@ -74,8 +74,8 @@ public class GZipCompressor extends AbstractCompressOrDecompress implements ICom
         try {
             gzipOutputStream = new GZIPOutputStream(outputStream, BLOCK_SIZE);
             IOUtils.copy(inputStream, gzipOutputStream, BLOCK_SIZE);
-            gzipOutputStream.finish();
             gzipOutputStream.flush();
+            gzipOutputStream.finish();
         } finally {
             IOUtils.closeQuietly(gzipOutputStream);// GZIP输出流关闭
         }

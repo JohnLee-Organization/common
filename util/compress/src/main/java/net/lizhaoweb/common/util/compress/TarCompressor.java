@@ -59,6 +59,8 @@ public class TarCompressor extends AbstractCompressOrDecompress implements IComp
             fileOutputStream = new FileOutputStream(compressedFile);
             tarArchiveOutputStream = new TarArchiveOutputStream(fileOutputStream, CACHE_SIZE);
             this.recursionCompress(new TarArchiveEntryCallback(), tarArchiveOutputStream, inputFileOrDir, inputFileOrDir.getName());
+//            tarArchiveOutputStream.closeEntry();
+            tarArchiveOutputStream.flush();
             tarArchiveOutputStream.finish();
         } finally {
             IOUtils.closeQuietly(tarArchiveOutputStream);// 输出流关闭

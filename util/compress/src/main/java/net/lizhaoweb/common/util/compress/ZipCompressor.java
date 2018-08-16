@@ -59,9 +59,9 @@ public class ZipCompressor extends AbstractCompressOrDecompress implements IComp
             fileOutputStream = new FileOutputStream(compressedFile);
             zipOutputStream = new ZipOutputStream(fileOutputStream);
             this.recursionCompress(new ZipEntryCallback(), zipOutputStream, inputFileOrDir, inputFileOrDir.getName());
-            zipOutputStream.closeEntry();
+//            zipOutputStream.closeEntry();
+            zipOutputStream.flush();
             zipOutputStream.finish();
-            fileOutputStream.flush();
         } catch (Exception e) {
             String errorMessage = String.format("An exception occurs when the file[%s] is compressing.: %s", compressedFile, e.getMessage());
             throw new IllegalStateException(errorMessage, e);
