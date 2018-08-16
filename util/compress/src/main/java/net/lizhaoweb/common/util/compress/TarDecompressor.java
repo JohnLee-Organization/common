@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Date of last commit:$Date$<br>
  */
 public class TarDecompressor extends AbstractCompressOrDecompress implements IDecompressor {
-    private static final int BLOCK_SIZE = 4096;
+
 
     /**
      * 有参构造
@@ -63,7 +63,7 @@ public class TarDecompressor extends AbstractCompressOrDecompress implements IDe
         try {
             this.checkAndMakeDirectory(decompressedPath);
             fileInputStream = new FileInputStream(compressedFile);
-            tarArchiveInputStream = new TarArchiveInputStream(fileInputStream, BLOCK_SIZE);
+            tarArchiveInputStream = new TarArchiveInputStream(fileInputStream, CACHE_SIZE);
             TarArchiveEntry tarArchiveEntry = null;
             Map<File, Long> dirAndTime = new ConcurrentHashMap<>();
 
@@ -83,7 +83,7 @@ public class TarDecompressor extends AbstractCompressOrDecompress implements IDe
                 FileOutputStream fileOutputStream = null;
                 try {
                     fileOutputStream = new FileOutputStream(zipFileOrDir);
-                    IOUtils.copy(tarArchiveInputStream, fileOutputStream, BLOCK_SIZE);
+                    IOUtils.copy(tarArchiveInputStream, fileOutputStream, CACHE_SIZE);
                     fileOutputStream.flush();
                 } finally {
                     IOUtils.closeQuietly(fileOutputStream);
@@ -106,9 +106,5 @@ public class TarDecompressor extends AbstractCompressOrDecompress implements IDe
             IOUtils.closeQuietly(fileInputStream);
         }
         this.printInformation(String.format("The file[%s] has been unpacked to the directory[%s]", compressedFile, decompressedPath));
-    }
-
-    private void aaaa() {
-
     }
 }

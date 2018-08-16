@@ -33,6 +33,8 @@ import java.io.File;
 @RequiredArgsConstructor
 public abstract class AbstractCompressOrDecompress {
 
+    protected static final int CACHE_SIZE = 1024 * 4;
+
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @NonNull

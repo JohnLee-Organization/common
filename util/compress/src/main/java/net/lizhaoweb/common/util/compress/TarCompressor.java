@@ -28,7 +28,6 @@ import java.io.*;
  * Date of last commit:$Date$<br>
  */
 public class TarCompressor extends AbstractCompressOrDecompress implements ICompressor {
-    private static final int CACHE_SIZE = 1024 * 4;
 
 
     /**

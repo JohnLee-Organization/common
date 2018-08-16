@@ -45,8 +45,9 @@ public class TestTar {
     public void decompress() {
         TarDecompressor tarDecompressor = new TarDecompressor(true);
         try {
-//            tarDecompressor.setModifyTime(true);
-            tarDecompressor.decompress("D:\\GreenProfram\\Cygwin64\\opt\\pip-1.5.5.tar", "D:\\GreenProfram\\Cygwin64\\opt");
+//            tarDecompressor.setModifyTime(false);
+//            tarDecompressor.decompress("D:\\GreenProfram\\Cygwin64\\opt\\pip-1.5.5.tar", "D:\\GreenProfram\\Cygwin64\\opt");
+            tarDecompressor.decompress("D:\\GreenProfram\\Cygwin64\\application.tar", "D:\\GreenProfram\\Cygwin64\\application");
         } catch (Exception e) {
             e.printStackTrace();
         }
