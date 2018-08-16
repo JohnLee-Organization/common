@@ -41,6 +41,7 @@ public class GZipCompressor extends AbstractCompressOrDecompress implements ICom
     /**
      * {@inheritDoc}
      */
+    @Override
     public void compress(String inputFileOrDir, String compressedFile) throws IOException {
         this.compress(new File(inputFileOrDir), new File(compressedFile));
     }
@@ -48,6 +49,7 @@ public class GZipCompressor extends AbstractCompressOrDecompress implements ICom
     /**
      * {@inheritDoc}
      */
+    @Override
     public void compress(File inputFileOrDir, File compressedFile) throws IOException {
         FileInputStream fileInputStream = null;
         FileOutputStream fileOutputStream = null;
@@ -58,7 +60,7 @@ public class GZipCompressor extends AbstractCompressOrDecompress implements ICom
             this.compress(fileInputStream, fileOutputStream);
         } finally {
             IOUtils.closeQuietly(fileOutputStream);// 输出流关闭
-            IOUtils.closeQuietly(fileOutputStream);// 输出流关闭
+            IOUtils.closeQuietly(fileInputStream);// 输入流关闭
         }
         this.printInformation(String.format("The file[%s] for gzip is compressed", compressedFile));
     }
@@ -77,5 +79,17 @@ public class GZipCompressor extends AbstractCompressOrDecompress implements ICom
         } finally {
             IOUtils.closeQuietly(gzipOutputStream);// GZIP输出流关闭
         }
+    }
+
+    void compress(InputStream inputStream, File compressedFile) throws IOException {
+        FileOutputStream fileOutputStream = null;
+        try {
+            this.printInformation(String.format("The file[%s] for gzip is compressing ...", compressedFile));
+            fileOutputStream = new FileOutputStream(compressedFile);
+            this.compress(inputStream, fileOutputStream);
+        } finally {
+            IOUtils.closeQuietly(fileOutputStream);// 输出流关闭
+        }
+        this.printInformation(String.format("The file[%s] for gzip is compressed", compressedFile));
     }
 }

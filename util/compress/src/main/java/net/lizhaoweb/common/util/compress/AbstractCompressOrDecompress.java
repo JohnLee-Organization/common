@@ -18,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * <h1>压缩/解压缩工具 - 抽象</h1>
@@ -47,6 +49,7 @@ public abstract class AbstractCompressOrDecompress {
     @Getter
     private boolean modifyTime = true;
 
+    // 打印信息
     protected void printInformation(String message) {
         if (verbose) {
             logger.info(message);
@@ -54,6 +57,7 @@ public abstract class AbstractCompressOrDecompress {
         }
     }
 
+    // 检查目录是否存在，如果不存在则创建
     protected void checkAndMakeDirectory(File directory) {
         if (!directory.exists()) {
             boolean success = directory.mkdirs();
@@ -61,6 +65,7 @@ public abstract class AbstractCompressOrDecompress {
         }
     }
 
+    // 设置文件的修改时间
     protected void modifyTime(File file, long time) {
         if (!this.isModifyTime()) {
             return;
@@ -74,6 +79,7 @@ public abstract class AbstractCompressOrDecompress {
         }
     }
 
+    // 检查文件是否存在，如果存在则删除
     protected void checkAndDeleteFile(File file) {
         if (file.exists()) {
             boolean success = file.delete();
@@ -81,6 +87,7 @@ public abstract class AbstractCompressOrDecompress {
         }
     }
 
+    // 解压时，验证压缩包情况
     protected void checkCompressionPackForDecompressor(File compressionPack, String argumentName) {
         if (compressionPack == null) {
             String message = String.format("The argument[%s] is null", argumentName);
@@ -100,6 +107,7 @@ public abstract class AbstractCompressOrDecompress {
         }
     }
 
+    // 解压时，验证目标目录情况
     protected void checkTargetDirectoryForDecompressor(File targetDirectory, String argumentName) {
         if (targetDirectory == null) {
             String message = String.format("The argument[%s] is null", argumentName);
@@ -117,5 +125,39 @@ public abstract class AbstractCompressOrDecompress {
             String message = String.format("The target-directory[%s] can't be written", targetDirectory);
             throw new IllegalArgumentException(message);
         }
+    }
+
+    // 结尾补偿
+    protected String suffixEqualize(String string, String suffix) {
+        if (string.endsWith(suffix)) {
+            return string;
+        } else {
+            return string + suffix;
+        }
+    }
+
+
+    // 递归压缩文件
+    protected <OS extends OutputStream> void recursionCompress(IArchiveEntryCallback<OS> callback, OS tarArchiveOutputStream, File file, String tarArchivePath) throws IOException {
+
+        // 目录处理
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files == null) {
+                return;
+            }
+            String baseDir = this.suffixEqualize(tarArchivePath, "/");
+            callback.addArchiveDirectory(tarArchiveOutputStream, file, baseDir);
+            if (files.length == 0) {
+                return;
+            }
+            for (File childFile : files) {
+                this.recursionCompress(callback, tarArchiveOutputStream, childFile, baseDir + childFile.getName()); // 递归遍历子文件夹
+            }
+            return;
+        }
+
+        // 文件处理
+        callback.addArchiveFile(tarArchiveOutputStream, file, tarArchivePath);
     }
 }

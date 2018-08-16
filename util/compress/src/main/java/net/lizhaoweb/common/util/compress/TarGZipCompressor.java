@@ -10,10 +10,7 @@
  */
 package net.lizhaoweb.common.util.compress;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 /**
  * <h1>压缩器 [实现] - Tar.GZip</h1>
@@ -47,6 +44,7 @@ public class TarGZipCompressor extends AbstractCompressOrDecompress implements I
     /**
      * {@inheritDoc}
      */
+    @Override
     public void compress(String inputFileOrDir, String compressedFile) throws IOException {
         this.compress(new File(inputFileOrDir), new File(compressedFile));
     }
@@ -54,19 +52,45 @@ public class TarGZipCompressor extends AbstractCompressOrDecompress implements I
     /**
      * {@inheritDoc}
      */
+    @Override
     public void compress(File inputFileOrDir, File compressedFile) throws IOException {
         TarCompressor tarCompressor = new TarCompressor(this.verbose);
-        File tarFile = new File(String.format("%s/.__tar_to_gzip.tar", this.osTempDir));
-        tarCompressor.compress(inputFileOrDir, tarFile);
+        String compressedFileName = compressedFile.getName();
+        File tarTempFile = new File(
+                String.format("%s/java_tar_to_gzip_by_john_lee.tmp", this.osTempDir),
+                String.format("__%s_%d.tar", compressedFileName.substring(0, compressedFileName.lastIndexOf(".tar.gz")), System.currentTimeMillis())
+        );
+        this.checkAndMakeDirectory(tarTempFile.getParentFile());
+        tarCompressor.compress(inputFileOrDir, tarTempFile);
 
         GZipCompressor gZipCompressor = new GZipCompressor(this.verbose);
-        gZipCompressor.compress(tarFile, compressedFile);
+        gZipCompressor.compress(tarTempFile, compressedFile);
 
-        this.checkAndDeleteFile(tarFile);
+        this.checkAndDeleteFile(tarTempFile);
+
+
+//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(CACHE_SIZE);
+//        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+//
+//        TarCompressor tarCompressor = new TarCompressor(this.verbose);
+//        tarCompressor.compress(inputFileOrDir, outputStream);
+//
+//        GZipCompressor gZipCompressor = new GZipCompressor(this.verbose);
+//        gZipCompressor.compress(inputStream, compressedFile);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void compress(InputStream inputStream, OutputStream outputStream) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(CACHE_SIZE);
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
 
+        TarCompressor tarCompressor = new TarCompressor(this.verbose);
+        tarCompressor.compress(inputStream, byteArrayOutputStream);
+
+        GZipCompressor gZipCompressor = new GZipCompressor(this.verbose);
+        gZipCompressor.compress(byteArrayInputStream, outputStream);
     }
 }

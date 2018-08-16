@@ -30,7 +30,8 @@ public class TestTarGZip {
     public void compress() {
         TarGZipCompressor tarGZipCompressor = new TarGZipCompressor(true);
         try {
-            tarGZipCompressor.compress("D:\\GreenProfram\\Cygwin64\\opt", "D:\\GreenProfram\\Cygwin64\\opt.tar.gz");
+//            tarCompressor.setModifyTime(false);
+            tarGZipCompressor.compress("D:\\GreenProfram\\Cygwin64\\application", "D:\\GreenProfram\\Cygwin64\\application.tar.gz");
         } catch (Exception e) {
             e.printStackTrace();
         }

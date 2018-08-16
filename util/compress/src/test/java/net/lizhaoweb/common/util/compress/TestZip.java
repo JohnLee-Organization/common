@@ -12,6 +12,10 @@ package net.lizhaoweb.common.util.compress;
 
 import org.junit.Test;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -31,13 +35,32 @@ import java.util.concurrent.Future;
 public class TestZip {
 
     /**
-     * 压缩
+     * 压缩 - 文件
      */
     @Test
-    public void compress() {
+    public void compressForFile() {
         ZipCompressor zipCompressor = new ZipCompressor(true);
         try {
-            zipCompressor.compress("D:\\GreenProfram\\Cygwin64\\opt", "D:\\GreenProfram\\Cygwin64\\opt.zip");
+//            zipCompressor.setModifyTime(false);
+            zipCompressor.compress("D:\\GreenProfram\\Cygwin64\\application", "D:\\GreenProfram\\Cygwin64\\application.zip");
+//            zipCompressor.compress("D:\\GreenProfram\\Cygwin64\\opt", "D:\\GreenProfram\\Cygwin64\\opt.zip");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 压缩 - 流
+     */
+    @Test
+    public void compressForSteam() {
+        ZipCompressor zipCompressor = new ZipCompressor(true);
+        try {
+//            zipCompressor.setModifyTime(false);
+            InputStream inputStream = new FileInputStream("D:\\GreenProfram\\Cygwin64\\application");
+            OutputStream outputStream = new FileOutputStream("D:\\GreenProfram\\Cygwin64\\application.zip");
+            zipCompressor.compress(inputStream, outputStream);
+//            zipCompressor.compress("D:\\GreenProfram\\Cygwin64\\opt", "D:\\GreenProfram\\Cygwin64\\opt.zip");
         } catch (Exception e) {
             e.printStackTrace();
         }

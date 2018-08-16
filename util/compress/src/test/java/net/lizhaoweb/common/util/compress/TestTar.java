@@ -12,6 +12,11 @@ package net.lizhaoweb.common.util.compress;
 
 import org.junit.Test;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 /**
  * @author <a href="http://www.lizhaoweb.cn">李召(John.Lee)</a>
  * @version 1.0.0.0.1
@@ -24,14 +29,31 @@ import org.junit.Test;
 public class TestTar {
 
     /**
-     * 压缩
+     * 压缩 - 文件
      */
     @Test
-    public void compress() {
+    public void compressForFile() {
         TarCompressor tarCompressor = new TarCompressor(true);
         try {
 //            tarCompressor.setModifyTime(false);
             tarCompressor.compress("D:\\GreenProfram\\Cygwin64\\application", "D:\\GreenProfram\\Cygwin64\\application.tar");
+//            tarCompressor.compress("D:\\GreenProfram\\Cygwin64\\application\\shell\\bin", "D:\\GreenProfram\\Cygwin64\\application\\shell\\bin.tar");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 压缩 - 流
+     */
+    @Test
+    public void compressForSteam() {
+        TarCompressor tarCompressor = new TarCompressor(true);
+        try {
+//            tarCompressor.setModifyTime(false);
+            InputStream inputStream = new FileInputStream("D:\\GreenProfram\\Cygwin64\\application");
+            OutputStream outputStream = new FileOutputStream("D:\\GreenProfram\\Cygwin64\\application.tar");
+            tarCompressor.compress(inputStream, outputStream);
 //            tarCompressor.compress("D:\\GreenProfram\\Cygwin64\\application\\shell\\bin", "D:\\GreenProfram\\Cygwin64\\application\\shell\\bin.tar");
         } catch (Exception e) {
             e.printStackTrace();
