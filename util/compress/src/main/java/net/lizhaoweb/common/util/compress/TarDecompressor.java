@@ -16,11 +16,11 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.TreeMap;
 
 /**
  * <h1>解压缩器 [实现] - Tar</h1>
@@ -65,13 +65,15 @@ public class TarDecompressor extends AbstractCompressOrDecompress implements IDe
             fileInputStream = new FileInputStream(compressedFile);
             tarArchiveInputStream = new TarArchiveInputStream(fileInputStream, CACHE_SIZE);
             TarArchiveEntry tarArchiveEntry = null;
-            Map<File, Long> dirAndTime = new ConcurrentHashMap<>();
+            Map<File, Long> dirAndTime = new TreeMap<>(new Comparator<File>() {
+                @Override
+                public int compare(File file1, File file2) {
+                    return file2.compareTo(file1);
+                }
+            });
 
             while ((tarArchiveEntry = tarArchiveInputStream.getNextTarEntry()) != null) {
                 long modificationTime = tarArchiveEntry.getModTime().getTime();
-//                if (modificationTime == tarArchiveEntry.getLastModifiedDate().getTime()) {
-//                    System.out.println(tarArchiveEntry.getLastModifiedDate().getTime());
-//                }
                 File zipFileOrDir = new File(decompressedPath, tarArchiveEntry.getName());
                 if (tarArchiveEntry.isDirectory()) {
                     this.checkAndMakeDirectory(zipFileOrDir);
@@ -80,14 +82,9 @@ public class TarDecompressor extends AbstractCompressOrDecompress implements IDe
                 }
                 this.checkAndMakeDirectory(zipFileOrDir.getParentFile());
                 dirAndTime.put(zipFileOrDir.getParentFile(), modificationTime);
-                FileOutputStream fileOutputStream = null;
-                try {
-                    fileOutputStream = new FileOutputStream(zipFileOrDir);
-                    IOUtils.copy(tarArchiveInputStream, fileOutputStream, CACHE_SIZE);
-                    fileOutputStream.flush();
-                } finally {
-                    IOUtils.closeQuietly(fileOutputStream);
-                    this.modifyTime(zipFileOrDir, modificationTime);
+                this.fileDecompress(tarArchiveInputStream, zipFileOrDir, modificationTime);
+                if (zipFileOrDir.length() != tarArchiveEntry.getSize()) {
+                    System.out.println("!=!=!=");
                 }
                 this.printInformation(String.format("The file[%s] is decompressed", zipFileOrDir));
             }

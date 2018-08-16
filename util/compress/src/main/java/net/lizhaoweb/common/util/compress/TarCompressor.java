@@ -82,12 +82,6 @@ public class TarCompressor extends AbstractCompressOrDecompress implements IComp
         }
     }
 
-    // 复制数据
-    private void copyData(InputStream inputStream, TarArchiveOutputStream tarArchiveOutputStream) throws IOException {
-        IOUtils.copy(inputStream, tarArchiveOutputStream, CACHE_SIZE);
-        tarArchiveOutputStream.flush();
-    }
-
     void compress(File inputFileOrDir, OutputStream outputStream) throws IOException {
         TarArchiveOutputStream tarArchiveOutputStream = null;
         try {

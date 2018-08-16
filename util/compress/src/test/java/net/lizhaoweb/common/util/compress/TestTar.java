@@ -10,12 +10,10 @@
  */
 package net.lizhaoweb.common.util.compress;
 
+import org.junit.Before;
 import org.junit.Test;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 /**
  * @author <a href="http://www.lizhaoweb.cn">李召(John.Lee)</a>
@@ -27,17 +25,31 @@ import java.io.OutputStream;
  * Date of last commit:$Date$<br>
  */
 public class TestTar {
+    private boolean verbose;
+    private boolean modifyTime;
+
+    private String compressPath;
+    private String compressedFile;
+    private String decompressPath;
+
+    @Before
+    public void init() {
+        verbose = true;
+        modifyTime = true;
+        compressPath = "D:\\GreenProfram\\Cygwin64\\application";
+        compressedFile = "D:\\GreenProfram\\Cygwin64\\application.tar";
+        decompressPath = "D:\\GreenProfram\\Cygwin64";
+    }
 
     /**
      * 压缩 - 文件
      */
     @Test
     public void compressForFile() {
-        TarCompressor tarCompressor = new TarCompressor(true);
+        TarCompressor tarCompressor = new TarCompressor(verbose);
         try {
-//            tarCompressor.setModifyTime(false);
-            tarCompressor.compress("D:\\GreenProfram\\Cygwin64\\application", "D:\\GreenProfram\\Cygwin64\\application.tar");
-//            tarCompressor.compress("D:\\GreenProfram\\Cygwin64\\application\\shell\\bin", "D:\\GreenProfram\\Cygwin64\\application\\shell\\bin.tar");
+            tarCompressor.setModifyTime(modifyTime);
+            tarCompressor.compress(compressPath, compressedFile);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -48,13 +60,12 @@ public class TestTar {
      */
     @Test
     public void compressForSteam() {
-        TarCompressor tarCompressor = new TarCompressor(true);
+        TarCompressor tarCompressor = new TarCompressor(verbose);
         try {
-//            tarCompressor.setModifyTime(false);
-            InputStream inputStream = new FileInputStream("D:\\GreenProfram\\Cygwin64\\application");
-            OutputStream outputStream = new FileOutputStream("D:\\GreenProfram\\Cygwin64\\application.tar");
+            tarCompressor.setModifyTime(modifyTime);
+            InputStream inputStream = new FileInputStream(compressPath);
+            OutputStream outputStream = new FileOutputStream(compressedFile);
             tarCompressor.compress(inputStream, outputStream);
-//            tarCompressor.compress("D:\\GreenProfram\\Cygwin64\\application\\shell\\bin", "D:\\GreenProfram\\Cygwin64\\application\\shell\\bin.tar");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -65,13 +76,20 @@ public class TestTar {
      */
     @Test
     public void decompress() {
-        TarDecompressor tarDecompressor = new TarDecompressor(true);
+        TarDecompressor tarDecompressor = new TarDecompressor(verbose);
         try {
-//            tarDecompressor.setModifyTime(false);
-//            tarDecompressor.decompress("D:\\GreenProfram\\Cygwin64\\opt\\pip-1.5.5.tar", "D:\\GreenProfram\\Cygwin64\\opt");
-            tarDecompressor.decompress("D:\\GreenProfram\\Cygwin64\\application.tar", "D:\\GreenProfram\\Cygwin64\\application");
+            tarDecompressor.setModifyTime(modifyTime);
+            tarDecompressor.decompress(compressedFile, decompressPath);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void aaa() {
+        File file1 = new File("D:\\GreenProfram\\Cygwin64\\application");
+        File file2 = new File("D:\\GreenProfram\\Cygwin64");
+        System.out.println(file1.compareTo(file2));
+        System.out.println(file2.compareTo(file1));
     }
 }

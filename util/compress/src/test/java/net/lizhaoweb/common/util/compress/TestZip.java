@@ -10,6 +10,7 @@
  */
 package net.lizhaoweb.common.util.compress;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.FileInputStream;
@@ -33,17 +34,31 @@ import java.util.concurrent.Future;
  * Date of last commit:$Date$<br>
  */
 public class TestZip {
+    private boolean verbose;
+    private boolean modifyTime;
+
+    private String compressPath;
+    private String compressedFile;
+    private String decompressPath;
+
+    @Before
+    public void init() {
+        verbose = true;
+        modifyTime = true;
+        compressPath = "D:\\GreenProfram\\Cygwin64\\Cygwin.ico";
+        compressedFile = "D:\\GreenProfram\\Cygwin64\\Cygwin.zip";
+        decompressPath = "D:\\GreenProfram\\Cygwin64\\opt";
+    }
 
     /**
      * 压缩 - 文件
      */
     @Test
     public void compressForFile() {
-        ZipCompressor zipCompressor = new ZipCompressor(true);
+        ZipCompressor zipCompressor = new ZipCompressor(verbose);
         try {
-//            zipCompressor.setModifyTime(false);
-            zipCompressor.compress("D:\\GreenProfram\\Cygwin64\\application", "D:\\GreenProfram\\Cygwin64\\application.zip");
-//            zipCompressor.compress("D:\\GreenProfram\\Cygwin64\\opt", "D:\\GreenProfram\\Cygwin64\\opt.zip");
+            zipCompressor.setModifyTime(modifyTime);
+            zipCompressor.compress(compressPath, compressedFile);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -54,13 +69,12 @@ public class TestZip {
      */
     @Test
     public void compressForSteam() {
-        ZipCompressor zipCompressor = new ZipCompressor(true);
+        ZipCompressor zipCompressor = new ZipCompressor(verbose);
         try {
-//            zipCompressor.setModifyTime(false);
-            InputStream inputStream = new FileInputStream("D:\\GreenProfram\\Cygwin64\\application");
-            OutputStream outputStream = new FileOutputStream("D:\\GreenProfram\\Cygwin64\\application.zip");
+            zipCompressor.setModifyTime(modifyTime);
+            InputStream inputStream = new FileInputStream(compressPath);
+            OutputStream outputStream = new FileOutputStream(compressedFile);
             zipCompressor.compress(inputStream, outputStream);
-//            zipCompressor.compress("D:\\GreenProfram\\Cygwin64\\opt", "D:\\GreenProfram\\Cygwin64\\opt.zip");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -71,9 +85,10 @@ public class TestZip {
      */
     @Test
     public void decompress() {
-        final ZipDecompressor zipDecompressor = new ZipDecompressor(true);
+        final ZipDecompressor zipDecompressor = new ZipDecompressor(verbose);
         try {
-            zipDecompressor.decompress("D:\\GreenProfram\\Cygwin64\\opt\\aliyun-mns-python-sdk-1.1.4.zip", "D:\\GreenProfram\\Cygwin64\\opt");
+            zipDecompressor.setModifyTime(modifyTime);
+            zipDecompressor.decompress(compressedFile, decompressPath);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -84,7 +99,8 @@ public class TestZip {
      */
     @Test
     public void decompress_() {
-        final ZipDecompressor zipDecompressor = new ZipDecompressor(true);
+        final ZipDecompressor zipDecompressor = new ZipDecompressor(verbose);
+        zipDecompressor.setModifyTime(modifyTime);
         ExecutorService executorService = Executors.newFixedThreadPool(100);
         List<Future<Boolean>> futureList = new ArrayList<>();
 
@@ -95,7 +111,7 @@ public class TestZip {
                 public Boolean call() throws Exception {
                     try {
                         System.out.println(aaa);
-                        zipDecompressor.decompress("D:\\GreenProfram\\Cygwin64\\opt\\jvm-app-0.zip", "D:\\GreenProfram\\Cygwin64\\opt");
+                        zipDecompressor.decompress(compressedFile, decompressPath);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

@@ -29,7 +29,6 @@ import java.util.zip.ZipOutputStream;
  */
 public class ZipCompressor extends AbstractCompressOrDecompress implements ICompressor {
 
-    private int countRecursive = 1; // 定义递归次数变量
 
     /**
      * 有参构造。
@@ -86,12 +85,6 @@ public class ZipCompressor extends AbstractCompressOrDecompress implements IComp
         } finally {
             IOUtils.closeQuietly(zipOutputStream);// 输出流关闭
         }
-    }
-
-    // 复制数据
-    private void copyData(InputStream inputStream, ZipOutputStream zipOutputStream) throws IOException {
-        IOUtils.copy(inputStream, zipOutputStream, CACHE_SIZE);
-        zipOutputStream.flush();
     }
 
     class ZipEntryCallback implements IArchiveEntryCallback<ZipOutputStream> {

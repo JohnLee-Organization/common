@@ -14,12 +14,11 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 
 /**
  * <h1>压缩/解压缩工具 - 抽象</h1>
@@ -159,5 +158,22 @@ public abstract class AbstractCompressOrDecompress {
 
         // 文件处理
         callback.addArchiveFile(tarArchiveOutputStream, file, tarArchivePath);
+    }
+
+    // 复制数据
+    protected void copyData(InputStream inputStream, OutputStream outputStream) throws IOException {
+        IOUtils.copy(inputStream, outputStream, CACHE_SIZE);
+        outputStream.flush();
+    }
+
+    protected void fileDecompress(InputStream inputStream, File compressFile, long modificationTime) throws IOException {
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream(compressFile);
+            this.copyData(inputStream, fileOutputStream);
+        } finally {
+            IOUtils.closeQuietly(fileOutputStream);
+            this.modifyTime(compressFile, modificationTime);
+        }
     }
 }

@@ -14,11 +14,11 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -35,7 +35,6 @@ import java.util.zip.ZipInputStream;
  */
 public class ZipDecompressor extends AbstractCompressOrDecompress implements IDecompressor {
 
-    private static final int BLOCK_SIZE = 512;
 
     /**
      * 有参构造
@@ -66,7 +65,12 @@ public class ZipDecompressor extends AbstractCompressOrDecompress implements IDe
             fileInputStream = new FileInputStream(compressedFile);
             zipInputStream = new ZipInputStream(fileInputStream);
             ZipEntry zipEntry = null;
-            Map<File, Long> dirAndTime = new ConcurrentHashMap<>();
+            Map<File, Long> dirAndTime = new TreeMap<>(new Comparator<File>() {
+                @Override
+                public int compare(File file1, File file2) {
+                    return file2.compareTo(file1);
+                }
+            });
 
             while ((zipEntry = zipInputStream.getNextEntry()) != null) {
                 long modificationTime = zipEntry.getTime();
@@ -78,14 +82,9 @@ public class ZipDecompressor extends AbstractCompressOrDecompress implements IDe
                 }
                 this.checkAndMakeDirectory(zipFileOrDir.getParentFile());
                 dirAndTime.put(zipFileOrDir.getParentFile(), modificationTime);
-                FileOutputStream fileOutputStream = null;
-                try {
-                    fileOutputStream = new FileOutputStream(zipFileOrDir);
-                    IOUtils.copy(zipInputStream, fileOutputStream, BLOCK_SIZE);
-                    fileOutputStream.flush();
-                } finally {
-                    IOUtils.closeQuietly(fileOutputStream);
-                    this.modifyTime(zipFileOrDir, modificationTime);
+                this.fileDecompress(zipInputStream, zipFileOrDir, modificationTime);
+                if (zipFileOrDir.length() != zipEntry.getSize()) {
+                    System.out.println("!=!=!=");
                 }
                 this.printInformation(String.format("The file[%s] is decompressed", zipFileOrDir));
             }
