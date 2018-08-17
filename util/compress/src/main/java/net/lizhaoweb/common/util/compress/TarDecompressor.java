@@ -39,7 +39,7 @@ public class TarDecompressor extends AbstractCompressOrDecompress implements IDe
     /**
      * 有参构造
      *
-     * @param verbose
+     * @param verbose 是否打印信息
      */
     public TarDecompressor(boolean verbose) {
         super(verbose);

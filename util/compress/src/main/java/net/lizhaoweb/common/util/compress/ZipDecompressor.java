@@ -39,7 +39,7 @@ public class ZipDecompressor extends AbstractCompressOrDecompress implements IDe
     /**
      * 有参构造
      *
-     * @param verbose
+     * @param verbose 是否打印信息
      */
     public ZipDecompressor(boolean verbose) {
         super(verbose);
@@ -61,10 +61,11 @@ public class ZipDecompressor extends AbstractCompressOrDecompress implements IDe
         FileInputStream fileInputStream = null;
         ZipInputStream zipInputStream = null;
         try {
+            ZipEntry zipEntry;
+
             this.checkAndMakeDirectory(decompressedPath);
             fileInputStream = new FileInputStream(compressedFile);
             zipInputStream = new ZipInputStream(fileInputStream);
-            ZipEntry zipEntry = null;
             Map<File, Long> dirAndTime = new TreeMap<>(new Comparator<File>() {
                 @Override
                 public int compare(File file1, File file2) {

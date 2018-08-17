@@ -33,7 +33,7 @@ public class TarCompressor extends AbstractCompressOrDecompress implements IComp
     /**
      * 有参构造
      *
-     * @param verbose
+     * @param verbose 是否打印信息
      */
     public TarCompressor(boolean verbose) {
         super(verbose);
@@ -99,7 +99,7 @@ public class TarCompressor extends AbstractCompressOrDecompress implements IComp
     /**
      * 内部类 - 压缩回调
      */
-    class TarArchiveEntryCallback implements IArchiveEntryCallback<TarArchiveOutputStream> {
+    private class TarArchiveEntryCallback implements IArchiveEntryCallback<TarArchiveOutputStream> {
 
         // 文件归档
         @Override

@@ -10,11 +10,12 @@
  */
 package net.lizhaoweb.common.util.compress;
 
-import org.apache.commons.io.IOUtils;
+import org.hyperic.sigar.FileSystem;
+import org.hyperic.sigar.Sigar;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.FileInputStream;
+import java.io.File;
 
 /**
  * @author <a href="http://www.lizhaoweb.cn">李召(John.Lee)</a>
@@ -37,9 +38,9 @@ public class TestGZip {
     public void init() {
         verbose = true;
         modifyTime = true;
-        compressPath = "D:\\GreenProfram\\Cygwin64\\Cygwin.ico";
-        compressedFile = "D:\\GreenProfram\\Cygwin64\\Cygwin.gz";
-        decompressPath = "D:\\GreenProfram\\Cygwin64\\opt";
+        compressPath = "D:\\GreenProfram\\Cygwin64\\opt\\20171215113835_021_2089.csv";
+        compressedFile = "D:\\GreenProfram\\Cygwin64\\opt\\20171215113835_021_2089.csv.gz";
+        decompressPath = "D:\\GreenProfram\\Cygwin64\\opt\\gzip";
     }
 
     /**
@@ -77,10 +78,39 @@ public class TestGZip {
     public void aaa() {
         try {
             String fileName = "F:\\TEst\\1970110017_010_5105.csv.gz";
-            FileInputStream fileInputStream = new FileInputStream(fileName);
-            byte[] byteArray = IOUtils.toByteArray(fileInputStream);
-            String aaaa = new String(byteArray);
-            System.out.println(aaaa);
+            File file = new File(fileName);
+//            FileInputStream fileInputStream = new FileInputStream(file);
+//            byte[] byteArray = IOUtils.toByteArray(fileInputStream);
+//            String aaaa = new String(byteArray);
+//            System.out.println(aaaa);
+//            System.out.println("\n\n\n");
+
+//            // 操作系统属性
+//            Properties systemProperties = System.getProperties();
+//            Set<Map.Entry<Object, Object>> entrySet = systemProperties.entrySet();
+//            Iterator<Map.Entry<Object, Object>> entryIterator = entrySet.iterator();
+//            while (entryIterator.hasNext()) {
+//                Map.Entry<Object, Object> entry = entryIterator.next();
+//                System.out.println(entry.getKey() + "=" + entry.getValue());
+//            }
+//            System.out.println("\n\n\n");
+
+//            System.out.println(file.getName() + ":" + Files.probeContentType(Paths.get(file.toURI())));
+
+
+            Sigar sigar = new Sigar();
+            FileSystem fslist[] = sigar.getFileSystemList();
+            FileSystem fs = fslist[2];
+            System.out.println("盘符类型:"+ fs.getSysTypeName());
+            System.out.println("盘符类型名:"+ fs.getTypeName());
+            System.out.println("盘符文件系统类型:"+ fs.getType());
+            System.out.println(fs.getDevName());
+            System.out.println(fs.getDirName());
+            System.out.println(fs.toMap());
+
+            System.out.println(sigar.getFileInfo(fileName));
+//            sigar.getMountedFileSystemUsage(fileName).
+//            sigar.getDiskUsage(fileName).
         } catch (Exception e) {
             e.printStackTrace();
         }

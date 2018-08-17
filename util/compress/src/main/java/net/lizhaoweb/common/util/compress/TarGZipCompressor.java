@@ -26,18 +26,18 @@ import java.io.*;
 public class TarGZipCompressor extends AbstractCompressOrDecompress implements ICompressor {
 
     private boolean verbose;
-    private String userHome;
+    //    private String userHome;
     private String osTempDir;
 
     /**
      * 有参构造
      *
-     * @param verbose
+     * @param verbose 是否打印信息
      */
     public TarGZipCompressor(boolean verbose) {
         super(verbose);
         this.verbose = verbose;
-        this.userHome = System.getProperties().getProperty("user.home");
+//        this.userHome = System.getProperties().getProperty("user.home");
         this.osTempDir = System.getProperty("java.io.tmpdir");
     }
 

@@ -87,7 +87,11 @@ public class ZipCompressor extends AbstractCompressOrDecompress implements IComp
         }
     }
 
-    class ZipEntryCallback implements IArchiveEntryCallback<ZipOutputStream> {
+
+    /**
+     * 内部类 - 压缩回调
+     */
+    private class ZipEntryCallback implements IArchiveEntryCallback<ZipOutputStream> {
 
         // 文件归档
         @Override

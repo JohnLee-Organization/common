@@ -15,6 +15,9 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.io.IOUtils;
+import org.hyperic.sigar.FileSystem;
+import org.hyperic.sigar.Sigar;
+import org.hyperic.sigar.SigarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +40,8 @@ public abstract class AbstractCompressOrDecompress {
     protected static final int CACHE_SIZE = 1024 * 4;
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    protected Sigar sigar = new Sigar();
 
     @NonNull
     private boolean verbose;
@@ -166,6 +171,7 @@ public abstract class AbstractCompressOrDecompress {
         outputStream.flush();
     }
 
+    // 文件解压
     protected void fileDecompress(InputStream inputStream, File compressFile, long modificationTime) throws IOException {
         FileOutputStream fileOutputStream = null;
         try {
@@ -175,5 +181,17 @@ public abstract class AbstractCompressOrDecompress {
             IOUtils.closeQuietly(fileOutputStream);
             this.modifyTime(compressFile, modificationTime);
         }
+    }
+
+    // 获取文件所在分区的文件系统类型
+    protected String getSysTypeName(File file) throws SigarException, IOException {
+        String fileName = file.getCanonicalPath();
+        FileSystem[] fsList = sigar.getFileSystemList();
+        for (FileSystem fs : fsList) {
+            if (fileName.startsWith(fs.getDirName())) {
+                return fs.getSysTypeName();
+            }
+        }
+        return null;
     }
 }
