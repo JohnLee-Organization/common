@@ -11,8 +11,6 @@
 package net.lizhaoweb.common.util.compress;
 
 import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.io.IOUtils;
 import org.hyperic.sigar.FileSystem;
@@ -34,16 +32,16 @@ import java.io.*;
  * Author of last commit:$Author$<br>
  * Date of last commit:$Date$<br>
  */
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public abstract class AbstractCompressOrDecompress {
 
     protected static final int CACHE_SIZE = 1024 * 4;
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    protected Sigar sigar = new Sigar();
+    protected Sigar sigar;
 
-    @NonNull
+    //    @NonNull
     private boolean verbose;
 
     /**
@@ -52,6 +50,21 @@ public abstract class AbstractCompressOrDecompress {
     @Setter
     @Getter
     private boolean modifyTime = true;
+
+    public AbstractCompressOrDecompress() {
+        try {
+            sigar = new Sigar();
+        } catch (Error e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public AbstractCompressOrDecompress(boolean verbose) {
+        this();
+        this.verbose = verbose;
+    }
 
     // 打印信息
     protected void printInformation(String message) {
@@ -184,7 +197,11 @@ public abstract class AbstractCompressOrDecompress {
     }
 
     // 获取文件所在分区的文件系统类型
-    protected String getSysTypeName(File file) throws SigarException, IOException {
+    protected String getSysTypeName(File file) throws IOException, SigarException {
+        if (sigar == null || sigar.getNativeLibrary() == null) {
+            return null;
+        }
+//        try {
         String fileName = file.getCanonicalPath();
         FileSystem[] fsList = sigar.getFileSystemList();
         for (FileSystem fs : fsList) {
@@ -192,6 +209,9 @@ public abstract class AbstractCompressOrDecompress {
                 return fs.getSysTypeName();
             }
         }
+//        } catch (UnsatisfiedLinkError e) {
+//            e.printStackTrace();
+//        }
         return null;
     }
 }

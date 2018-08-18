@@ -15,9 +15,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipParameters;
+import org.apache.commons.compress.compressors.gzip.GzipUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * <h1>压缩器 [实现] - GZip</h1>
@@ -31,6 +33,7 @@ import java.io.*;
  * Date of last commit:$Date$<br>
  */
 public class GZipCompressor extends AbstractCompressOrDecompress implements ICompressor {
+
 
     /**
      * 有参构造
@@ -46,7 +49,7 @@ public class GZipCompressor extends AbstractCompressOrDecompress implements ICom
      */
     @Override
     public void compress(String inputFileOrDir, String compressedFile) throws IOException {
-        this.compress(new File(inputFileOrDir), new File(compressedFile));
+        this.compress(new File(inputFileOrDir), compressedFile == null ? null : new File(compressedFile));
     }
 
     /**
@@ -57,6 +60,14 @@ public class GZipCompressor extends AbstractCompressOrDecompress implements ICom
         FileInputStream fileInputStream = null;
         FileOutputStream fileOutputStream = null;
         try {
+            if (compressedFile == null) {
+                String compressedFileName = GzipUtils.getCompressedFilename(inputFileOrDir.getCanonicalPath());
+                compressedFile = new File(compressedFileName);
+            }
+            if (!GzipUtils.isCompressedFilename(compressedFile.getName())) {
+                String exceptionMessage = String.format("The package name[%s] to be compressed is illegal", compressedFile.getAbsolutePath());
+                throw new IllegalArgumentException(exceptionMessage);
+            }
             this.printInformation(String.format("The file[%s] for gzip is compressing ...", compressedFile));
             fileInputStream = new FileInputStream(inputFileOrDir);
             fileOutputStream = new FileOutputStream(compressedFile);
@@ -114,6 +125,8 @@ public class GZipCompressor extends AbstractCompressOrDecompress implements ICom
         try {
             String sysTypeName = this.getSysTypeName(file);
             return GZipOperatingSystem.fromName(sysTypeName).getFlag();
+//        } catch (InvocationTargetException ite) {
+//            return GZipOperatingSystem.UNKNOWN.getFlag();
         } catch (Exception e) {
             return GZipOperatingSystem.UNKNOWN.getFlag();
         }

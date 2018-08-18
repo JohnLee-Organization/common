@@ -51,7 +51,8 @@ public class TestGZip {
         GZipCompressor gZipCompressor = new GZipCompressor(verbose);
         try {
             gZipCompressor.setModifyTime(modifyTime);
-            gZipCompressor.compress(compressPath, compressedFile);
+            gZipCompressor.compress(compressPath, null);
+//            gZipCompressor.compress(compressPath, compressedFile+".bz");
         } catch (Exception e) {
             e.printStackTrace();
         }
