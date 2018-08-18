@@ -57,14 +57,14 @@ public class TarDecompressor extends AbstractCompressOrDecompress implements IDe
      */
     public void decompress(File compressedFile, File decompressedPath) throws IOException {
         this.checkCompressionPackForDecompressor(compressedFile, "compressedFile");
-        this.checkTargetDirectoryForDecompressor(decompressedPath, "decompressedPath");
+//        this.checkTargetDirectoryForDecompressor(decompressedPath, "decompressedPath");
         FileInputStream fileInputStream = null;
         TarArchiveInputStream tarArchiveInputStream = null;
+        TarArchiveEntry tarArchiveEntry;
         try {
             this.checkAndMakeDirectory(decompressedPath);
             fileInputStream = new FileInputStream(compressedFile);
             tarArchiveInputStream = new TarArchiveInputStream(fileInputStream, CACHE_SIZE);
-            TarArchiveEntry tarArchiveEntry = null;
             Map<File, Long> dirAndTime = new TreeMap<>(new Comparator<File>() {
                 @Override
                 public int compare(File file1, File file2) {
@@ -72,22 +72,23 @@ public class TarDecompressor extends AbstractCompressOrDecompress implements IDe
                 }
             });
 
-            while ((tarArchiveEntry = tarArchiveInputStream.getNextTarEntry()) != null) {
-                long modificationTime = tarArchiveEntry.getModTime().getTime();
-                File zipFileOrDir = new File(decompressedPath, tarArchiveEntry.getName());
-                if (tarArchiveEntry.isDirectory()) {
-                    this.checkAndMakeDirectory(zipFileOrDir);
-                    dirAndTime.put(zipFileOrDir, modificationTime);
-                    continue;
-                }
-                this.checkAndMakeDirectory(zipFileOrDir.getParentFile());
-                dirAndTime.put(zipFileOrDir.getParentFile(), modificationTime);
-                this.fileDecompress(tarArchiveInputStream, zipFileOrDir, modificationTime);
-                if (zipFileOrDir.length() != tarArchiveEntry.getSize()) {
-                    System.out.println("!=!=!=");
-                }
-                this.printInformation(String.format("The file[%s] is decompressed", zipFileOrDir));
-            }
+//            while ((tarArchiveEntry = tarArchiveInputStream.getNextTarEntry()) != null) {
+//                long modificationTime = tarArchiveEntry.getModTime().getTime();
+//                File zipFileOrDir = new File(decompressedPath, tarArchiveEntry.getName());
+//                if (tarArchiveEntry.isDirectory()) {
+//                    this.checkAndMakeDirectory(zipFileOrDir);
+//                    dirAndTime.put(zipFileOrDir, modificationTime);
+//                    continue;
+//                }
+//                this.checkAndMakeDirectory(zipFileOrDir.getParentFile());
+//                dirAndTime.put(zipFileOrDir.getParentFile(), modificationTime);
+//                this.fileDecompress(tarArchiveInputStream, zipFileOrDir, modificationTime);
+////                if (zipFileOrDir.length() != tarArchiveEntry.getSize()) {
+////                    System.out.println("!=!=!=");
+////                }
+//                this.printInformation(String.format("The file[%s] is decompressed", zipFileOrDir));
+//            }
+            archiveEntryOperator.archiveEntryDecompress(decompressedPath, tarArchiveInputStream, dirAndTime);
 
             if (this.isModifyTime()) {
                 Set<Map.Entry<File, Long>> dirAndTimeEntrySet = dirAndTime.entrySet();
@@ -95,9 +96,6 @@ public class TarDecompressor extends AbstractCompressOrDecompress implements IDe
                     this.modifyTime(dirAndTimeEntry.getKey(), dirAndTimeEntry.getValue());
                 }
             }
-        } catch (Exception e) {
-            String errorMessage = String.format("An exception occurs when the file[%s] is decompressing.: %s", compressedFile, e.getMessage());
-            throw new IllegalStateException(errorMessage, e);
         } finally {
             IOUtils.closeQuietly(tarArchiveInputStream);
             IOUtils.closeQuietly(fileInputStream);

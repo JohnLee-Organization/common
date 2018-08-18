@@ -12,6 +12,7 @@ package net.lizhaoweb.common.util.compress;
 
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipParameters;
+import org.apache.commons.compress.compressors.gzip.GzipUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -48,7 +49,7 @@ public class GZipDecompressor extends AbstractCompressOrDecompress implements ID
      * {@inheritDoc}
      */
     public void decompress(String compressedFile, String decompressedPath) throws IOException {
-        this.decompress(new File(compressedFile), new File(decompressedPath));
+        this.decompress(new File(compressedFile), decompressedPath == null ? null : new File(decompressedPath));
     }
 
     /**
@@ -56,21 +57,30 @@ public class GZipDecompressor extends AbstractCompressOrDecompress implements ID
      */
     public void decompress(File compressedFile, File decompressedPath) throws IOException {
         this.checkCompressionPackForDecompressor(compressedFile, "compressedFile");
-        this.checkTargetDirectoryForDecompressor(decompressedPath, "decompressedPath");
-        try {
-            String gzipFileName = compressedFile.getName();
-            String fileName = gzipFileName.substring(0, gzipFileName.lastIndexOf('.'));
-            File file = new File(decompressedPath, fileName);
+//        this.checkTargetDirectoryForDecompressor(decompressedPath, "decompressedPath");
 
-            this.decompressFile(compressedFile, file);
-        } catch (Exception e) {
-            String errorMessage = String.format("An exception occurs when the file[%s] is decompressing.: %s", compressedFile, e.getMessage());
-            throw new IllegalStateException(errorMessage, e);
+        if (!GzipUtils.isCompressedFilename(compressedFile.getName())) {
+            String exceptionMessage = String.format("The package name[%s] to be decompressed is illegal", compressedFile.getAbsolutePath());
+            throw new IllegalArgumentException(exceptionMessage);
         }
+        File decompressedFile = null;
+        if (decompressedPath == null) {
+            String decompressedFileName = GzipUtils.getUncompressedFilename(compressedFile.getCanonicalPath());
+            decompressedFile = new File(decompressedFileName);
+        } else if (decompressedPath.isDirectory()) {
+            String decompressedFileSimpleName = GzipUtils.getUncompressedFilename(compressedFile.getName());
+            decompressedFile = new File(decompressedPath, decompressedFileSimpleName);
+        } else {
+            decompressedFile = decompressedPath;
+        }
+        this.checkAndMakeDirectory(decompressedFile.getParentFile());
+
+        this.decompressFile(compressedFile, decompressedFile);
+
         this.printInformation(String.format("The file[%s] has been unpacked to the file[%s]", compressedFile, decompressedPath));
     }
 
-    void decompressFile(File compressedFile, File tarFile) throws IOException {
+    private void decompressFile(File compressedFile, File decompressedFile) throws IOException {
         this.checkCompressionPackForDecompressor(compressedFile, "compressedFile");
         GzipParameters gzipParameters = null;
         FileInputStream fileInputStream = null;
@@ -79,7 +89,7 @@ public class GZipDecompressor extends AbstractCompressOrDecompress implements ID
         try {
             fileInputStream = new FileInputStream(compressedFile);
             gzipInputStream = new GzipCompressorInputStream(fileInputStream, true);
-            fileOutputStream = new FileOutputStream(tarFile);
+            fileOutputStream = new FileOutputStream(decompressedFile);
 
             gzipParameters = gzipInputStream.getMetaData();
             IOUtils.copy(gzipInputStream, fileOutputStream, CACHE_SIZE);
@@ -92,13 +102,13 @@ public class GZipDecompressor extends AbstractCompressOrDecompress implements ID
 
         // 设置文件属性
         if (gzipParameters != null) {
-            if (StringUtils.isNotBlank(gzipParameters.getFilename())) {
-                FileUtils.moveFile(tarFile, new File(tarFile.getParentFile(), gzipParameters.getFilename()));
+            if (StringUtils.isNotBlank(gzipParameters.getFilename()) && !gzipParameters.getFilename().equals(decompressedFile.getName())) {
+                FileUtils.moveFile(decompressedFile, new File(decompressedFile.getParentFile(), gzipParameters.getFilename()));
             }
-            this.modifyTime(tarFile, gzipParameters.getModificationTime());
+            this.modifyTime(decompressedFile, gzipParameters.getModificationTime());
         }
 
-        this.printInformation(String.format("The file[%s] has been unpacked to the file[%s]", compressedFile, tarFile));
+        this.printInformation(String.format("The file[%s] has been unpacked to the file[%s]", compressedFile, decompressedFile));
     }
 
 //    void decompressFile(File compressedFile, File tarFile) throws IOException {

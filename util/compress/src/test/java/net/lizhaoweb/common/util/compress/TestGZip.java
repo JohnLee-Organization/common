@@ -53,6 +53,7 @@ public class TestGZip {
             gZipCompressor.setModifyTime(modifyTime);
             gZipCompressor.compress(compressPath, null);
 //            gZipCompressor.compress(compressPath, compressedFile+".bz");
+//            gZipCompressor.compress(compressPath, compressedFile);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -66,7 +67,9 @@ public class TestGZip {
         GZipDecompressor gZipDecompressor = new GZipDecompressor(verbose);
         try {
             gZipDecompressor.setModifyTime(modifyTime);
-            gZipDecompressor.decompress(compressedFile, decompressPath);
+//            gZipDecompressor.decompress(compressedFile + ".bz", decompressPath);
+            gZipDecompressor.decompress(compressedFile, null);
+//            gZipDecompressor.decompress(compressedFile, decompressPath);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -102,9 +105,9 @@ public class TestGZip {
             Sigar sigar = new Sigar();
             FileSystem fslist[] = sigar.getFileSystemList();
             FileSystem fs = fslist[2];
-            System.out.println("盘符类型:"+ fs.getSysTypeName());
-            System.out.println("盘符类型名:"+ fs.getTypeName());
-            System.out.println("盘符文件系统类型:"+ fs.getType());
+            System.out.println("盘符类型:" + fs.getSysTypeName());
+            System.out.println("盘符类型名:" + fs.getTypeName());
+            System.out.println("盘符文件系统类型:" + fs.getType());
             System.out.println(fs.getDevName());
             System.out.println(fs.getDirName());
             System.out.println(fs.toMap());

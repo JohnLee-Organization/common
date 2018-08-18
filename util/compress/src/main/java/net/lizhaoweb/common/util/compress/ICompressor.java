@@ -12,8 +12,6 @@ package net.lizhaoweb.common.util.compress;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 /**
  * <h1>压缩器 [接口]</h1>
@@ -46,12 +44,12 @@ public interface ICompressor {
      */
     void compress(File inputFileOrDir, File compressedFile) throws IOException;
 
-    /**
-     * 数据压缩
-     *
-     * @param inputStream  输入流
-     * @param outputStream 输出流
-     * @throws IOException 输入输出异常
-     */
-    void compress(InputStream inputStream, OutputStream outputStream) throws IOException;
+//    /**
+//     * 数据压缩
+//     *
+//     * @param inputStream  输入流
+//     * @param outputStream 输出流
+//     * @throws IOException 输入输出异常
+//     */
+//    void compress(InputStream inputStream, OutputStream outputStream) throws IOException;
 }

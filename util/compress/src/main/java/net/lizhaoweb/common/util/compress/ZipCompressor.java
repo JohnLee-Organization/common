@@ -10,11 +10,15 @@
  */
 package net.lizhaoweb.common.util.compress;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.io.IOUtils;
 
-import java.io.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * <h1>压缩器 [实现] - Zip</h1>
@@ -53,78 +57,54 @@ public class ZipCompressor extends AbstractCompressOrDecompress implements IComp
     @Override
     public void compress(File inputFileOrDir, File compressedFile) throws IOException {
         FileOutputStream fileOutputStream = null;
-        ZipOutputStream zipOutputStream = null;
+        ZipArchiveOutputStream zipArchiveOutputStream = null;
         try {
             this.printInformation(String.format("The file[%s] for zip is compressing ...", compressedFile));
             fileOutputStream = new FileOutputStream(compressedFile);
-            zipOutputStream = new ZipOutputStream(fileOutputStream);
-            this.recursionCompress(new ZipEntryCallback(), zipOutputStream, inputFileOrDir, inputFileOrDir.getName());
+            zipArchiveOutputStream = new ZipArchiveOutputStream(fileOutputStream);
+            archiveEntryOperator.recursionCompress(new ZipArchiveEntryCallback(this), zipArchiveOutputStream, inputFileOrDir, inputFileOrDir.getName());
 //            zipOutputStream.closeEntry();
-            zipOutputStream.flush();
-            zipOutputStream.finish();
+            zipArchiveOutputStream.flush();
+            zipArchiveOutputStream.finish();
         } catch (Exception e) {
             String errorMessage = String.format("An exception occurs when the file[%s] is compressing.: %s", compressedFile, e.getMessage());
             throw new IllegalStateException(errorMessage, e);
         } finally {
-            IOUtils.closeQuietly(zipOutputStream);// 输出流关闭
+            IOUtils.closeQuietly(zipArchiveOutputStream);// 输出流关闭
             IOUtils.closeQuietly(fileOutputStream);// 输出流关闭
         }
         this.printInformation(String.format("The file[%s] for zip is compressed", compressedFile));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+//    /**
+//     * {@inheritDoc}
+//     */
+//    @Override
+//    public void compress(InputStream inputStream, OutputStream outputStream) throws IOException {
+//        ZipOutputStream zipOutputStream = null;
+//        try {
+//            zipOutputStream = new ZipOutputStream(outputStream);
+//            this.copyData(inputStream, zipOutputStream);
+//            zipOutputStream.finish();
+//        } finally {
+//            IOUtils.closeQuietly(zipOutputStream);// 输出流关闭
+//        }
+//    }
+}
+
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
+class ZipArchiveEntryCallback implements IArchiveEntryCallback<ZipArchiveOutputStream> {
+
+    private AbstractCompressOrDecompress compressor;
+
+    // 创建归档实体，并加入到输出流中
     @Override
-    public void compress(InputStream inputStream, OutputStream outputStream) throws IOException {
-        ZipOutputStream zipOutputStream = null;
-        try {
-            zipOutputStream = new ZipOutputStream(outputStream);
-            this.copyData(inputStream, zipOutputStream);
-            zipOutputStream.finish();
-        } finally {
-            IOUtils.closeQuietly(zipOutputStream);// 输出流关闭
+    public void addArchiveEntry(ZipArchiveOutputStream archiveOutputStream, File srcFile, String archiveName) throws IOException {
+        ZipArchiveEntry zipArchiveEntry = new ZipArchiveEntry(archiveName);
+        zipArchiveEntry.setSize(srcFile.length());
+        if (compressor.isModifyTime()) {
+            zipArchiveEntry.setTime(srcFile.lastModified());
         }
-    }
-
-
-    /**
-     * 内部类 - 压缩回调
-     */
-    private class ZipEntryCallback implements IArchiveEntryCallback<ZipOutputStream> {
-
-        // 文件归档
-        @Override
-        public void addArchiveFile(ZipOutputStream archiveOutputStream, File srcFile, String archiveName) throws IOException {
-            FileInputStream fileInputStream = null;
-            try {
-                this.addArchiveEntry(archiveOutputStream, srcFile, archiveName);
-                printInformation(archiveName);
-                fileInputStream = new FileInputStream(srcFile);
-                copyData(fileInputStream, archiveOutputStream);
-                archiveOutputStream.closeEntry();
-            } finally {
-                IOUtils.closeQuietly(fileInputStream);// 输入流关闭
-            }
-        }
-
-        // 目录归档
-        @Override
-        public void addArchiveDirectory(ZipOutputStream archiveOutputStream, File srcFile, String archiveName) throws IOException {
-            this.addArchiveEntry(archiveOutputStream, srcFile, archiveName);
-            printInformation(archiveName);
-            archiveOutputStream.closeEntry();
-        }
-
-        // 创建归档实体，并加入到输出流中
-        @Override
-        public void addArchiveEntry(ZipOutputStream archiveOutputStream, File srcFile, String archiveName) throws IOException {
-            ZipEntry zipEntry = new ZipEntry(archiveName);
-            zipEntry.setSize(srcFile.length());
-            if (isModifyTime()) {
-                zipEntry.setTime(srcFile.lastModified());
-            }
-            archiveOutputStream.putNextEntry(zipEntry);
-        }
+        archiveOutputStream.putArchiveEntry(zipArchiveEntry);
     }
 }

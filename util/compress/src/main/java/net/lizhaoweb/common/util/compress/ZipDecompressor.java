@@ -10,6 +10,7 @@
  */
 package net.lizhaoweb.common.util.compress;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
@@ -20,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 /**
  * <h1>解压缩器 [实现] - Zip</h1>
@@ -57,15 +57,14 @@ public class ZipDecompressor extends AbstractCompressOrDecompress implements IDe
      */
     public void decompress(File compressedFile, File decompressedPath) throws IOException {
         this.checkCompressionPackForDecompressor(compressedFile, "compressedFile");
-        this.checkTargetDirectoryForDecompressor(decompressedPath, "decompressedPath");
+//        this.checkTargetDirectoryForDecompressor(decompressedPath, "decompressedPath");
         FileInputStream fileInputStream = null;
-        ZipInputStream zipInputStream = null;
+        ZipArchiveInputStream zipInputStream = null;
+        ZipEntry zipEntry;
         try {
-            ZipEntry zipEntry;
-
             this.checkAndMakeDirectory(decompressedPath);
             fileInputStream = new FileInputStream(compressedFile);
-            zipInputStream = new ZipInputStream(fileInputStream);
+            zipInputStream = new ZipArchiveInputStream(fileInputStream);
             Map<File, Long> dirAndTime = new TreeMap<>(new Comparator<File>() {
                 @Override
                 public int compare(File file1, File file2) {
@@ -73,22 +72,7 @@ public class ZipDecompressor extends AbstractCompressOrDecompress implements IDe
                 }
             });
 
-            while ((zipEntry = zipInputStream.getNextEntry()) != null) {
-                long modificationTime = zipEntry.getTime();
-                File zipFileOrDir = new File(decompressedPath, zipEntry.getName());
-                if (zipEntry.isDirectory()) {
-                    this.checkAndMakeDirectory(zipFileOrDir);
-                    dirAndTime.put(zipFileOrDir, modificationTime);
-                    continue;
-                }
-                this.checkAndMakeDirectory(zipFileOrDir.getParentFile());
-                dirAndTime.put(zipFileOrDir.getParentFile(), modificationTime);
-                this.fileDecompress(zipInputStream, zipFileOrDir, modificationTime);
-                if (zipFileOrDir.length() != zipEntry.getSize()) {
-                    System.out.println("!=!=!=");
-                }
-                this.printInformation(String.format("The file[%s] is decompressed", zipFileOrDir));
-            }
+            archiveEntryOperator.archiveEntryDecompress(decompressedPath, zipInputStream, dirAndTime);
 
             if (this.isModifyTime()) {
                 Set<Map.Entry<File, Long>> dirAndTimeEntrySet = dirAndTime.entrySet();
@@ -96,9 +80,6 @@ public class ZipDecompressor extends AbstractCompressOrDecompress implements IDe
                     this.modifyTime(dirAndTimeEntry.getKey(), dirAndTimeEntry.getValue());
                 }
             }
-        } catch (Exception e) {
-            String errorMessage = String.format("An exception occurs when the file[%s] is decompressing.FileInputStream=%s ZipInputStream=%s: %s", compressedFile, fileInputStream, zipInputStream, e.getMessage());
-            throw new IllegalStateException(errorMessage, e);
         } finally {
             IOUtils.closeQuietly(zipInputStream);
             IOUtils.closeQuietly(fileInputStream);

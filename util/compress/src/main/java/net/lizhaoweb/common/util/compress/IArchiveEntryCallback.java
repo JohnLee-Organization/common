@@ -10,9 +10,10 @@
  */
 package net.lizhaoweb.common.util.compress;
 
+import org.apache.commons.compress.archivers.ArchiveOutputStream;
+
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 
 /**
  * <h1>回调 - 归档实体</h1>
@@ -25,11 +26,7 @@ import java.io.OutputStream;
  * Author of last commit:$Author$<br>
  * Date of last commit:$Date$<br>
  */
-public interface IArchiveEntryCallback<OS extends OutputStream> {
-
-    void addArchiveFile(OS archiveOutputStream, File srcFile, String archiveName) throws IOException;
-
-    void addArchiveDirectory(OS archiveOutputStream, File srcFile, String archiveName) throws IOException;
+public interface IArchiveEntryCallback<OS extends ArchiveOutputStream> {
 
     void addArchiveEntry(OS archiveOutputStream, File srcFile, String archiveName) throws IOException;
 }

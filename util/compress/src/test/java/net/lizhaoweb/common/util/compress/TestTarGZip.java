@@ -37,8 +37,8 @@ public class TestTarGZip {
 //        compressPath = "D:\\GreenProfram\\Cygwin64\\application";
 //        compressedFile = "D:\\GreenProfram\\Cygwin64\\application.tar.gz";
 //        decompressPath = "D:\\GreenProfram\\Cygwin64";
-        compressPath = "D:\\GreenProfram\\Cygwin64\\Cygwin.ico";
-        compressedFile = "D:\\GreenProfram\\Cygwin64\\Cygwin.tar.gz";
+        compressPath = "D:\\GreenProfram\\Cygwin64\\soft\\make-4.1";
+        compressedFile = "D:\\GreenProfram\\Cygwin64\\soft\\make-4.1.tar.gz";
         decompressPath = "D:\\GreenProfram\\Cygwin64\\opt";
     }
 

@@ -10,11 +10,16 @@
  */
 package net.lizhaoweb.common.util.compress;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.io.IOUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * <h1>压缩器 [实现] - Tar</h1>
@@ -55,10 +60,11 @@ public class TarCompressor extends AbstractCompressOrDecompress implements IComp
         FileOutputStream fileOutputStream = null;
         TarArchiveOutputStream tarArchiveOutputStream = null;
         try {
+//            TarUtils.
             this.printInformation(String.format("The file[%s] for tar is compressing ...", compressedFile));
             fileOutputStream = new FileOutputStream(compressedFile);
             tarArchiveOutputStream = new TarArchiveOutputStream(fileOutputStream, CACHE_SIZE);
-            this.recursionCompress(new TarArchiveEntryCallback(), tarArchiveOutputStream, inputFileOrDir, inputFileOrDir.getName());
+            archiveEntryOperator.recursionCompress(new TarArchiveEntryCallback(this), tarArchiveOutputStream, inputFileOrDir, inputFileOrDir.getName());
 //            tarArchiveOutputStream.closeEntry();
             tarArchiveOutputStream.flush();
             tarArchiveOutputStream.finish();
@@ -69,70 +75,69 @@ public class TarCompressor extends AbstractCompressOrDecompress implements IComp
         this.printInformation(String.format("The file[%s] for tar is compressed", compressedFile));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+//    /**
+//     * {@inheritDoc}
+//     */
+//    @Override
+//    public void compress(InputStream inputStream, OutputStream outputStream) throws IOException {
+//        TarArchiveOutputStream tarArchiveOutputStream = null;
+//        try {
+//            tarArchiveOutputStream = new TarArchiveOutputStream(outputStream, CACHE_SIZE);
+//            this.copyData(inputStream, tarArchiveOutputStream);
+//            tarArchiveOutputStream.finish();
+//        } finally {
+//            IOUtils.closeQuietly(tarArchiveOutputStream);// 输出流关闭
+//        }
+//    }
+
+//    void compress(File inputFileOrDir, OutputStream outputStream) throws IOException {
+//        TarArchiveOutputStream tarArchiveOutputStream = null;
+//        try {
+//            tarArchiveOutputStream = new TarArchiveOutputStream(outputStream, CACHE_SIZE);
+//            this.recursionCompress(new TarArchiveEntryCallback(this), tarArchiveOutputStream, inputFileOrDir, inputFileOrDir.getName());
+//            tarArchiveOutputStream.finish();
+//        } finally {
+//            IOUtils.closeQuietly(tarArchiveOutputStream);// 输出流关闭
+//        }
+//    }
+}
+
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
+class TarArchiveEntryCallback implements IArchiveEntryCallback<TarArchiveOutputStream> {
+
+    private AbstractCompressOrDecompress compressor;
+
+//    // 文件归档
+//    @Override
+//    public void addArchiveFile(TarArchiveOutputStream archiveOutputStream, File srcFile, String archiveName) throws IOException {
+//        FileInputStream fileInputStream = null;
+//        try {
+//            this.addArchiveEntry(archiveOutputStream, srcFile, archiveName);
+//            compressor.printInformation(archiveName);
+//            fileInputStream = new FileInputStream(srcFile);
+//            compressor.copyData(fileInputStream, archiveOutputStream);
+//            archiveOutputStream.closeArchiveEntry();
+//        } finally {
+//            IOUtils.closeQuietly(fileInputStream);// 输入流关闭
+//        }
+//    }
+//
+//    // 目录归档
+//    @Override
+//    public void addArchiveDirectory(TarArchiveOutputStream archiveOutputStream, File srcFile, String archiveName) throws IOException {
+//        this.addArchiveEntry(archiveOutputStream, srcFile, archiveName);
+//        compressor.printInformation(archiveName);
+//        archiveOutputStream.closeArchiveEntry();
+//    }
+
+    // 创建 TAR 的归档实体，并加入到输入流中
     @Override
-    public void compress(InputStream inputStream, OutputStream outputStream) throws IOException {
-        TarArchiveOutputStream tarArchiveOutputStream = null;
-        try {
-            tarArchiveOutputStream = new TarArchiveOutputStream(outputStream, CACHE_SIZE);
-            this.copyData(inputStream, tarArchiveOutputStream);
-            tarArchiveOutputStream.finish();
-        } finally {
-            IOUtils.closeQuietly(tarArchiveOutputStream);// 输出流关闭
+    public void addArchiveEntry(TarArchiveOutputStream archiveOutputStream, File srcFile, String archiveName) throws IOException {
+        TarArchiveEntry tarArchiveEntry = new TarArchiveEntry(srcFile, archiveName);
+        if (!compressor.isModifyTime()) {
+            tarArchiveEntry.setModTime(System.currentTimeMillis());
         }
-    }
-
-    void compress(File inputFileOrDir, OutputStream outputStream) throws IOException {
-        TarArchiveOutputStream tarArchiveOutputStream = null;
-        try {
-            tarArchiveOutputStream = new TarArchiveOutputStream(outputStream, CACHE_SIZE);
-            this.recursionCompress(new TarArchiveEntryCallback(), tarArchiveOutputStream, inputFileOrDir, inputFileOrDir.getName());
-            tarArchiveOutputStream.finish();
-        } finally {
-            IOUtils.closeQuietly(tarArchiveOutputStream);// 输出流关闭
-        }
-    }
-
-
-    /**
-     * 内部类 - 压缩回调
-     */
-    private class TarArchiveEntryCallback implements IArchiveEntryCallback<TarArchiveOutputStream> {
-
-        // 文件归档
-        @Override
-        public void addArchiveFile(TarArchiveOutputStream archiveOutputStream, File srcFile, String archiveName) throws IOException {
-            FileInputStream fileInputStream = null;
-            try {
-                this.addArchiveEntry(archiveOutputStream, srcFile, archiveName);
-                printInformation(archiveName);
-                fileInputStream = new FileInputStream(srcFile);
-                copyData(fileInputStream, archiveOutputStream);
-                archiveOutputStream.closeArchiveEntry();
-            } finally {
-                IOUtils.closeQuietly(fileInputStream);// 输入流关闭
-            }
-        }
-
-        // 目录归档
-        @Override
-        public void addArchiveDirectory(TarArchiveOutputStream archiveOutputStream, File srcFile, String archiveName) throws IOException {
-            this.addArchiveEntry(archiveOutputStream, srcFile, archiveName);
-            printInformation(archiveName);
-            archiveOutputStream.closeArchiveEntry();
-        }
-
-        // 创建 TAR 的归档实体，并加入到输入流中
-        @Override
-        public void addArchiveEntry(TarArchiveOutputStream archiveOutputStream, File srcFile, String archiveName) throws IOException {
-            TarArchiveEntry tarArchiveEntry = new TarArchiveEntry(srcFile, archiveName);
-            if (!isModifyTime()) {
-                tarArchiveEntry.setModTime(System.currentTimeMillis());
-            }
-            archiveOutputStream.putArchiveEntry(tarArchiveEntry);
-        }
+        archiveOutputStream.putArchiveEntry(tarArchiveEntry);
     }
 }
 

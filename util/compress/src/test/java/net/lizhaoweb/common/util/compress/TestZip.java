@@ -13,10 +13,6 @@ package net.lizhaoweb.common.util.compress;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -62,22 +58,6 @@ public class TestZip {
         try {
             zipCompressor.setModifyTime(modifyTime);
             zipCompressor.compress(compressPath, compressedFile);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 压缩 - 流
-     */
-    @Test
-    public void compressForSteam() {
-        ZipCompressor zipCompressor = new ZipCompressor(verbose);
-        try {
-            zipCompressor.setModifyTime(modifyTime);
-            InputStream inputStream = new FileInputStream(compressPath);
-            OutputStream outputStream = new FileOutputStream(compressedFile);
-            zipCompressor.compress(inputStream, outputStream);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -13,7 +13,7 @@ package net.lizhaoweb.common.util.compress;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.*;
+import java.io.File;
 
 /**
  * @author <a href="http://www.lizhaoweb.cn">李召(John.Lee)</a>
@@ -53,22 +53,6 @@ public class TestTar {
         try {
             tarCompressor.setModifyTime(modifyTime);
             tarCompressor.compress(compressPath, compressedFile);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 压缩 - 流
-     */
-    @Test
-    public void compressForSteam() {
-        TarCompressor tarCompressor = new TarCompressor(verbose);
-        try {
-            tarCompressor.setModifyTime(modifyTime);
-            InputStream inputStream = new FileInputStream(compressPath);
-            OutputStream outputStream = new FileOutputStream(compressedFile);
-            tarCompressor.compress(inputStream, outputStream);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -10,8 +10,12 @@
  */
 package net.lizhaoweb.common.util.compress;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.io.IOUtils;
 import org.hyperic.sigar.FileSystem;
 import org.hyperic.sigar.Sigar;
@@ -20,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.Map;
 
 /**
  * <h1>压缩/解压缩工具 - 抽象</h1>
@@ -51,14 +56,15 @@ public abstract class AbstractCompressOrDecompress {
     @Getter
     private boolean modifyTime = true;
 
+    protected ArchiveEntryOperator archiveEntryOperator;
+
     public AbstractCompressOrDecompress() {
         try {
             sigar = new Sigar();
-        } catch (Error e) {
-            e.printStackTrace();
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
+        archiveEntryOperator = new ArchiveEntryOperator(this);
     }
 
     public AbstractCompressOrDecompress(boolean verbose) {
@@ -154,46 +160,10 @@ public abstract class AbstractCompressOrDecompress {
     }
 
 
-    // 递归压缩文件
-    protected <OS extends OutputStream> void recursionCompress(IArchiveEntryCallback<OS> callback, OS tarArchiveOutputStream, File file, String tarArchivePath) throws IOException {
-
-        // 目录处理
-        if (file.isDirectory()) {
-            File[] files = file.listFiles();
-            if (files == null) {
-                return;
-            }
-            String baseDir = this.suffixEqualize(tarArchivePath, "/");
-            callback.addArchiveDirectory(tarArchiveOutputStream, file, baseDir);
-            if (files.length == 0) {
-                return;
-            }
-            for (File childFile : files) {
-                this.recursionCompress(callback, tarArchiveOutputStream, childFile, baseDir + childFile.getName()); // 递归遍历子文件夹
-            }
-            return;
-        }
-
-        // 文件处理
-        callback.addArchiveFile(tarArchiveOutputStream, file, tarArchivePath);
-    }
-
     // 复制数据
     protected void copyData(InputStream inputStream, OutputStream outputStream) throws IOException {
         IOUtils.copy(inputStream, outputStream, CACHE_SIZE);
         outputStream.flush();
-    }
-
-    // 文件解压
-    protected void fileDecompress(InputStream inputStream, File compressFile, long modificationTime) throws IOException {
-        FileOutputStream fileOutputStream = null;
-        try {
-            fileOutputStream = new FileOutputStream(compressFile);
-            this.copyData(inputStream, fileOutputStream);
-        } finally {
-            IOUtils.closeQuietly(fileOutputStream);
-            this.modifyTime(compressFile, modificationTime);
-        }
     }
 
     // 获取文件所在分区的文件系统类型
@@ -213,5 +183,98 @@ public abstract class AbstractCompressOrDecompress {
 //            e.printStackTrace();
 //        }
         return null;
+    }
+}
+
+@AllArgsConstructor
+class ArchiveEntryOperator {
+
+    private AbstractCompressOrDecompress operator;
+
+    // 递归压缩文件
+    protected void recursionCompress(IArchiveEntryCallback callback, ArchiveOutputStream archiveOutputStream, File file, String tarArchivePath) throws IOException {
+
+        // 目录处理
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files == null) {
+                return;
+            }
+            String baseDir = operator.suffixEqualize(tarArchivePath, "/");
+            this.addArchiveDirectory(callback, archiveOutputStream, file, baseDir);
+            if (files.length == 0) {
+                return;
+            }
+            for (File childFile : files) {
+                this.recursionCompress(callback, archiveOutputStream, childFile, baseDir + childFile.getName()); // 递归遍历子文件夹
+            }
+            return;
+        }
+
+        // 文件处理
+        this.addArchiveFile(callback, archiveOutputStream, file, tarArchivePath);
+    }
+
+    // 文件归档
+    private void addArchiveFile(IArchiveEntryCallback callback, ArchiveOutputStream archiveOutputStream, File srcFile, String archiveName) throws IOException {
+        FileInputStream fileInputStream = null;
+        try {
+            callback.addArchiveEntry(archiveOutputStream, srcFile, archiveName);
+            operator.printInformation(archiveName);
+            fileInputStream = new FileInputStream(srcFile);
+            operator.copyData(fileInputStream, archiveOutputStream);
+            archiveOutputStream.closeArchiveEntry();
+        } finally {
+            IOUtils.closeQuietly(fileInputStream);// 输入流关闭
+        }
+    }
+
+    // 目录归档
+    private void addArchiveDirectory(IArchiveEntryCallback callback, ArchiveOutputStream archiveOutputStream, File srcFile, String archiveName) throws IOException {
+        callback.addArchiveEntry(archiveOutputStream, srcFile, archiveName);
+        operator.printInformation(archiveName);
+        archiveOutputStream.closeArchiveEntry();
+    }
+
+//    // 创建归档实体，并加入到输出流中
+//    public void addArchiveEntry(ArchiveOutputStream archiveOutputStream, File srcFile, String archiveName) throws IOException {
+//        ArchiveEntry zipEntry = new ZipEntry(archiveName);
+//        zipEntry.setSize(srcFile.length());
+//        if (oprator.isModifyTime()) {
+//            zipEntry.setTime(srcFile.lastModified());
+//        }
+//        archiveOutputStream.putArchiveEntry(zipEntry);
+//    }
+
+    protected void archiveEntryDecompress(File decompressedPath, ArchiveInputStream archiveInputStream, Map<File, Long> dirAndTime) throws IOException {
+        ArchiveEntry zipEntry = null;
+        while ((zipEntry = archiveInputStream.getNextEntry()) != null) {
+            long modificationTime = zipEntry.getLastModifiedDate().getTime();
+            File zipFileOrDir = new File(decompressedPath, zipEntry.getName());
+            if (zipEntry.isDirectory()) {
+                operator.checkAndMakeDirectory(zipFileOrDir);
+                dirAndTime.put(zipFileOrDir, modificationTime);
+                continue;
+            }
+            operator.checkAndMakeDirectory(zipFileOrDir.getParentFile());
+            dirAndTime.put(zipFileOrDir.getParentFile(), modificationTime);
+            this.fileDecompress(archiveInputStream, zipFileOrDir, modificationTime);
+//            if (zipFileOrDir.length() != zipEntry.getSize()) {
+//                System.out.println("!=!=!=");
+//            }
+            operator.printInformation(String.format("The file[%s] is decompressed", zipFileOrDir));
+        }
+    }
+
+    // 文件解压
+    private void fileDecompress(InputStream inputStream, File compressFile, long modificationTime) throws IOException {
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream(compressFile);
+            operator.copyData(inputStream, fileOutputStream);
+        } finally {
+            IOUtils.closeQuietly(fileOutputStream);
+            operator.modifyTime(compressFile, modificationTime);
+        }
     }
 }

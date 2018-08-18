@@ -18,8 +18,10 @@ import org.apache.commons.compress.compressors.gzip.GzipParameters;
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
 import org.apache.commons.io.IOUtils;
 
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * <h1>压缩器 [实现] - GZip</h1>
@@ -59,6 +61,7 @@ public class GZipCompressor extends AbstractCompressOrDecompress implements ICom
     public void compress(File inputFileOrDir, File compressedFile) throws IOException {
         FileInputStream fileInputStream = null;
         FileOutputStream fileOutputStream = null;
+        GzipCompressorOutputStream gzipOutputStream = null;
         try {
             if (compressedFile == null) {
                 String compressedFileName = GzipUtils.getCompressedFilename(inputFileOrDir.getCanonicalPath());
@@ -77,56 +80,57 @@ public class GZipCompressor extends AbstractCompressOrDecompress implements ICom
             parameters.setComment(inputFileOrDir.isFile() ? inputFileOrDir.getName() : null);
             parameters.setModificationTime(isModifyTime() ? inputFileOrDir.lastModified() : System.currentTimeMillis());
             parameters.setCompressionLevel(9);
-            this.compress(fileInputStream, fileOutputStream, parameters);
+            gzipOutputStream = new GzipCompressorOutputStream(fileOutputStream, parameters);
+            IOUtils.copy(fileInputStream, gzipOutputStream, CACHE_SIZE);
+            gzipOutputStream.flush();
+            gzipOutputStream.finish();
         } finally {
+            IOUtils.closeQuietly(gzipOutputStream);// GZIP输出流关闭
             IOUtils.closeQuietly(fileOutputStream);// 输出流关闭
             IOUtils.closeQuietly(fileInputStream);// 输入流关闭
         }
         this.printInformation(String.format("The file[%s] for gzip is compressed", compressedFile));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void compress(InputStream inputStream, OutputStream outputStream) throws IOException {
-        this.compress(inputStream, outputStream, null);
-    }
+//    /**
+//     * {@inheritDoc}
+//     */
+//    @Override
+//    public void compress(InputStream inputStream, OutputStream outputStream) throws IOException {
+//        this.compress(inputStream, outputStream, null);
+//    }
 
-    void compress(InputStream inputStream, File compressedFile) throws IOException {
-        FileOutputStream fileOutputStream = null;
-        try {
-            this.printInformation(String.format("The file[%s] for gzip is compressing ...", compressedFile));
-            fileOutputStream = new FileOutputStream(compressedFile);
-            this.compress(inputStream, fileOutputStream);
-        } finally {
-            IOUtils.closeQuietly(fileOutputStream);// 输出流关闭
-        }
-        this.printInformation(String.format("The file[%s] for gzip is compressed", compressedFile));
-    }
+//    void compress(InputStream inputStream, File compressedFile, GzipParameters parameters) throws IOException {
+//        FileOutputStream fileOutputStream = null;
+//        try {
+//            fileOutputStream = new FileOutputStream(compressedFile);
+//            this.compress(inputStream, fileOutputStream, parameters);
+//        } finally {
+//            IOUtils.closeQuietly(fileOutputStream);// 输出流关闭
+//        }
+//        this.printInformation(String.format("The file[%s] for gzip is compressed", compressedFile));
+//    }
 
-    private void compress(InputStream inputStream, OutputStream outputStream, GzipParameters parameters) throws IOException {
-        GzipCompressorOutputStream gzipOutputStream = null;
-        try {
-            if (parameters == null) {
-                gzipOutputStream = new GzipCompressorOutputStream(outputStream);
-            } else {
-                gzipOutputStream = new GzipCompressorOutputStream(outputStream, parameters);
-            }
-            IOUtils.copy(inputStream, gzipOutputStream, CACHE_SIZE);
-            gzipOutputStream.flush();
-            gzipOutputStream.finish();
-        } finally {
-            IOUtils.closeQuietly(gzipOutputStream);// GZIP输出流关闭
-        }
-    }
+//    void compress(InputStream inputStream, OutputStream outputStream, GzipParameters parameters) throws IOException {
+//        GzipCompressorOutputStream gzipOutputStream = null;
+//        try {
+//            if (parameters == null) {
+//                gzipOutputStream = new GzipCompressorOutputStream(outputStream);
+//            } else {
+//                gzipOutputStream = new GzipCompressorOutputStream(outputStream, parameters);
+//            }
+//            IOUtils.copy(inputStream, gzipOutputStream, CACHE_SIZE);
+//            gzipOutputStream.flush();
+//            gzipOutputStream.finish();
+//        } finally {
+//            IOUtils.closeQuietly(gzipOutputStream);// GZIP输出流关闭
+//        }
+//    }
 
-    private int getGZipOperatingSystem(File file) {
+    int getGZipOperatingSystem(File file) {
         try {
             String sysTypeName = this.getSysTypeName(file);
             return GZipOperatingSystem.fromName(sysTypeName).getFlag();
-//        } catch (InvocationTargetException ite) {
-//            return GZipOperatingSystem.UNKNOWN.getFlag();
         } catch (Exception e) {
             return GZipOperatingSystem.UNKNOWN.getFlag();
         }
