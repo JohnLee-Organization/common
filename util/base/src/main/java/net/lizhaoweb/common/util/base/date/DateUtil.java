@@ -211,7 +211,7 @@ public class DateUtil extends DateUtils {
         if (dateString.matches(Constant.Regex.DATE_STRING_REGULAR_EXPRESSION)) {
             Integer[] dateArray = getDateIntArray(dateString);
             int year = dateArray[DateConstant.DateTimeField.YEAR];
-            int month = dateArray[DateConstant.DateTimeField.MONTH];
+            int month = dateArray[DateConstant.DateTimeField.MONTH] - 1;
             int day = dateArray[DateConstant.DateTimeField.DATE];
             int hourOfDay = dateArray[DateConstant.DateTimeField.HOUR];
             int minute = dateArray[DateConstant.DateTimeField.MINUTE];
