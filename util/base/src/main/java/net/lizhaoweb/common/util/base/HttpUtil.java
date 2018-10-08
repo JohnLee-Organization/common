@@ -34,11 +34,7 @@ import java.util.regex.Pattern;
  * Date of last commit:$Date$<br>
  * <p/>
  */
-public final class HttpUtil {
-
-    private HttpUtil() {
-        super();
-    }
+public class HttpUtil {
 
     /**
      * 响浏览器输出字符串。
@@ -566,6 +562,7 @@ public final class HttpUtil {
 
     /**
      * 将字符串形式的请求参数，转换为 Map 形式的请求参数。
+     * 参数格式“k1=v1&k2=v2”
      *
      * @param stringParameters 字符串形式的请求参数
      * @return Map
@@ -574,35 +571,33 @@ public final class HttpUtil {
         if (stringParameters == null) {
             return null;
         }
-        Map<String, String[]> mapParameters = new HashMap<String, String[]>();
+
+        Map<String, String[]> parameterMap = new HashMap<>();
 
         if (stringParameters.trim().length() > 0) {
             String[] parameterNameAndValues = stringParameters.split("&");
             for (String parameterNameAndValue : parameterNameAndValues) {
-                String[] parameterNameAndValueSplist = parameterNameAndValue.split("=");
-                if (parameterNameAndValueSplist.length < 1) {
+                int pos = parameterNameAndValue.indexOf("=");
+                if (pos < 0) {
                     continue;
                 }
-                String[] parameterValues = mapParameters.get(parameterNameAndValueSplist[0]);
-                String parameterValueTemp = "";
-                if (parameterNameAndValueSplist.length == 2) {
-                    parameterValueTemp = parameterNameAndValueSplist[1];
-                } else if (parameterNameAndValueSplist.length > 2) {
-                    parameterValueTemp = parameterNameAndValueSplist[1];
-                }
+                String parameterName = parameterNameAndValue.substring(0, pos);
+                String[] parameterValues = parameterMap.get(parameterName);
+                String parameterValueTemp = parameterNameAndValue.substring(pos + 1);
                 try {
                     parameterValueTemp = URLEncoder.encode(parameterValueTemp, Charset.UTF8);
                 } catch (UnsupportedEncodingException e) {
+                    //
                 }
                 if (parameterValues != null) {
                     parameterValues = ArrayUtil.add(parameterValues, parameterValueTemp);
                 } else {
                     parameterValues = ArrayUtil.add(new String[0], parameterValueTemp);
                 }
-                mapParameters.put(parameterNameAndValueSplist[0], parameterValues);
+                parameterMap.put(parameterName, parameterValues);
             }
         }
-        return mapParameters;
+        return parameterMap;
     }
 
     /**
@@ -722,6 +717,57 @@ public final class HttpUtil {
             return IOUtil.toString(request.getInputStream(), charset);
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    /**
+     * 检测url是否含有参数，如果有，则把参数加到参数列表中
+     *
+     * @param url          资源地址
+     * @param parameterMap 参数列表
+     * @return 返回去掉参数的url
+     * @throws UnsupportedEncodingException
+     */
+    public static String checkHasParas(String url, Map<String, String[]> parameterMap, String encoding) throws UnsupportedEncodingException {
+        // 检测url中是否存在参数
+        if (url.contains("?") && url.indexOf("?") < url.indexOf("=")) {
+            stringParametersToMapParameters(parameterMap, url.substring(url.indexOf("?") + 1), encoding);
+            url = url.substring(0, url.indexOf("?"));
+        }
+        return url;
+    }
+
+    // 将字符串形式的请求参数，转换为 Map 形式的请求参数。
+    private static void stringParametersToMapParameters(Map<String, String[]> parameterMap, String stringParameters, String encoding) {
+        if (stringParameters == null) {
+            return;
+        }
+        if (parameterMap == null) {
+            parameterMap = new HashMap<>();
+        }
+
+        if (stringParameters.trim().length() > 0) {
+            String[] parameterNameAndValues = stringParameters.split("&");
+            for (String parameterNameAndValue : parameterNameAndValues) {
+                int pos = parameterNameAndValue.indexOf("=");
+                if (pos < 0) {
+                    continue;
+                }
+                String parameterName = parameterNameAndValue.substring(0, pos);
+                String[] parameterValues = parameterMap.get(parameterName);
+                String parameterValueTemp = parameterNameAndValue.substring(pos + 1);
+                try {
+                    parameterValueTemp = URLEncoder.encode(parameterValueTemp, encoding);
+                } catch (UnsupportedEncodingException e) {
+                    //
+                }
+                if (parameterValues != null) {
+                    parameterValues = ArrayUtil.add(parameterValues, parameterValueTemp);
+                } else {
+                    parameterValues = ArrayUtil.add(new String[0], parameterValueTemp);
+                }
+                parameterMap.put(parameterName, parameterValues);
+            }
         }
     }
 

@@ -2,6 +2,7 @@ package net.lizhaoweb.common.util.http.httpclient;
 
 import net.lizhaoweb.common.util.http.common.HttpConfig;
 import net.lizhaoweb.common.util.http.common.HttpMethods;
+import net.lizhaoweb.common.util.http.common.IHandler;
 import net.lizhaoweb.common.util.http.common.Utils;
 import net.lizhaoweb.common.util.http.exception.HttpProcessException;
 import net.lizhaoweb.common.util.http.httpclient.builder.HACB;
@@ -9,7 +10,8 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.methods.*;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.protocol.HttpContext;
@@ -27,7 +29,7 @@ import java.util.Map;
  * @version 1.0
  * @date 2015年11月4日 下午10:12:11
  */
-public class HttpAsyncClientUtil {
+public class HttpAsyncClientUtil extends AbstractHttpClientUtil {
     private static final Logger logger = LoggerFactory.getLogger(HttpAsyncClientUtil.class);
 
     /**
@@ -72,7 +74,7 @@ public class HttpAsyncClientUtil {
      * @throws HttpProcessException
      */
     public static void get(CloseableHttpAsyncClient client, String url, Header[] headers, HttpContext context, String encoding, IHandler handler) throws HttpProcessException {
-        send(HttpConfig.custom().method(HttpMethods.GET).asynclient(client).url(url).headers(headers).context(context).encoding(encoding).handler(handler));
+        send(HttpConfig.custom().method(HttpMethods.GET).asyncClient(client).url(url).requestHeaders(headers).context(context).encoding(encoding).handler(handler));
     }
 
     /**
@@ -99,7 +101,7 @@ public class HttpAsyncClientUtil {
      * @throws HttpProcessException
      */
     public static void post(CloseableHttpAsyncClient client, String url, Map<String, Object> parasMap, Header[] headers, HttpContext context, String encoding, IHandler handler) throws HttpProcessException {
-        send(HttpConfig.custom().method(HttpMethods.POST).asynclient(client).url(url).map(parasMap).headers(headers).context(context).encoding(encoding).handler(handler));
+        send(HttpConfig.custom().method(HttpMethods.POST).asyncClient(client).url(url).requestParameters(parasMap).requestHeaders(headers).context(context).encoding(encoding).handler(handler));
     }
 
     /**
@@ -126,7 +128,7 @@ public class HttpAsyncClientUtil {
      * @throws HttpProcessException
      */
     public static void put(CloseableHttpAsyncClient client, String url, Map<String, Object> parasMap, Header[] headers, HttpContext context, String encoding, IHandler handler) throws HttpProcessException {
-        send(HttpConfig.custom().method(HttpMethods.PUT).asynclient(client).url(url).map(parasMap).headers(headers).context(context).encoding(encoding).handler(handler));
+        send(HttpConfig.custom().method(HttpMethods.PUT).asyncClient(client).url(url).requestParameters(parasMap).requestHeaders(headers).context(context).encoding(encoding).handler(handler));
     }
 
     /**
@@ -152,7 +154,7 @@ public class HttpAsyncClientUtil {
      * @throws HttpProcessException
      */
     public static void delete(CloseableHttpAsyncClient client, String url, Header[] headers, HttpContext context, String encoding, IHandler handler) throws HttpProcessException {
-        send(HttpConfig.custom().method(HttpMethods.DELETE).asynclient(client).url(url).headers(headers).context(context).encoding(encoding).handler(handler));
+        send(HttpConfig.custom().method(HttpMethods.DELETE).asyncClient(client).url(url).requestHeaders(headers).context(context).encoding(encoding).handler(handler));
     }
 
     /**
@@ -178,7 +180,7 @@ public class HttpAsyncClientUtil {
      * @throws HttpProcessException
      */
     public static void patch(CloseableHttpAsyncClient client, String url, Map<String, Object> parasMap, Header[] headers, HttpContext context, String encoding, IHandler handler) throws HttpProcessException {
-        send(HttpConfig.custom().method(HttpMethods.PATCH).asynclient(client).url(url).map(parasMap).headers(headers).context(context).encoding(encoding).handler(handler));
+        send(HttpConfig.custom().method(HttpMethods.PATCH).asyncClient(client).url(url).requestParameters(parasMap).requestHeaders(headers).context(context).encoding(encoding).handler(handler));
     }
 
     /**
@@ -203,7 +205,7 @@ public class HttpAsyncClientUtil {
      * @throws HttpProcessException
      */
     public static void head(CloseableHttpAsyncClient client, String url, Header[] headers, HttpContext context, String encoding, IHandler handler) throws HttpProcessException {
-        send(HttpConfig.custom().method(HttpMethods.HEAD).asynclient(client).url(url).headers(headers).context(context).encoding(encoding).handler(handler));
+        send(HttpConfig.custom().method(HttpMethods.HEAD).asyncClient(client).url(url).requestHeaders(headers).context(context).encoding(encoding).handler(handler));
     }
 
     /**
@@ -228,7 +230,7 @@ public class HttpAsyncClientUtil {
      * @throws HttpProcessException
      */
     public static void options(CloseableHttpAsyncClient client, String url, Header[] headers, HttpContext context, String encoding, IHandler handler) throws HttpProcessException {
-        send(HttpConfig.custom().method(HttpMethods.OPTIONS).asynclient(client).url(url).headers(headers).context(context).encoding(encoding).handler(handler));
+        send(HttpConfig.custom().method(HttpMethods.OPTIONS).asyncClient(client).url(url).requestHeaders(headers).context(context).encoding(encoding).handler(handler));
     }
 
     /**
@@ -253,7 +255,7 @@ public class HttpAsyncClientUtil {
      * @throws HttpProcessException
      */
     public static void trace(CloseableHttpAsyncClient client, String url, Header[] headers, HttpContext context, String encoding, IHandler handler) throws HttpProcessException {
-        send(HttpConfig.custom().method(HttpMethods.TRACE).asynclient(client).url(url).headers(headers).context(context).encoding(encoding).handler(handler));
+        send(HttpConfig.custom().method(HttpMethods.TRACE).asyncClient(client).url(url).requestHeaders(headers).context(context).encoding(encoding).handler(handler));
     }
 
     /**
@@ -277,7 +279,7 @@ public class HttpAsyncClientUtil {
      * @throws HttpProcessException
      */
     public static void down(CloseableHttpAsyncClient client, String url, Header[] headers, HttpContext context, OutputStream out) throws HttpProcessException {
-        execute(HttpConfig.custom().method(HttpMethods.GET).asynclient(client).url(url).headers(headers).context(context).out(out));
+        execute(HttpConfig.custom().method(HttpMethods.GET).asyncClient(client).url(url).requestHeaders(headers).context(context).out(out));
     }
 
     /**
@@ -290,32 +292,37 @@ public class HttpAsyncClientUtil {
         execute(config.method(HttpMethods.GET));
     }
 
+    // -----------华----丽----分----割----线--------------
+    // -----------华----丽----分----割----线--------------
+    // -----------华----丽----分----割----线--------------
+
+
     /**
      * 请求资源或服务
      *
      * @param config 请求参数配置
      * @throws HttpProcessException
      */
-    private static void execute(HttpConfig config) throws HttpProcessException {
-        if (config.asynclient() == null) {// 检测是否设置了client
-            config.asynclient(create(config.url()));
+    private static void execute(final HttpConfig config) throws HttpProcessException {
+        if (config.asyncClient() == null) {// 检测是否设置了client
+            config.asyncClient(create(config.url()));
         }
         try {
             // 创建请求对象
             HttpRequestBase request = getRequest(config.url(), config.method());
 
             // 设置header信息
-            request.setHeaders(config.headers());
+            request.setHeaders(config.requestHeaders());
 
             // 判断是否支持设置entity(仅HttpPost、HttpPut、HttpPatch支持)
             if (HttpEntityEnclosingRequestBase.class.isAssignableFrom(request.getClass())) {
-                List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+                List<NameValuePair> nvps = new ArrayList<>();
 
                 // 检测url中是否存在参数
-                config.url(Utils.checkHasParas(config.url(), nvps, config.inenc()));
+                config.url(Utils.checkHasParas(config.url(), nvps, config.inEnc()));
 
                 // 装填参数
-                HttpEntity entity = Utils.map2List(nvps, config.map(), config.inenc());
+                HttpEntity entity = Utils.map2List(nvps, config.requestParameters(), config.inEnc());
 
                 // 设置参数到请求对象中
                 ((HttpEntityEnclosingRequestBase) request).setEntity(entity);
@@ -330,10 +337,8 @@ public class HttpAsyncClientUtil {
                 }
             }
             // 执行请求
-            final CloseableHttpAsyncClient client = config.asynclient();
-            final String encoding = config.outenc();
+            final CloseableHttpAsyncClient client = config.asyncClient();
             final IHandler handler = config.handler();
-            final OutputStream out = config.out();
 
             // Start the client
             client.start();
@@ -348,10 +353,10 @@ public class HttpAsyncClientUtil {
                 @Override
                 public void completed(HttpResponse resp) {
                     try {
-                        if (out == null) {
-                            handler.completed(fmt2String(resp, encoding));
+                        if (config.out() == null) {
+                            handler.completed(fmt2String(config, resp));
                         } else {
-                            handler.down(fmt2Stream(resp, out));
+                            handler.down(fmt2Stream(config, resp));
                         }
                     } catch (HttpProcessException e) {
                         e.printStackTrace();
@@ -366,9 +371,51 @@ public class HttpAsyncClientUtil {
                 }
             });
 
-        } catch (UnsupportedEncodingException e) {
-            throw new HttpProcessException(e);
+        } catch (Exception e) {
+            String exceptionString = String.format("%s\n%s", e.getMessage(), config.toString());
+            throw new HttpProcessException(exceptionString, e);
         }
+    }
+
+
+    // -----------华----丽----分----割----线--------------
+    // -----------华----丽----分----割----线--------------
+    // -----------华----丽----分----割----线--------------
+
+
+    /**
+     * 转化为字符串
+     *
+     * @param config   请求参数配置
+     * @param response 响应对象
+     * @return
+     * @throws HttpProcessException
+     */
+    private static String fmt2String(HttpConfig config, HttpResponse response) throws HttpProcessException {
+        String body = "";
+        try {
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                final InputStream inStream = entity.getContent();
+                try {
+                    final StringBuilder sb = new StringBuilder();
+                    final char[] tmp = new char[1024];
+                    final Reader reader = new InputStreamReader(inStream, config.outEnc());
+                    int l;
+                    while ((l = reader.read(tmp)) != -1) {
+                        sb.append(tmp, 0, l);
+                    }
+                    body = sb.toString();
+                } finally {
+                    inStream.close();
+                    EntityUtils.consume(entity);
+                }
+            }
+        } catch (Exception e) {
+            String exceptionString = String.format("%s\n%s", e.getMessage(), config.toString());
+            throw new HttpProcessException(exceptionString, e);
+        }
+        return body;
     }
 
     /**
@@ -384,190 +431,8 @@ public class HttpAsyncClientUtil {
         }
     }
 
-    /**
-     * 尝试关闭response
-     *
-     * @param resp HttpResponse对象
-     */
-    private static void close(HttpResponse resp) {
-        try {
-            if (resp == null)
-                return;
-            // 如果CloseableHttpResponse 是resp的父类，则支持关闭
-            if (CloseableHttpResponse.class.isAssignableFrom(resp.getClass())) {
-                ((CloseableHttpResponse) resp).close();
-            }
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-        }
-    }
 
     // -----------华----丽----分----割----线--------------
     // -----------华----丽----分----割----线--------------
     // -----------华----丽----分----割----线--------------
-
-    /**
-     * 根据请求方法名，获取request对象
-     *
-     * @param url    资源地址
-     * @param method 请求方式名称：get、post、head、put、delete、patch、trace、options
-     * @return
-     */
-    private static HttpRequestBase getRequest(String url, HttpMethods method) {
-        HttpRequestBase request = null;
-        switch (method.getCode()) {
-            case 0:// HttpGet
-                request = new HttpGet(url);
-                break;
-            case 1:// HttpPost
-                request = new HttpPost(url);
-                break;
-            case 2:// HttpHead
-                request = new HttpHead(url);
-                break;
-            case 3:// HttpPut
-                request = new HttpPut(url);
-                break;
-            case 4:// HttpDelete
-                request = new HttpDelete(url);
-                break;
-            case 5:// HttpTrace
-                request = new HttpTrace(url);
-                break;
-            case 6:// HttpPatch
-                request = new HttpPatch(url);
-                break;
-            case 7:// HttpOptions
-                request = new HttpOptions(url);
-                break;
-            default:
-                request = new HttpPost(url);
-                break;
-        }
-        return request;
-    }
-
-    /**
-     * 转化为字符串
-     *
-     * @param response 响应对象
-     * @param encoding 编码
-     * @return
-     * @throws HttpProcessException
-     */
-    private static String fmt2String(HttpResponse response, String encoding) throws HttpProcessException {
-        String body = "";
-        try {
-            HttpEntity entity = response.getEntity();
-            if (entity != null) {
-                final InputStream instream = entity.getContent();
-                try {
-                    final StringBuilder sb = new StringBuilder();
-                    final char[] tmp = new char[1024];
-                    final Reader reader = new InputStreamReader(instream, encoding);
-                    int l;
-                    while ((l = reader.read(tmp)) != -1) {
-                        sb.append(tmp, 0, l);
-                    }
-                    body = sb.toString();
-                } finally {
-                    instream.close();
-                    EntityUtils.consume(entity);
-                }
-            }
-        } catch (UnsupportedOperationException e) {
-            logger.error(e.getMessage(), e);
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-        }
-        return body;
-    }
-
-    /**
-     * 转化为流
-     *
-     * @param response 响应对象
-     * @param out      输出流
-     * @return
-     * @throws HttpProcessException
-     */
-    private static OutputStream fmt2Stream(HttpResponse response, OutputStream out) throws HttpProcessException {
-        try {
-            response.getEntity().writeTo(out);
-            EntityUtils.consume(response.getEntity());
-        } catch (IOException e) {
-            throw new HttpProcessException(e);
-        } finally {
-            close(response);
-        }
-        return out;
-    }
-
-    /**
-     * 回调处理接口
-     *
-     * @author arron
-     * @version 1.0
-     * @date 2015年11月10日 上午10:05:40
-     */
-    public interface IHandler {
-
-        /**
-         * 处理异常时，执行该方法
-         *
-         * @return
-         */
-        Object failed(Exception e);
-
-        /**
-         * 处理正常时，执行该方法
-         *
-         * @return
-         */
-        Object completed(String respBody);
-
-        /**
-         * 处理正常时，执行该方法
-         *
-         * @return
-         */
-        Object down(OutputStream out);
-
-        /**
-         * 处理取消时，执行该方法
-         *
-         * @return
-         */
-        Object cancelled();
-    }
-
-    public static void main(String[] args) throws HttpProcessException {
-        String url = "http://blog.csdn.net/xiaoxian8023";
-        IHandler handler = new IHandler() {
-            @Override
-            public Object failed(Exception e) {
-                System.out.println("失败了");
-                return null;
-            }
-
-            @Override
-            public Object completed(String respBody) {
-                System.out.println("获取结果：" + respBody.length());
-                return null;
-            }
-
-            @Override
-            public Object cancelled() {
-                System.out.println("取消了");
-                return null;
-            }
-
-            @Override
-            public Object down(OutputStream out) {
-                System.out.println("开始下载");
-                return null;
-            }
-        };
-        HttpAsyncClientUtil.send(HttpConfig.custom().url(url).handler(handler));
-    }
 }

@@ -13,7 +13,7 @@
 
     <name>Commons Util [HttpClient]</name>
     <description>
-        基于HttpClient-4.5.2、HttpAsyncClient-4.1.2封装的工具类。支持插件式配置Header、插件式配置httpclient对象，这样就可以方便地自定义header信息、配置ssl、配置proxy、Cookie等
+        基于HttpCore-4.4.4、HttpClient-4.5.2、HttpAsyncClient-4.1.2封装的工具类。支持插件式配置Header、插件式配置httpclient对象，这样就可以方便地自定义header信息、配置ssl、配置proxy、Cookie等
     </description>
     <packaging>jar</packaging>
 
@@ -26,6 +26,12 @@
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <!-- Logger -->
         <dependency>
@@ -52,11 +58,21 @@
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpasyncclient</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>net.lizhaoweb.common.util</groupId>
+            <artifactId>base</artifactId>
+            <version>JL.COMMON.1.1.0.0.1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

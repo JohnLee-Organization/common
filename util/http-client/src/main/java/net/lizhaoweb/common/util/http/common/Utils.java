@@ -1,5 +1,6 @@
 package net.lizhaoweb.common.util.http.common;
 
+import net.lizhaoweb.common.util.base.HttpUtil;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -23,7 +24,7 @@ import java.util.Map.Entry;
  * Date of last commit:$Date$<br>
  * <p/>
  */
-public class Utils {
+public class Utils extends HttpUtil {
 
     //传入参数特定类型
     public static final String ENTITY_STRING = "$ENTITY_STRING$";
@@ -44,10 +45,9 @@ public class Utils {
     public static String checkHasParas(String url, List<NameValuePair> nvps, String encoding) throws UnsupportedEncodingException {
         // 检测url中是否存在参数
         if (url.contains("?") && url.indexOf("?") < url.indexOf("=")) {
-            Map<String, Object> map = buildParas(url.substring(url
-                    .indexOf("?") + 1));
+            Map<String, String[]> map = new HashMap<>();
+            url = checkHasParas(url, map, encoding);
             map2List(nvps, map, encoding);
-            url = url.substring(0, url.indexOf("?"));
         }
         return url;
     }
@@ -59,34 +59,36 @@ public class Utils {
      * @param map  参数列表（map）
      * @throws UnsupportedEncodingException
      */
-    public static HttpEntity map2List(List<NameValuePair> nvps, Map<String, Object> map, String encoding) throws UnsupportedEncodingException {
+    public static HttpEntity map2List(List<NameValuePair> nvps, Map<String, ?> map, String encoding) throws UnsupportedEncodingException {
         HttpEntity entity = null;
         if (map != null && map.size() > 0) {
             boolean isSpecial = false;
             // 拼接参数
-            for (Entry<String, Object> entry : map.entrySet()) {
-                if (SPECIAL_ENTITIY.contains(entry.getKey())) {//判断是否在之中
+            for (Entry<String, ?> entry : map.entrySet()) {
+                String parameterName = entry.getKey();
+                Object parameterValue = entry.getValue();
+                if (SPECIAL_ENTITIY.contains(parameterName)) {//判断是否在之中
                     isSpecial = true;
-                    if (ENTITY_STRING.equals(entry.getKey())) {//string
-                        entity = new StringEntity(String.valueOf(entry.getValue()), encoding);
+                    if (ENTITY_STRING.equals(parameterName)) {//string
+                        entity = new StringEntity(String.valueOf(parameterValue), encoding);
                         break;
-                    } else if (ENTITY_BYTES.equals(entry.getKey())) {//file
-                        entity = new ByteArrayEntity((byte[]) entry.getValue());
+                    } else if (ENTITY_BYTES.equals(parameterName)) {//file
+                        entity = new ByteArrayEntity((byte[]) parameterValue);
                         break;
-                    } else if (ENTITY_FILE.equals(entry.getKey())) {//file
+                    } else if (ENTITY_FILE.equals(parameterName)) {//file
                         //entity = new FileEntity(file)
                         break;
-                    } else if (ENTITY_INPUTSTREAM.equals(entry.getKey())) {//inputstream
+                    } else if (ENTITY_INPUTSTREAM.equals(parameterName)) {//inputstream
 //						entity = new InputStreamEntity();
                         break;
-                    } else if (ENTITY_SERIALIZABLE.equals(entry.getKey())) {//serializeable
+                    } else if (ENTITY_SERIALIZABLE.equals(parameterName)) {//serializeable
 //						entity = new SerializableEntity()
                         break;
                     } else {
-                        nvps.add(new BasicNameValuePair(entry.getKey(), String.valueOf(entry.getValue())));
+                        commonParameters(nvps, parameterName, parameterValue);
                     }
                 } else {
-                    nvps.add(new BasicNameValuePair(entry.getKey(), String.valueOf(entry.getValue())));
+                    commonParameters(nvps, parameterName, parameterValue);
                 }
             }
             if (!isSpecial) {
@@ -96,41 +98,14 @@ public class Utils {
         return entity;
     }
 
-
-    /**
-     * 生成参数
-     * 参数格式“k1=v1&k2=v2”
-     *
-     * @param paras 参数列表
-     * @return 返回参数列表（map）
-     */
-    public static Map<String, Object> buildParas(String paras) {
-        String[] p = paras.split("&");
-        String[][] ps = new String[p.length][2];
-        int pos = 0;
-        for (int i = 0; i < p.length; i++) {
-            pos = p[i].indexOf("=");
-            ps[i][0] = p[i].substring(0, pos);
-            ps[i][1] = p[i].substring(pos + 1);
-            pos = 0;
+    private static void commonParameters(List<NameValuePair> nvps, String parameterName, Object parameterValue) {
+        if (parameterValue instanceof String[]) {
+            for (String value : (String[]) parameterValue) {
+                nvps.add(new BasicNameValuePair(parameterName, value));
+            }
+        } else {
+            nvps.add(new BasicNameValuePair(parameterName, String.valueOf(parameterValue)));
         }
-        return buildParas(ps);
-    }
-
-    /**
-     * 生成参数
-     * 参数类型：{{"k1","v1"},{"k2","v2"}}
-     *
-     * @param paras 参数列表
-     * @return 返回参数列表（map）
-     */
-    public static Map<String, Object> buildParas(String[][] paras) {
-        // 创建参数队列
-        Map<String, Object> map = new HashMap<String, Object>();
-        for (String[] para : paras) {
-            map.put(para[0], para[1]);
-        }
-        return map;
     }
 
 }
