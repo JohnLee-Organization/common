@@ -22,6 +22,7 @@
         <module>argument</module>
         <module>compress</module>
         <module>operating-system</module>
+        <module>slf4j</module>
     </modules>
 
 </project>

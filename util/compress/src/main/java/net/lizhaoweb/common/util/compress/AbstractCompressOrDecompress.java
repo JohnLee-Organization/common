@@ -22,6 +22,8 @@ import org.hyperic.sigar.Sigar;
 import org.hyperic.sigar.SigarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import java.io.*;
 import java.util.Map;
@@ -42,6 +44,7 @@ public abstract class AbstractCompressOrDecompress {
 
     protected static final int CACHE_SIZE = 1024 * 4;
 
+    protected Marker fatal = MarkerFactory.getMarker("FATAL");
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     protected Sigar sigar;
