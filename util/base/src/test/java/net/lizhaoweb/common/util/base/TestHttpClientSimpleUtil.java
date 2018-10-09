@@ -12,6 +12,9 @@ package net.lizhaoweb.common.util.base;
 
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author <a href="http://www.lizhaoweb.cn">李召(John.Lee)</a>
  * @version 1.0.0.0.1
@@ -31,6 +34,30 @@ public class TestHttpClientSimpleUtil {
             String content = HttpClientSimpleUtil.get(url, null);
             System.out.println(String.format("[Index]%d [Content]%s", index, content));
             index++;
+        }
+    }
+
+    @Test
+    public void getA() {
+        for (int index = 0; ; index++) {
+            String url = "http://mobile.littlehotspot.com/small/Program/getMenuByHotelid?hotelid=602";
+            String content = HttpClientSimpleUtil.get(url);
+            System.out.println(String.format("[Index]%d [Content]%s", index, content));
+            System.out.println();
+        }
+    }
+
+    @Test
+    public void post() {
+        for (int index = 0; ; index++) {
+            String url = "http://mobile.littlehotspot.com/small/Program/getMenuByHotelid?aaaa=bbbb&aasef=fefasdf";
+            Map<String, String[]> paras = new HashMap<>();
+            paras.put("hotelid", new String[]{"602"});
+            paras.put("hotelida", new String[]{"600"});
+            paras.put("hotelidB", new String[]{"sdfe"});
+            String content = HttpClientSimpleUtil.post(url, paras);
+            System.out.println(String.format("[Index]%d [Content]%s", index, content));
+            System.out.println();
         }
     }
 }

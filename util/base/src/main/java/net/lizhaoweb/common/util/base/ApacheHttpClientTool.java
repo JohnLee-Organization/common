@@ -15,6 +15,8 @@ import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.config.ConnectionConfig;
 import org.apache.http.config.SocketConfig;
@@ -23,13 +25,16 @@ import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeader;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -145,37 +150,60 @@ public class ApacheHttpClientTool extends HttpClientTool {
      * @return HttpEntity
      */
     public static HttpEntity convertParameters(Map<String, String[]> parameters) {
-        BasicHttpEntity httpEntity = new BasicHttpEntity();
+        HttpEntity httpEntity = new BasicHttpEntity();
         if (parameters == null || parameters.size() < 1) {
             return httpEntity;
         }
-        StringBuffer parameterString = new StringBuffer();
         Set<Map.Entry<String, String[]>> entrySet = parameters.entrySet();
+        List<NameValuePair> nameValuePairList = new ArrayList<>();
+
         for (Map.Entry<String, String[]> entry : entrySet) {
             String[] values = entry.getValue();
             if (values == null) {
-                parameterString.append("&").append(entry.getKey()).append("=");
+                nameValuePairList.add(new BasicNameValuePair(entry.getKey(), ""));
             } else {
                 for (String value : values) {
-                    parameterString.append("&").append(entry.getKey()).append("=").append(value);
+                    nameValuePairList.add(new BasicNameValuePair(entry.getKey(), value));
                 }
             }
         }
-        logger.debug("HttpClient send >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [Parameters]{}", parameterString);
-        InputStream inputStream = null;
         try {
-            String content = parameterString.toString();
-//                inputStream = new ByteArrayInputStream(content.getBytes());
-            inputStream = IOUtil.toInputStream(content);
-            httpEntity.setContent(inputStream);
-            httpEntity.setContentEncoding(Constant.Charset.UTF8);
-            httpEntity.setContentLength(inputStream.available());
-            httpEntity.setChunked(false);
-        } catch (IOException e) {
+            httpEntity = new UrlEncodedFormEntity(nameValuePairList, Constant.Charset.UTF8);
+        } catch (UnsupportedEncodingException e) {
             throw new IllegalStateException(e);
-        } finally {
-            IOUtil.close(inputStream);
         }
+
+//        BasicHttpEntity httpEntity = new BasicHttpEntity();
+//        if (parameters == null || parameters.size() < 1) {
+//            return httpEntity;
+//        }
+//        Set<Map.Entry<String, String[]>> entrySet = parameters.entrySet();
+//        StringBuffer parameterString = new StringBuffer();
+//        for (Map.Entry<String, String[]> entry : entrySet) {
+//            String[] values = entry.getValue();
+//            if (values == null) {
+//                parameterString.append("&").append(entry.getKey()).append("=");
+//            } else {
+//                for (String value : values) {
+//                    parameterString.append("&").append(entry.getKey()).append("=").append(value);
+//                }
+//            }
+//        }
+//        logger.debug("HttpClient send >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [Parameters]{}", parameterString);
+//        InputStream inputStream = null;
+//        try {
+//            String content = parameterString.toString();
+////                inputStream = new ByteArrayInputStream(content.getBytes());
+//            inputStream = IOUtil.toInputStream(content);
+//            httpEntity.setContent(inputStream);
+//            httpEntity.setContentEncoding(Constant.Charset.UTF8);
+//            httpEntity.setContentLength(inputStream.available());
+//            httpEntity.setChunked(false);
+//        } catch (IOException e) {
+//            throw new IllegalStateException(e);
+//        } finally {
+//            IOUtil.close(inputStream);
+//        }
         return httpEntity;
     }
 
@@ -282,15 +310,74 @@ public class ApacheHttpClientTool extends HttpClientTool {
             if (headerList != null) {
                 httpRequestBase.setHeaders(headerList.toArray(new Header[0]));
             }
+
             HttpClient httpClient = getInstance();
             httpResponse = httpClient.execute(httpRequestBase);
 //                httpRequestBase.abort();
             logger.info("HttpClient receive <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< [Response]{}", httpResponse);
         } catch (Exception e) {
             releaseConnection(httpResponse);
-            throw new IllegalStateException(e);
+
+            String exceptionMessage = String.format("%s\n%s", e.getMessage(), httpRequestInfo(httpRequestBase, Constant.Charset.UTF8));
+            throw new IllegalStateException(exceptionMessage, e);
         }
         return httpResponse;
+    }
+
+    /**
+     * 获取 Http-Client 请求信息
+     *
+     * @param httpRequestBase Http-Client 请求器
+     * @param encoding        编码
+     * @return 返回请求信息
+     */
+    public static String httpRequestInfo(HttpRequestBase httpRequestBase, String encoding) {
+        String newLine = "\n";
+        StringBuffer httpRequestInfo = new StringBuffer("HTTP-Request : [").append(newLine);
+        URI uri = httpRequestBase.getURI();
+        String url = HttpUtil.checkHasParas(uri.toString(), null, encoding);
+        httpRequestInfo.append("\tURL : ").append(url).append(newLine);
+        String method = httpRequestBase.getMethod();
+        httpRequestInfo.append("\tMethod : ").append(method).append(newLine);
+        Header[] headers = httpRequestBase.getAllHeaders();
+        if (headers != null) {
+            httpRequestInfo.append("\tHeaders : ").append(newLine);
+            for (Header header : headers) {
+                httpRequestInfo.append("\t\t").append(header.getName()).append("=").append(header.getValue()).append(newLine);
+            }
+        }
+        String parameters = null;
+        if (httpRequestBase instanceof HttpEntityEnclosingRequestBase) {
+            HttpEntityEnclosingRequestBase httpEntityEnclosingRequestBase = (HttpEntityEnclosingRequestBase) httpRequestBase;
+            HttpEntity httpEntity = httpEntityEnclosingRequestBase.getEntity();
+            if (!httpEntity.isStreaming()) {
+                Header contentEncodingHeader = httpEntity.getContentEncoding();
+                String contentEncoding = null;
+                if (contentEncodingHeader != null) {
+                    contentEncoding = contentEncodingHeader.getValue();
+                } else {
+                    contentEncoding = encoding;
+                }
+                ByteArrayOutputStream out = null;
+                byte[] bodyBytes = null;
+                try {
+                    out = new ByteArrayOutputStream();
+                    httpEntity.writeTo(out);
+                    bodyBytes = out.toByteArray();
+                    out.close();
+                    parameters = uri.getQuery() + "&" + new String(bodyBytes, contentEncoding);
+                } catch (Exception e) {
+                    throw new IllegalStateException(e);
+                } finally {
+                    IOUtil.closeQuietly(out);
+                }
+            }
+        }
+        if (parameters == null) {
+            parameters = "";
+        }
+        httpRequestInfo.append("\tParameters : ").append(parameters).append(newLine);
+        return httpRequestInfo.append("]").append(newLine).toString();
     }
 
     /**

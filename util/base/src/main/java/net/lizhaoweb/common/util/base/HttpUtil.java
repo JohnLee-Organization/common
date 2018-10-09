@@ -726,13 +726,18 @@ public class HttpUtil {
      * @param url          资源地址
      * @param parameterMap 参数列表
      * @return 返回去掉参数的url
-     * @throws UnsupportedEncodingException
      */
-    public static String checkHasParas(String url, Map<String, String[]> parameterMap, String encoding) throws UnsupportedEncodingException {
-        // 检测url中是否存在参数
-        if (url.contains("?") && url.indexOf("?") < url.indexOf("=")) {
-            stringParametersToMapParameters(parameterMap, url.substring(url.indexOf("?") + 1), encoding);
-            url = url.substring(0, url.indexOf("?"));
+    public static String checkHasParas(String url, Map<String, String[]> parameterMap, String encoding) {
+        try {
+            // 检测url中是否存在参数
+            if (url.contains("?") && url.indexOf("?") < url.indexOf("=")) {
+                if (parameterMap != null) {
+                    stringParametersToMapParameters(parameterMap, url.substring(url.indexOf("?") + 1), encoding);
+                }
+                url = url.substring(0, url.indexOf("?"));
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
         }
         return url;
     }
