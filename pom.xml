@@ -144,5 +144,6 @@
         <module>util</module>
         <module>translate</module>
         <module>third</module>
+        <module>aliyun</module>
     </modules>
 </project>
