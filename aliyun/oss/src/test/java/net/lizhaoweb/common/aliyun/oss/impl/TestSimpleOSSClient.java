@@ -18,12 +18,14 @@ import com.aliyun.oss.model.ObjectMetadata;
 import com.aliyun.oss.model.PutObjectResult;
 import com.aliyun.oss.model.UploadFileResult;
 import net.lizhaoweb.common.aliyun.oss.IOSSClient;
+import net.lizhaoweb.common.util.base.PropertiesUtil;
 import net.lizhaoweb.common.util.base.StringUtil;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,11 +44,12 @@ public class TestSimpleOSSClient {
 
     @Before
     public void init() {
-//        String endpoint = "http://devp.oss.littlehotspot.com";
-//        String endpoint = "http://oss.littlehotspot.com";
-        String endpoint = "http://oss-cn-beijing.aliyuncs.com";
-        String accessKeyId = "LTAIt7quTv3p6gsP";
-        String secretAccessKey = "HfModdrDMPZYWJULNf199PCAY69m3t";
+        String userHome = System.getProperty("user.home");
+        Properties properties = PropertiesUtil.load(userHome + "/ALiYun/oss.properties");
+
+        String endpoint = PropertiesUtil.getProperty(properties, "aliyun.oss.endpoint");// 消息队列节点
+        String accessKeyId = PropertiesUtil.getProperty(properties, "aliyun.oss.accessKeyId");// MNS账号的accessKeyId
+        String secretAccessKey = PropertiesUtil.getProperty(properties, "aliyun.oss.secretAccessKey");// MNS账号的secretAccessKey
 
         CredentialsProvider credsProvider = new DefaultCredentialProvider(accessKeyId, secretAccessKey);
         ClientConfiguration config = new ClientConfiguration();

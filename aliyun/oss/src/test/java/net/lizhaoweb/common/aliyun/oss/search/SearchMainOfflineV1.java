@@ -18,8 +18,11 @@ import com.aliyun.oss.common.auth.DefaultCredentials;
 import net.lizhaoweb.common.aliyun.oss.impl.SimpleOSSClient;
 import net.lizhaoweb.common.aliyun.oss.search.service.ISearchFromOSSForSavorService;
 import net.lizhaoweb.common.aliyun.oss.search.service.SearchFromOSSForSavorServiceOfflineV1;
+import net.lizhaoweb.common.util.base.PropertiesUtil;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Properties;
 
 /**
  * @author <a href="http://www.lizhaoweb.cn">李召(John.Lee)</a>
@@ -36,9 +39,12 @@ public class SearchMainOfflineV1 {
 
     @Before
     public void init() {
-        String endpoint = "http://oss-cn-beijing.aliyuncs.com";
-        String accessKeyId = "LTAIt7quTv3p6gsP";
-        String secretAccessKey = "HfModdrDMPZYWJULNf199PCAY69m3t";
+        String userHome = System.getProperty("user.home");
+        Properties properties = PropertiesUtil.load(userHome + "/ALiYun/oss.properties");
+
+        String endpoint = PropertiesUtil.getProperty(properties, "aliyun.oss.endpoint");// 消息队列节点
+        String accessKeyId = PropertiesUtil.getProperty(properties, "aliyun.oss.accessKeyId");// MNS账号的accessKeyId
+        String secretAccessKey = PropertiesUtil.getProperty(properties, "aliyun.oss.secretAccessKey");// MNS账号的secretAccessKey
 
         Credentials credentials = new DefaultCredentials(accessKeyId, secretAccessKey);
         CredentialsProvider credsProvider = new DefaultCredentialProvider(credentials);

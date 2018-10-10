@@ -43,5 +43,6 @@
 
     <modules>
         <module>oss</module>
+        <module>mns</module>
     </modules>
 </project>
