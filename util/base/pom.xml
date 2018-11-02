@@ -29,6 +29,11 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.fusesource.jansi</groupId>
+            <artifactId>jansi</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <!-- Logger -->
         <dependency>
@@ -74,8 +79,8 @@
 
         <!--&lt;!&ndash; Spring &ndash;&gt;-->
         <!--<dependency>-->
-            <!--<groupId>org.springframework</groupId>-->
-            <!--<artifactId>spring-core</artifactId>-->
+        <!--<groupId>org.springframework</groupId>-->
+        <!--<artifactId>spring-core</artifactId>-->
         <!--</dependency>-->
 
         <!-- Jackson -->
