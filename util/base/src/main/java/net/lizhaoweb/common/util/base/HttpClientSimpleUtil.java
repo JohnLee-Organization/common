@@ -11,12 +11,15 @@
 package net.lizhaoweb.common.util.base;
 
 import net.lizhaoweb.common.util.base.bean.HttpResponseJ;
+import org.apache.http.Consts;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,6 +41,41 @@ import java.util.regex.Matcher;
 public class HttpClientSimpleUtil {
 
     private static Logger logger = LoggerFactory.getLogger(HttpClientSimpleUtil.class);
+
+    /**
+     * 发送 HTTP 请求。
+     *
+     * @param url     访问 URL
+     * @param headers 头参数
+     * @param content 内容
+     * @return 响应内容
+     */
+    public static String post(String url, Map<String, String> headers, String content) {
+        return post(url, headers, (Charset) null, content);
+    }
+
+    /**
+     * 发送 HTTP 请求。
+     *
+     * @param url     访问 URL
+     * @param headers 头参数
+     * @param charset 内容对应的字符集
+     * @param content 内容
+     * @return 响应内容
+     */
+    public static String post(String url, Map<String, String> headers, Charset charset, String content) {
+        if (StringUtil.isBlank(url)) {
+            throw new IllegalArgumentException("Argument 'url' is null");
+        }
+        Charset _charset = charset;
+        if (_charset == null) {
+            _charset = Consts.UTF_8;
+        }
+        HttpEntity entity = new StringEntity(content, _charset);
+        List<Header> headerList = ApacheHttpClientTool.setHeaders(headers);
+        HttpResponse response = HttpClientUtil.HttpClientActuator.post(url, headerList, entity);
+        return responseContent(response);
+    }
 
     /**
      * 发送 HTTP 请求。
@@ -118,6 +156,41 @@ public class HttpClientSimpleUtil {
      */
     public static String head(String url) {
         return head(url, null);
+    }
+
+    /**
+     * 发送 HTTP 请求。
+     *
+     * @param url     访问 URL
+     * @param headers 头参数
+     * @param content 内容
+     * @return 响应内容
+     */
+    public static String put(String url, Map<String, String> headers, String content) {
+        return put(url, headers, (Charset) null, content);
+    }
+
+    /**
+     * 发送 HTTP 请求。
+     *
+     * @param url     访问 URL
+     * @param headers 头参数
+     * @param charset 内容对应的字符集
+     * @param content 内容
+     * @return 响应内容
+     */
+    public static String put(String url, Map<String, String> headers, Charset charset, String content) {
+        if (StringUtil.isBlank(url)) {
+            throw new IllegalArgumentException("Argument 'url' is null");
+        }
+        Charset _charset = charset;
+        if (_charset == null) {
+            _charset = Consts.UTF_8;
+        }
+        HttpEntity entity = new StringEntity(content, _charset);
+        List<Header> headerList = ApacheHttpClientTool.setHeaders(headers);
+        HttpResponse response = HttpClientUtil.HttpClientActuator.put(url, headerList, entity);
+        return responseContent(response);
     }
 
     /**

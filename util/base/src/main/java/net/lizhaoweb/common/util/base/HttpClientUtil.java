@@ -15,10 +15,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.lizhaoweb.common.util.base.bean.HttpResponseJ;
+import org.apache.http.Consts;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.*;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,6 +85,78 @@ public class HttpClientUtil {
     }
 
     /**
+     * 更新或新增。
+     *
+     * @param uri        请求地址
+     * @param headerList 请求头列表
+     * @param charset    内容对应的字符集
+     * @param content    内容
+     * @return 返回响应对象
+     */
+    public static final HttpResponseJ put(String uri, List<Header> headerList, Charset charset, String content) {
+        HttpResponseJ httpResponse = null;
+        try {
+            Charset _charset = charset;
+            if (_charset == null) {
+                _charset = Consts.UTF_8;
+            }
+            HttpEntity entity = new StringEntity(content, _charset);
+            HttpResponse response = HttpClientActuator.put(uri, headerList, entity);
+            httpResponse = ApacheHttpClientTool.convertHttpResponse(response);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+        return httpResponse;
+    }
+
+    /**
+     * 更新或新增。
+     *
+     * @param uri       请求地址
+     * @param headerMap 请求头参数
+     * @param charset   内容对应的字符集
+     * @param content   内容
+     * @return 返回响应对象
+     */
+    public static final HttpResponseJ put(String uri, Map<String, String> headerMap, Charset charset, String content) {
+        List<Header> headerList = ApacheHttpClientTool.setHeaders(headerMap);
+        return put(uri, headerList, charset, content);
+    }
+
+    /**
+     * 更新或新增。
+     *
+     * @param uri              请求地址
+     * @param headerList       请求头列表
+     * @param contentByteArray 内容字节数组
+     * @return 返回响应对象
+     */
+    public static final HttpResponseJ put(String uri, List<Header> headerList, byte[] contentByteArray) {
+        HttpResponseJ httpResponse = null;
+        try {
+            HttpEntity entity = new ByteArrayEntity(contentByteArray);
+            HttpResponse response = HttpClientActuator.put(uri, headerList, entity);
+            httpResponse = ApacheHttpClientTool.convertHttpResponse(response);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+        return httpResponse;
+    }
+
+    /**
+     * 更新或新增。
+     *
+     * @param uri              请求地址
+     * @param headerMap        请求头参数
+     * @param contentByteArray 内容字节数组
+     * @return 返回响应对象
+     */
+    public static final HttpResponseJ put(String uri, Map<String, String> headerMap, byte[] contentByteArray) {
+        List<Header> headerList = ApacheHttpClientTool.setHeaders(headerMap);
+        return put(uri, headerList, contentByteArray);
+    }
+
+    /**
      * 新增
      *
      * @param uri        请求地址
@@ -115,6 +190,78 @@ public class HttpClientUtil {
     }
 
     /**
+     * 新增
+     *
+     * @param uri        请求地址
+     * @param headerList 请求头列表
+     * @param charset    内容对应的字符集
+     * @param content    内容
+     * @return 返回响应对象
+     */
+    public static final HttpResponseJ post(String uri, List<Header> headerList, Charset charset, String content) {
+        HttpResponseJ httpResponse = null;
+        try {
+            Charset _charset = charset;
+            if (_charset == null) {
+                _charset = Consts.UTF_8;
+            }
+            HttpEntity entity = new StringEntity(content, _charset);
+            HttpResponse response = HttpClientActuator.post(uri, headerList, entity);
+            httpResponse = ApacheHttpClientTool.convertHttpResponse(response);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+        return httpResponse;
+    }
+
+    /**
+     * 新增
+     *
+     * @param uri       请求地址
+     * @param headerMap 请求头参数
+     * @param charset   内容对应的字符集
+     * @param content   内容
+     * @return 返回响应对象
+     */
+    public static final HttpResponseJ post(String uri, Map<String, String> headerMap, Charset charset, String content) {
+        List<Header> headerList = ApacheHttpClientTool.setHeaders(headerMap);
+        return post(uri, headerList, charset, content);
+    }
+
+    /**
+     * 新增
+     *
+     * @param uri              请求地址
+     * @param headerList       请求头列表
+     * @param contentByteArray 内容字节数组
+     * @return 返回响应对象
+     */
+    public static final HttpResponseJ post(String uri, List<Header> headerList, byte[] contentByteArray) {
+        HttpResponseJ httpResponse = null;
+        try {
+            HttpEntity entity = new ByteArrayEntity(contentByteArray);
+            HttpResponse response = HttpClientActuator.post(uri, headerList, entity);
+            httpResponse = ApacheHttpClientTool.convertHttpResponse(response);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+        return httpResponse;
+    }
+
+    /**
+     * 新增
+     *
+     * @param uri              请求地址
+     * @param headerMap        请求头参数
+     * @param contentByteArray 内容字节数组
+     * @return 返回响应对象
+     */
+    public static final HttpResponseJ post(String uri, Map<String, String> headerMap, byte[] contentByteArray) {
+        List<Header> headerList = ApacheHttpClientTool.setHeaders(headerMap);
+        return post(uri, headerList, contentByteArray);
+    }
+
+    /**
      * 更新
      *
      * @param uri        请求地址
@@ -145,6 +292,78 @@ public class HttpClientUtil {
         List<Header> headerList = ApacheHttpClientTool.setHeaders(headerMap);
         HttpEntity entity = ApacheHttpClientTool.convertParameters(args);
         return patch(uri, headerList, entity);
+    }
+
+    /**
+     * 更新
+     *
+     * @param uri        请求地址
+     * @param headerList 请求头列表
+     * @param charset    内容对应的字符集
+     * @param content    内容
+     * @return 返回响应对象
+     */
+    public static final HttpResponseJ patch(String uri, List<Header> headerList, Charset charset, String content) {
+        HttpResponseJ httpResponse = null;
+        try {
+            Charset _charset = charset;
+            if (_charset == null) {
+                _charset = Consts.UTF_8;
+            }
+            HttpEntity entity = new StringEntity(content, _charset);
+            HttpResponse response = HttpClientActuator.patch(uri, headerList, entity);
+            httpResponse = ApacheHttpClientTool.convertHttpResponse(response);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+        return httpResponse;
+    }
+
+    /**
+     * 更新
+     *
+     * @param uri       请求地址
+     * @param headerMap 请求头参数
+     * @param charset   内容对应的字符集
+     * @param content   内容
+     * @return 返回响应对象
+     */
+    public static final HttpResponseJ patch(String uri, Map<String, String> headerMap, Charset charset, String content) {
+        List<Header> headerList = ApacheHttpClientTool.setHeaders(headerMap);
+        return patch(uri, headerList, charset, content);
+    }
+
+    /**
+     * 更新
+     *
+     * @param uri              请求地址
+     * @param headerList       请求头列表
+     * @param contentByteArray 内容字节数组
+     * @return 返回响应对象
+     */
+    public static final HttpResponseJ patch(String uri, List<Header> headerList, byte[] contentByteArray) {
+        HttpResponseJ httpResponse = null;
+        try {
+            HttpEntity entity = new ByteArrayEntity(contentByteArray);
+            HttpResponse response = HttpClientActuator.patch(uri, headerList, entity);
+            httpResponse = ApacheHttpClientTool.convertHttpResponse(response);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+        return httpResponse;
+    }
+
+    /**
+     * 更新
+     *
+     * @param uri              请求地址
+     * @param headerMap        请求头参数
+     * @param contentByteArray 内容字节数组
+     * @return 返回响应对象
+     */
+    public static final HttpResponseJ patch(String uri, Map<String, String> headerMap, byte[] contentByteArray) {
+        List<Header> headerList = ApacheHttpClientTool.setHeaders(headerMap);
+        return patch(uri, headerList, contentByteArray);
     }
 
     /**
