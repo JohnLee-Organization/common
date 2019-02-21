@@ -13,7 +13,7 @@
     <artifactId>aliyun</artifactId>
     <version>JL.COMMON.5.0.0.0.1.0.1-SNAPSHOT</version>
 
-    <name>Commons Aliyun</name>
+    <name>Commons ALiYun</name>
     <description>李召(John.Lee) 阿里云项目组</description>
     <packaging>pom</packaging>
 
