@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>common</artifactId>
+        <groupId>net.lizhaoweb</groupId>
+        <version>JL.COMMON.0.0.0.0.1.0.1-SNAPSHOT</version>
+    </parent>
+
+    <groupId>net.lizhaoweb.common</groupId>
+    <artifactId>os</artifactId>
+    <version>JL.COMMON.3.0.0.0.1.0.1-SNAPSHOT</version>
+
+    <name>Commons OS</name>
+    <description>李召(John.Lee) 操作系统项目组</description>
+    <packaging>pom</packaging>
+
+    <distributionManagement>
+        <site>
+            <id>website</id>
+            <url>scp://webhost.company.com/www/website</url>
+        </site>
+    </distributionManagement>
+
+    <properties>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+
+
+        </dependencies>
+    </dependencyManagement>
+
+    <modules>
+        <module>sigar</module>
+    </modules>
+
+</project>
