@@ -4,7 +4,7 @@
     <parent>
         <groupId>net.lizhaoweb</groupId>
         <artifactId>parent</artifactId>
-        <version>JL.PARENT.0.0.0.0.1.0.1</version>
+        <version>JL.PARENT.0.0.0.0.1.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>common</artifactId>
@@ -145,5 +145,6 @@
         <module>translate</module>
         <module>third</module>
         <module>aliyun</module>
+        <module>os</module>
     </modules>
 </project>
