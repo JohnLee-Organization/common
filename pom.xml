@@ -145,6 +145,6 @@
         <module>translate</module>
         <module>third</module>
         <module>aliyun</module>
-        <module>os</module>
+        <module>operating-system</module>
     </modules>
 </project>

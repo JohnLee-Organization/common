@@ -10,10 +10,10 @@
     </parent>
 
     <groupId>net.lizhaoweb.common</groupId>
-    <artifactId>os</artifactId>
+    <artifactId>operating-system</artifactId>
     <version>JL.COMMON.3.0.0.0.1.0.1-SNAPSHOT</version>
 
-    <name>Commons OS</name>
+    <name>Commons Operating-System</name>
     <description>李召(John.Lee) 操作系统项目组</description>
     <packaging>pom</packaging>
 
