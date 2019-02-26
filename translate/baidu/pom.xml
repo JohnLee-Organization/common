@@ -10,7 +10,7 @@
     </parent>
 
     <groupId>net.lizhaoweb.common.translate</groupId>
-    <artifactId>baidu</artifactId>
+    <artifactId>translate-baidu</artifactId>
     <version>JL.COMMON.2.2.0.0.1.0.1-SNAPSHOT</version>
 
     <name>Commons Translate [BaiDu]</name>
@@ -81,7 +81,7 @@
         </dependency>
         <dependency>
             <groupId>net.lizhaoweb.common.translate</groupId>
-            <artifactId>api</artifactId>
+            <artifactId>translate-api</artifactId>
             <version>JL.COMMON.2.1.0.0.1.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>

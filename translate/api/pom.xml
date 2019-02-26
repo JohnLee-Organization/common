@@ -10,7 +10,7 @@
     </parent>
 
     <groupId>net.lizhaoweb.common.translate</groupId>
-    <artifactId>api</artifactId>
+    <artifactId>translate-api</artifactId>
     <version>JL.COMMON.2.1.0.0.1.0.1-SNAPSHOT</version>
 
     <name>Commons Translate [API]</name>

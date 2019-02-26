@@ -8,7 +8,7 @@
     </parent>
 
     <groupId>net.lizhaoweb.common.util.slf4j</groupId>
-    <artifactId>api</artifactId>
+    <artifactId>slf4j-api</artifactId>
     <version>JL.COMMON.1.7.1.0.1.0.0-SNAPSHOT</version>
 
     <name>Commons Util SLF4J [API]</name>
