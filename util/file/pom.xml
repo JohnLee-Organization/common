@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>util</artifactId>
+        <groupId>net.lizhaoweb.common</groupId>
+        <version>JL.COMMON.1.0.0.0.1.0.1-SNAPSHOT</version>
+    </parent>
+
+    <groupId>net.lizhaoweb.common.util</groupId>
+    <artifactId>file</artifactId>
+    <version>JL.COMMON.1.8.0.0.1.0.1-SNAPSHOT</version>
+
+    <name>Commons Util [File]</name>
+    <description>李召(John.Lee) 个人通用工具项目 - 文件</description>
+    <packaging>jar</packaging>
+
+    <properties>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>
