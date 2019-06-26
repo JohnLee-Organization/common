@@ -58,7 +58,7 @@ public class Task implements Callable<PartResult> {
 
         try {
             DownloadPart downloadPart = downloadCheckPoint.downloadParts.get(partIndex);
-            tr = new PartResult(partIndex + 1, downloadPart.start, downloadPart.end);
+            tr = new PartResult(partIndex + 1, downloadPart.start, downloadPart.end, downloadPart.end - downloadPart.start);
 
             output = new RandomAccessFile(downloadFileRequest.getTempDownloadFile(), "rw");
             output.seek(downloadPart.start);

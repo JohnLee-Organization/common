@@ -12,6 +12,8 @@ package net.lizhaoweb.common.file.download;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 下载文件结果
  *
@@ -25,6 +27,8 @@ import lombok.Data;
  */
 @Data
 public class DownloadFileResult {
+
+    private List<PartResult> partResults;
 
     private FileObjectMetadata objectMetadata;
 }

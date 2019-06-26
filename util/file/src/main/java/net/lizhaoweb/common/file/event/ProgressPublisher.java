@@ -28,8 +28,7 @@ public class ProgressPublisher {
         listener.progressChanged(new ProgressEvent(eventType));
     }
 
-    public static void publishSelectProgress(final ProgressListener listener, final ProgressEventType eventType,
-                                             final long scannedBytes) {
+    public static void publishSelectProgress(final ProgressListener listener, final ProgressEventType eventType, final long scannedBytes) {
         if (listener == ProgressListener.NOOP || listener == null || eventType == null) {
             return;
         }
@@ -52,8 +51,7 @@ public class ProgressPublisher {
         publishByteCountEvent(listener, ProgressEventType.REQUEST_CONTENT_LENGTH_EVENT, bytes);
     }
 
-    private static void publishByteCountEvent(final ProgressListener listener, final ProgressEventType eventType,
-                                              final long bytes) {
+    private static void publishByteCountEvent(final ProgressListener listener, final ProgressEventType eventType, final long bytes) {
         if (listener == ProgressListener.NOOP || listener == null || bytes <= 0) {
             return;
         }
