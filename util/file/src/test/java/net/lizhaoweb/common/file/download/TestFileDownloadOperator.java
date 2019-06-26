@@ -33,6 +33,8 @@ public class TestFileDownloadOperator {
     public void init() {
         FileObjectOperator fileObjectOperator = new FileObjectOperator();
         fileObjectOperator.setEndPoint("http://oss.littlehotspot.com");
+        fileObjectOperator.setConnectTimeout(30000);
+        fileObjectOperator.setReadTimeout(5000);
 
         FileDownloadOperator fileDownloadOperator = new FileDownloadOperator();
         fileDownloadOperator.setFileObjectOperator(fileObjectOperator);
@@ -41,11 +43,23 @@ public class TestFileDownloadOperator {
 
     @Test
     public void downloadFile() {
+        long start = System.currentTimeMillis();
+        final long[] downByte = {0, 0, 0};
         try {
             ProgressListener progressListener = new ProgressListener() {
                 @Override
                 public void progressChanged(ProgressEvent event) {
-                    System.out.println(event.toString());
+//                    if (ProgressEventType.REQUEST_CONTENT_LENGTH_EVENT == event.getEventType()) {
+//                        if (downByte[0] < 1) {
+//                            downByte[0] = event.getBytes();
+//                        } else {
+//                            downByte[1] += event.getBytes();
+//                        }
+//                        System.out.print(downByte[0] + "===");
+//                        System.out.print(downByte[1] + "\t");
+//                    }
+                    downByte[2]++;
+                    System.out.println(downByte[2] + "\t-----\t" + event);
                 }
             };
 
@@ -54,14 +68,17 @@ public class TestFileDownloadOperator {
             downloadFileRequest.setDownloadFile("D:\\httpDownload.mp4");
             downloadFileRequest.setUri("media/resource/GdxeRaKasX.mp4");
             downloadFileRequest.setQueryString("");
-            downloadFileRequest.setTaskNum(1);
-            downloadFileRequest.setPartSize(1024 * 1024);
+            downloadFileRequest.setTaskNum(10);
+            downloadFileRequest.setPartSize(1 * 1024 * 1024);
             downloadFileRequest.setEnableCheckpoint(true);
             downloadFileRequest.setProgressListener(progressListener);
-            this.fileDownloadOperator.downloadFile(downloadFileRequest);
-            System.out.println("down file done");
+
+            DownloadFileResult downloadFileResult = this.fileDownloadOperator.downloadFile(downloadFileRequest);
+            System.out.println(downloadFileResult);
+            System.out.println(downByte[0]);
         } catch (Throwable e) {
             e.printStackTrace();
         }
+        System.out.println(System.currentTimeMillis() - start);
     }
 }

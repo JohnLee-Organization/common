@@ -10,6 +10,8 @@
  */
 package net.lizhaoweb.common.file.download.http_url;
 
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.lizhaoweb.common.file.GenericRequest;
 import net.lizhaoweb.common.file.download.FileObject;
@@ -22,7 +24,10 @@ import net.lizhaoweb.common.file.event.ProgressPublisher;
 import net.lizhaoweb.common.file.utils.CodingUtils;
 import net.lizhaoweb.common.file.utils.DownloadFileConstants;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -43,7 +48,11 @@ import java.util.regex.Pattern;
  */
 public class FileObjectOperator implements IFileObjectOperator {
 
-    private static Pattern HTTP_PROTOCOL = Pattern.compile("^HTTPS?://", Pattern.CASE_INSENSITIVE);
+    @Setter
+    private int connectTimeout = 30000;
+
+    @Setter
+    private int readTimeout = 5000;
 
     @Setter
     private String endPoint;
@@ -59,8 +68,7 @@ public class FileObjectOperator implements IFileObjectOperator {
         HttpURLConnection connection = null;
         try {
             Map<String, String> requestHeaderMap = new HashMap<>();
-            connection = this.sendHttpURLConnection(genericRequest, "HEAD", requestHeaderMap);
-            connection.connect();
+            connection = new HttpURLClient(this.endPoint, this.connectTimeout, this.readTimeout).send(genericRequest, "HEAD", requestHeaderMap);
             return this.setFileObjectMeta(connection);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -78,10 +86,15 @@ public class FileObjectOperator implements IFileObjectOperator {
         CodingUtils.assertParameterNotNull(queryString, "queryString");
 
         ProgressListener listener = getFileObjectRequest.getProgressListener();
+        ProgressPublisher.publishProgress(listener, ProgressEventType.TRANSFER_STARTED_EVENT);
+
+        return getFileObject(getFileObjectRequest, 1, 3);
+    }
+
+    private FileObject getFileObject(GetFileObjectRequest getFileObjectRequest, int tryCount, int maxCount) {
         FileObject fileObject = new FileObject();
         HttpURLConnection connection = null;
         try {
-            ProgressPublisher.publishProgress(listener, ProgressEventType.TRANSFER_STARTED_EVENT);
             fileObject.setUri(getFileObjectRequest.getUri());
             fileObject.setQueryString(getFileObjectRequest.getQueryString());
 
@@ -92,24 +105,83 @@ public class FileObjectOperator implements IFileObjectOperator {
                 requestHeaderMap.put("Range", "bytes=" + startPos + "-" + endPos);
             }
 
-            connection = this.sendHttpURLConnection(getFileObjectRequest, "GET", requestHeaderMap);
+            connection = new HttpURLClient(this.endPoint, this.connectTimeout, this.readTimeout).send(getFileObjectRequest, "GET", requestHeaderMap);
             fileObject.setObjectMetadata(this.setFileObjectMeta(connection));
-            fileObject.setObjectContent(connection.getInputStream());
+            byte[] contentBytes = this.readStream(connection.getInputStream());
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(contentBytes);
+            fileObject.setObjectContent(byteArrayInputStream);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            if (tryCount > maxCount) {
+                throw new RuntimeException(e);
+            }
+            fileObject = this.getFileObject(getFileObjectRequest, tryCount++, maxCount);
         } finally {
-//            this.closeHttpURLConnection(connection);
+            this.closeHttpURLConnection(connection);
         }
         return fileObject;
     }
 
-
-    private HttpURLConnection sendHttpURLConnection(GenericRequest genericRequest, String method, Map<String, String> headerMap) throws IOException {
-        URL url = this.getUrl(genericRequest.getUri(), genericRequest.getQueryString());
-        return this.sendHttpURLConnection(url, method, headerMap);
+    static byte[] readStream(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        try {
+            byte[] buffer = new byte[1024];
+            int len = -1;
+            while ((len = inputStream.read(buffer)) != -1) {
+                outStream.write(buffer, 0, len);
+            }
+        } finally {
+            outStream.close();
+            inputStream.close();
+        }
+        return outStream.toByteArray();
     }
 
-    private HttpURLConnection sendHttpURLConnection(URL url, String method, Map<String, String> headerMap) throws IOException {
+    private FileObjectMetadata setFileObjectMeta(HttpURLConnection connection) {
+        FileObjectMetadata fileObjectMeta = new FileObjectMetadata();
+        Map<String, List<String>> headerMap = connection.getHeaderFields();
+
+        List<String> ContentLengthValue = headerMap.get("Content-Length");
+        if (ContentLengthValue != null && ContentLengthValue.size() > 0) {
+            String ContentLength = ContentLengthValue.get(0);
+            fileObjectMeta.setSize(Long.valueOf(ContentLength));
+        }
+
+        List<String> LastModifiedValue = headerMap.get("Last-Modified");
+        if (LastModifiedValue != null && LastModifiedValue.size() > 0) {
+            String ContentLength = LastModifiedValue.get(0);
+            fileObjectMeta.setLastModified(new Date(ContentLength));
+        }
+        return fileObjectMeta;
+    }
+
+    private void closeHttpURLConnection(HttpURLConnection connection) {
+        if (connection != null) {
+            connection.disconnect();
+            connection = null;
+        }
+    }
+}
+
+@RequiredArgsConstructor
+class HttpURLClient {
+
+    private static Pattern HTTP_PROTOCOL = Pattern.compile("^HTTPS?://", Pattern.CASE_INSENSITIVE);
+
+    @NonNull
+    private String endPoint;
+
+    @NonNull
+    private int connectTimeout;
+
+    @NonNull
+    private int readTimeout;
+
+    HttpURLConnection send(GenericRequest genericRequest, String method, Map<String, String> headerMap) throws IOException {
+        URL url = this.getUrl(genericRequest.getUri(), genericRequest.getQueryString());
+        return this.send(url, method, headerMap);
+    }
+
+    HttpURLConnection send(URL url, String method, Map<String, String> headerMap) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod(method);
 
@@ -117,7 +189,8 @@ public class FileObjectOperator implements IFileObjectOperator {
         connection.setDoInput(true);// 创建输入流，必须有
         connection.setDoOutput(true);// 创建输出流，必须有
         connection.setUseCaches(false);// 不缓存
-//            connection.setConnectTimeout(this.connectTimeout);// 连接超时
+        connection.setConnectTimeout(connectTimeout);// 连接超时
+        connection.setReadTimeout(readTimeout);
 
         connection.setRequestProperty("Accept", "*/*");
         connection.setRequestProperty("Accept-Charset", DownloadFileConstants.DEFAULT_CHARSET_NAME);
@@ -142,29 +215,11 @@ public class FileObjectOperator implements IFileObjectOperator {
             }
         }
 
+        connection.connect();
         return connection;
     }
 
-
-    private FileObjectMetadata setFileObjectMeta(HttpURLConnection connection) {
-        FileObjectMetadata fileObjectMeta = new FileObjectMetadata();
-        Map<String, List<String>> headerMap = connection.getHeaderFields();
-
-        List<String> ContentLengthValue = headerMap.get("Content-Length");
-        if (ContentLengthValue != null && ContentLengthValue.size() > 0) {
-            String ContentLength = ContentLengthValue.get(0);
-            fileObjectMeta.setSize(Long.valueOf(ContentLength));
-        }
-
-        List<String> LastModifiedValue = headerMap.get("Last-Modified");
-        if (LastModifiedValue != null && LastModifiedValue.size() > 0) {
-            String ContentLength = LastModifiedValue.get(0);
-            fileObjectMeta.setLastModified(new Date(ContentLength));
-        }
-        return fileObjectMeta;
-    }
-
-    private URL getUrl(String uri, String queryString) throws MalformedURLException {
+    URL getUrl(String uri, String queryString) throws MalformedURLException {
         String url, realEndPoint, realUri, realQueryString;
 
         realEndPoint = this.endPoint.trim();
@@ -192,12 +247,5 @@ public class FileObjectOperator implements IFileObjectOperator {
             url = String.format("%s/%s?%s", realEndPoint, realUri, realQueryString);
         }
         return new URL(url);
-    }
-
-    private void closeHttpURLConnection(HttpURLConnection connection) {
-        if (connection != null) {
-            connection.disconnect();
-            connection = null;
-        }
     }
 }

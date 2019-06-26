@@ -54,12 +54,22 @@ class DownloadCheckPoint implements Serializable {
      * Writes the checkpoint data to the checkpoint file.
      */
     public synchronized void dump(String cpFile) throws IOException {
-        this.md5 = hashCode();
-        FileOutputStream fileOut = new FileOutputStream(cpFile);
-        ObjectOutputStream outStream = new ObjectOutputStream(fileOut);
-        outStream.writeObject(this);
-        outStream.close();
-        fileOut.close();
+        FileOutputStream fileOut = null;
+        ObjectOutputStream outStream = null;
+        try {
+            this.md5 = hashCode();
+            fileOut = new FileOutputStream(cpFile);
+            outStream = new ObjectOutputStream(fileOut);
+            outStream.writeObject(this);
+            outStream.flush();
+        } finally {
+            if (outStream != null) {
+                outStream.close();
+            }
+            if (fileOut != null) {
+                fileOut.close();
+            }
+        }
     }
 
     /**

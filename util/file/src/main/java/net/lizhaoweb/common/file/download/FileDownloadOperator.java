@@ -107,7 +107,7 @@ public class FileDownloadOperator implements IFileDownloadOperator {
         ProgressPublisher.publishProgress(listener, ProgressEventType.TRANSFER_STARTED_EVENT);
 
         // Concurrently download parts.
-        DownloadFileResult downloadResult = download(downloadCheckPoint, downloadFileRequest);
+        DownloadResult downloadResult = download(downloadCheckPoint, downloadFileRequest);
 //        Long serverCRC = null;
         for (PartResult partResult : downloadResult.getPartResults()) {
 //            if (partResult.getServerCRC() != null) {
@@ -161,8 +161,8 @@ public class FileDownloadOperator implements IFileDownloadOperator {
         createFixedFile(downloadFileRequest.getTempDownloadFile(), downloadCheckPoint.objectStat.size);
     }
 
-    private DownloadFileResult download(DownloadCheckPoint downloadCheckPoint, DownloadFileRequest downloadFileRequest) throws Throwable {
-        DownloadFileResult downloadResult = new DownloadFileResult();
+    private DownloadResult download(DownloadCheckPoint downloadCheckPoint, DownloadFileRequest downloadFileRequest) throws Throwable {
+        DownloadResult downloadResult = new DownloadResult();
         ArrayList<PartResult> taskResults = new ArrayList<PartResult>();
         ExecutorService service = Executors.newFixedThreadPool(downloadFileRequest.getTaskNum());
         ArrayList<Future<PartResult>> futures = new ArrayList<Future<PartResult>>();
