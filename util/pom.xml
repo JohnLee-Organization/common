@@ -23,6 +23,7 @@
         <module>compress</module>
         <module>operating-system</module>
         <module>slf4j</module>
+        <module>file</module>
     </modules>
 
 </project>
