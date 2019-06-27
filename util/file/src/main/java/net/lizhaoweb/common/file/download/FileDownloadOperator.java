@@ -15,6 +15,7 @@ import net.lizhaoweb.common.file.event.ProgressEventType;
 import net.lizhaoweb.common.file.event.ProgressListener;
 import net.lizhaoweb.common.file.event.ProgressPublisher;
 import net.lizhaoweb.common.file.utils.CodingUtils;
+import net.lizhaoweb.common.file.utils.IOUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -48,9 +49,10 @@ public class FileDownloadOperator implements IFileDownloadOperator {
             rf = new RandomAccessFile(file, "rw");
             rf.setLength(length);
         } finally {
-            if (rf != null) {
-                rf.close();
-            }
+//            if (rf != null) {
+//                rf.close();
+//            }
+            IOUtils.close(rf);
         }
     }
 
@@ -163,10 +165,10 @@ public class FileDownloadOperator implements IFileDownloadOperator {
 
     private DownloadResult download(DownloadCheckPoint downloadCheckPoint, DownloadFileRequest downloadFileRequest) throws Throwable {
         DownloadResult downloadResult = new DownloadResult();
-        ArrayList<PartResult> taskResults = new ArrayList<PartResult>();
+        ArrayList<PartResult> taskResults = new ArrayList<>();
         ExecutorService service = Executors.newFixedThreadPool(downloadFileRequest.getTaskNum());
-        ArrayList<Future<PartResult>> futures = new ArrayList<Future<PartResult>>();
-        List<Task> tasks = new ArrayList<Task>();
+        ArrayList<Future<PartResult>> futures = new ArrayList<>();
+        List<Task> tasks = new ArrayList<>();
         ProgressListener listener = downloadFileRequest.getProgressListener();
 
         // Compute the size of data pending download.
@@ -223,7 +225,7 @@ public class FileDownloadOperator implements IFileDownloadOperator {
     }
 
     private ArrayList<DownloadPart> splitFile(long objectSize, long partSize) {
-        ArrayList<DownloadPart> parts = new ArrayList<DownloadPart>();
+        ArrayList<DownloadPart> parts = new ArrayList<>();
 
         long partNum = objectSize / partSize;
         if (partNum >= 10000) {
@@ -292,8 +294,7 @@ public class FileDownloadOperator implements IFileDownloadOperator {
         if (!rename) {
             copyFile(srcFile, destFile);
             if (!srcFile.delete()) {
-                throw new IOException(
-                        "Failed to delete original file '" + srcFile + "' after copy to '" + destFile + "'");
+                throw new IOException("Failed to delete original file '" + srcFile + "' after copy to '" + destFile + "'");
             }
         }
     }
@@ -304,14 +305,15 @@ public class FileDownloadOperator implements IFileDownloadOperator {
         try {
             is = new FileInputStream(source);
             os = new FileOutputStream(dest);
-            byte[] buffer = new byte[4096];
-            int length;
-            while ((length = is.read(buffer)) > 0) {
-                os.write(buffer, 0, length);
-            }
+            IOUtils.copy(is, os);
+//            byte[] buffer = new byte[4096];
+//            int length;
+//            while ((length = is.read(buffer)) > 0) {
+//                os.write(buffer, 0, length);
+//            }
         } finally {
-            is.close();
-            os.close();
+            IOUtils.close(is);
+            IOUtils.close(os);
         }
     }
 }

@@ -23,6 +23,7 @@ import net.lizhaoweb.common.file.event.ProgressListener;
 import net.lizhaoweb.common.file.event.ProgressPublisher;
 import net.lizhaoweb.common.file.utils.CodingUtils;
 import net.lizhaoweb.common.file.utils.DownloadFileConstants;
+import net.lizhaoweb.common.file.utils.IOUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -114,24 +115,27 @@ public class FileObjectOperator implements IFileObjectOperator {
             if (tryCount > maxCount) {
                 throw new RuntimeException(e);
             }
-            fileObject = this.getFileObject(getFileObjectRequest, tryCount++, maxCount);
+            fileObject = this.getFileObject(getFileObjectRequest, ++tryCount, maxCount);
         } finally {
             this.closeHttpURLConnection(connection);
         }
         return fileObject;
     }
 
-    static byte[] readStream(InputStream inputStream) throws IOException {
+    private byte[] readStream(InputStream inputStream) throws IOException {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         try {
-            byte[] buffer = new byte[1024];
-            int len = -1;
-            while ((len = inputStream.read(buffer)) != -1) {
-                outStream.write(buffer, 0, len);
-            }
+//            byte[] buffer = new byte[1024];
+//            int len = -1;
+//            while ((len = inputStream.read(buffer)) != -1) {
+//                outStream.write(buffer, 0, len);
+//            }
+            IOUtils.copy(inputStream, outStream, 1024);
         } finally {
-            outStream.close();
-            inputStream.close();
+//            outStream.close();
+//            inputStream.close();
+            IOUtils.close(outStream);
+            IOUtils.close(inputStream);
         }
         return outStream.toByteArray();
     }
@@ -181,7 +185,7 @@ class HttpURLClient {
         return this.send(url, method, headerMap);
     }
 
-    HttpURLConnection send(URL url, String method, Map<String, String> headerMap) throws IOException {
+    private HttpURLConnection send(URL url, String method, Map<String, String> headerMap) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod(method);
 
@@ -219,7 +223,7 @@ class HttpURLClient {
         return connection;
     }
 
-    URL getUrl(String uri, String queryString) throws MalformedURLException {
+    private URL getUrl(String uri, String queryString) throws MalformedURLException {
         String url, realEndPoint, realUri, realQueryString;
 
         realEndPoint = this.endPoint.trim();

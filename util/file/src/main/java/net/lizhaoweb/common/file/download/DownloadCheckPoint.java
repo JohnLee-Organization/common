@@ -11,6 +11,7 @@
 package net.lizhaoweb.common.file.download;
 
 import net.lizhaoweb.common.file.GenericRequest;
+import net.lizhaoweb.common.file.utils.IOUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -42,12 +43,23 @@ class DownloadCheckPoint implements Serializable {
      * Loads the checkpoint data from the checkpoint file.
      */
     public synchronized void load(String cpFile) throws IOException, ClassNotFoundException {
-        FileInputStream fileIn = new FileInputStream(cpFile);
-        ObjectInputStream in = new ObjectInputStream(fileIn);
-        DownloadCheckPoint dcp = (DownloadCheckPoint) in.readObject();
-        assign(dcp);
-        in.close();
-        fileIn.close();
+        FileInputStream fileIn = null;
+        ObjectInputStream in = null;
+        try {
+            fileIn = new FileInputStream(cpFile);
+            in = new ObjectInputStream(fileIn);
+            DownloadCheckPoint dcp = (DownloadCheckPoint) in.readObject();
+            assign(dcp);
+        } finally {
+            IOUtils.close(in);
+            IOUtils.close(fileIn);
+        }
+//        FileInputStream fileIn = new FileInputStream(cpFile);
+//        ObjectInputStream in = new ObjectInputStream(fileIn);
+//        DownloadCheckPoint dcp = (DownloadCheckPoint) in.readObject();
+//        assign(dcp);
+//        in.close();
+//        fileIn.close();
     }
 
     /**
@@ -63,12 +75,14 @@ class DownloadCheckPoint implements Serializable {
             outStream.writeObject(this);
             outStream.flush();
         } finally {
-            if (outStream != null) {
-                outStream.close();
-            }
-            if (fileOut != null) {
-                fileOut.close();
-            }
+//            if (outStream != null) {
+//                outStream.close();
+//            }
+//            if (fileOut != null) {
+//                fileOut.close();
+//            }
+            IOUtils.close(outStream);
+            IOUtils.close(fileOut);
         }
     }
 

@@ -14,6 +14,7 @@ import lombok.Getter;
 import net.lizhaoweb.common.file.event.ProgressListener;
 import net.lizhaoweb.common.file.event.ProgressPublisher;
 import net.lizhaoweb.common.file.utils.DownloadFileConstants;
+import net.lizhaoweb.common.file.utils.IOUtils;
 
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -70,11 +71,12 @@ public class Task implements Callable<PartResult> {
             objectMetadata = ossObj.getObjectMetadata();
             content = ossObj.getObjectContent();
 
-            byte[] buffer = new byte[DownloadFileConstants.DEFAULT_BUFFER_SIZE];
-            int bytesRead = 0;
-            while ((bytesRead = content.read(buffer)) != -1) {
-                output.write(buffer, 0, bytesRead);
-            }
+//            byte[] buffer = new byte[DownloadFileConstants.DEFAULT_BUFFER_SIZE];
+//            int bytesRead = 0;
+//            while ((bytesRead = content.read(buffer)) != -1) {
+//                output.write(buffer, 0, bytesRead);
+//            }
+            IOUtils.copy(content, output, DownloadFileConstants.DEFAULT_BUFFER_SIZE);
 
 //            if (fileObjectOperator.getInnerClient().getClientConfiguration().isCrcCheckEnabled()) {
 //                Long clientCRC = IOUtils.getCRCValue(content);
@@ -94,13 +96,14 @@ public class Task implements Callable<PartResult> {
             tr.setException(e);
 //            logException(String.format("Task %d:%s upload part %d failed: ", id, name, partIndex), e);
         } finally {
-            if (output != null) {
-                output.close();
-            }
-
-            if (content != null) {
-                content.close();
-            }
+//            if (output != null) {
+//                output.close();
+//            }
+//            if (content != null) {
+//                content.close();
+//            }
+            IOUtils.close(output);
+            IOUtils.close(content);
         }
 
         return tr;
