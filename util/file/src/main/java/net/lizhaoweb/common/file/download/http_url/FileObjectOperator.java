@@ -19,13 +19,14 @@ import net.lizhaoweb.common.file.download.FileObjectMetadata;
 import net.lizhaoweb.common.file.download.GetFileObjectRequest;
 import net.lizhaoweb.common.file.download.IFileObjectOperator;
 import net.lizhaoweb.common.file.event.ProgressEventType;
+import net.lizhaoweb.common.file.event.ProgressInputStream;
 import net.lizhaoweb.common.file.event.ProgressListener;
 import net.lizhaoweb.common.file.event.ProgressPublisher;
+import net.lizhaoweb.common.file.utils.CRC64;
 import net.lizhaoweb.common.file.utils.CodingUtils;
 import net.lizhaoweb.common.file.utils.DownloadFileConstants;
 import net.lizhaoweb.common.file.utils.IOUtils;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.zip.CheckedInputStream;
 
 /**
  * @author <a href="http://www.lizhaoweb.cn">李召(John.Lee)</a>
@@ -94,6 +96,7 @@ public class FileObjectOperator implements IFileObjectOperator {
 
     private FileObject getFileObject(GetFileObjectRequest getFileObjectRequest, int tryCount, int maxCount) {
         FileObject fileObject = new FileObject();
+        ProgressListener listener = getFileObjectRequest.getProgressListener();
         HttpURLConnection connection = null;
         try {
             fileObject.setUri(getFileObjectRequest.getUri());
@@ -108,11 +111,23 @@ public class FileObjectOperator implements IFileObjectOperator {
 
             connection = new HttpURLClient(this.endPoint, this.connectTimeout, this.readTimeout).send(getFileObjectRequest, "GET", requestHeaderMap);
             fileObject.setObjectMetadata(this.setFileObjectMeta(connection));
-            byte[] contentBytes = this.readStream(connection.getInputStream());
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(contentBytes);
-            fileObject.setObjectContent(byteArrayInputStream);
+            InputStream inputStream = connection.getInputStream();
+            ProgressInputStream progressInputStream = new ProgressInputStream(inputStream, listener) {
+                @Override
+                protected void onEOF() {
+                    ProgressPublisher.publishProgress(getListener(), ProgressEventType.TRANSFER_COMPLETED_EVENT);
+                }
+            };
+            CRC64 crc = new CRC64();
+            CheckedInputStream checkedInputstream = new CheckedInputStream(progressInputStream, crc);
+            fileObject.setObjectContent(checkedInputstream);
+
+//            byte[] contentBytes = this.readStream(connection.getInputStream());
+//            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(contentBytes);
+//            fileObject.setObjectContent(byteArrayInputStream);
         } catch (IOException e) {
             if (tryCount > maxCount) {
+                ProgressPublisher.publishProgress(listener, ProgressEventType.TRANSFER_FAILED_EVENT);
                 throw new RuntimeException(e);
             }
             fileObject = this.getFileObject(getFileObjectRequest, ++tryCount, maxCount);

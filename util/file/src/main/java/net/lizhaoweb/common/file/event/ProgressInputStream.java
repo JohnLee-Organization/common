@@ -52,6 +52,59 @@ public abstract class ProgressInputStream extends FilterInputStream {
         this.notifyThresHold = notifyThresHold;
     }
 
+    @Override
+    public int read() throws IOException {
+        if (!hasBeenRead) {
+            onFirstRead();
+            hasBeenRead = true;
+        }
+        int ch = super.read();
+        if (ch == -1) {
+            eof();
+        } else {
+            onBytesRead(1);
+        }
+        return ch;
+    }
+
+    @Override
+    public void reset() throws IOException {
+        super.reset();
+        onReset();
+        unnotifiedByteCount = 0;
+        notifiedByteCount = 0;
+    }
+
+    @Override
+    public int read(byte b[]) throws IOException {
+        return read(b, 0, b.length);
+    }
+
+    @Override
+    public int read(byte[] b, int off, int len) throws IOException {
+        if (!hasBeenRead) {
+            onFirstRead();
+            hasBeenRead = true;
+        }
+        int bytesRead = super.read(b, off, len);
+        if (bytesRead == -1) {
+            eof();
+        } else {
+            onBytesRead(bytesRead);
+        }
+        return bytesRead;
+    }
+
+    public final InputStream getWrappedInputStream() {
+        return in;
+    }
+
+    @Override
+    public void close() throws IOException {
+        onClose();
+        super.close();
+    }
+
     protected void onFirstRead() {
     }
 
@@ -77,62 +130,11 @@ public abstract class ProgressInputStream extends FilterInputStream {
         }
     }
 
-    @Override
-    public int read() throws IOException {
-        if (!hasBeenRead) {
-            onFirstRead();
-            hasBeenRead = true;
-        }
-        int ch = super.read();
-        if (ch == -1)
-            eof();
-        else
-            onBytesRead(1);
-        return ch;
-    }
-
-    @Override
-    public void reset() throws IOException {
-        super.reset();
-        onReset();
-        unnotifiedByteCount = 0;
-        notifiedByteCount = 0;
-    }
-
-    @Override
-    public int read(byte b[]) throws IOException {
-        return read(b, 0, b.length);
-    }
-
-    @Override
-    public int read(byte[] b, int off, int len) throws IOException {
-        if (!hasBeenRead) {
-            onFirstRead();
-            hasBeenRead = true;
-        }
-        int bytesRead = super.read(b, off, len);
-        if (bytesRead == -1)
-            eof();
-        else
-            onBytesRead(bytesRead);
-        return bytesRead;
-    }
-
     private void eof() {
         if (doneEOF)
             return;
         onEOF();
         unnotifiedByteCount = 0;
         doneEOF = true;
-    }
-
-    public final InputStream getWrappedInputStream() {
-        return in;
-    }
-
-    @Override
-    public void close() throws IOException {
-        onClose();
-        super.close();
     }
 }
