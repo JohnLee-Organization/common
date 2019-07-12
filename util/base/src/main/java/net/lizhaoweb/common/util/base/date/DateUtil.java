@@ -10,8 +10,6 @@ import net.lizhaoweb.common.util.base.Constant;
 import net.lizhaoweb.common.util.base.StringUtil;
 import net.lizhaoweb.common.util.exception.DateFormatParseException;
 import org.apache.commons.lang.time.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -29,8 +27,6 @@ import java.util.regex.Pattern;
  * @version ATC 1.0.0.1
  */
 public class DateUtil extends DateUtils {
-
-    protected static Logger logger = LoggerFactory.getLogger(DateUtil.class);
 
     /**
      * 无参构造。

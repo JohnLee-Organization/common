@@ -16,8 +16,6 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.StringEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.charset.Charset;
 import java.util.List;
@@ -39,8 +37,6 @@ import java.util.regex.Matcher;
  * <p/>
  */
 public class HttpClientSimpleUtil {
-
-    private static Logger logger = LoggerFactory.getLogger(HttpClientSimpleUtil.class);
 
     /**
      * 发送 HTTP 请求。

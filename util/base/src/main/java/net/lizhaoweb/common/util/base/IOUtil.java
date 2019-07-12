@@ -13,8 +13,6 @@ package net.lizhaoweb.common.util.base;
 
 import net.lizhaoweb.common.util.exception.EmptyFileException;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -38,8 +36,6 @@ import java.util.zip.Checksum;
  */
 public class IOUtil extends IOUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(IOUtil.class);
-
     private IOUtil() {
         // no instances of this class
     }
@@ -52,7 +48,7 @@ public class IOUtil extends IOUtils {
             closeable.close();
             closeable = null;
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+            //logger.error(e.getMessage(), e);
         }
     }
 
@@ -68,7 +64,7 @@ public class IOUtil extends IOUtils {
             serverSocket.close();
             serverSocket = null;
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+            //logger.error(e.getMessage(), e);
         }
     }
 
@@ -84,7 +80,7 @@ public class IOUtil extends IOUtils {
             socket.close();
             socket = null;
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+            //logger.error(e.getMessage(), e);
         }
     }
 
@@ -231,7 +227,7 @@ public class IOUtil extends IOUtils {
         try {
             closeable.close();
         } catch (Exception exc) {
-            logger.error("Unable to close resource: " + exc, exc);
+            //logger.error("Unable to close resource: " + exc, exc);
         }
     }
 }

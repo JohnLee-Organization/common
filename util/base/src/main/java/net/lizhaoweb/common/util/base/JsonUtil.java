@@ -22,8 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import net.lizhaoweb.common.util.base.date.DateConstant;
 import net.lizhaoweb.common.util.exception.JsonAnalysisException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -44,8 +42,6 @@ import java.util.List;
  * <p/>
  */
 public class JsonUtil {
-
-    protected static Logger logger = LoggerFactory.getLogger(JsonUtil.class);
 
     private static ObjectMapper mapper;
 
@@ -132,7 +128,6 @@ public class JsonUtil {
     public static String toJson(Object object) {
         String result;
         try {
-            logger.trace("[Object]{}", object);
             ObjectMapper mapper = getInstance();
             result = mapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
@@ -150,7 +145,6 @@ public class JsonUtil {
     public static byte[] toBytes(Object object) {
         byte[] result;
         try {
-            logger.trace("[Object]{}", object);
             ObjectMapper mapper = getInstance();
             result = mapper.writeValueAsBytes(object);
         } catch (JsonProcessingException e) {
@@ -173,7 +167,6 @@ public class JsonUtil {
     public static <T> T toBean(String json, Class<T> clazz) {
         T result;
         try {
-            logger.trace("[Json]{} [Class]{}", json, clazz);
             ObjectMapper mapper = getInstance();
             result = mapper.readValue(json, clazz);
         } catch (IOException e) {
@@ -193,7 +186,6 @@ public class JsonUtil {
     public static <T> T toBean(byte[] jsonBytes, Class<T> clazz) {
         T result;
         try {
-            logger.trace("[Bytes]{} [Class]{}", jsonBytes, clazz);
             ObjectMapper mapper = getInstance();
             result = mapper.readValue(jsonBytes, clazz);
         } catch (IOException e) {
@@ -213,7 +205,6 @@ public class JsonUtil {
     public static <T> T toBean(String json, JavaType javaType) {
         T result;
         try {
-            logger.trace("[Json]{} [JavaType]{}", json, javaType);
             ObjectMapper mapper = getInstance();
             result = mapper.readValue(json, javaType);
         } catch (IOException e) {
@@ -233,7 +224,6 @@ public class JsonUtil {
     public static <T> T toBean(byte[] jsonBytes, JavaType javaType) {
         T result;
         try {
-            logger.trace("[Bytes]{} [JavaType]{}", jsonBytes, javaType);
             ObjectMapper mapper = getInstance();
             result = mapper.readValue(jsonBytes, javaType);
         } catch (IOException e) {
@@ -253,7 +243,6 @@ public class JsonUtil {
     public static <T> T toBean(String json, TypeReference<T> valueTypeRef) {
         T result;
         try {
-            logger.trace("[Json]{} [TypeReference]{}", json, valueTypeRef);
             ObjectMapper mapper = getInstance();
             result = mapper.readValue(json, valueTypeRef);
         } catch (IOException e) {
@@ -273,7 +262,6 @@ public class JsonUtil {
     public static <T> T toBean(byte[] jsonBytes, TypeReference<T> valueTypeRef) {
         T result;
         try {
-            logger.trace("[Bytes]{} [TypeReference]{}", jsonBytes, valueTypeRef);
             ObjectMapper mapper = getInstance();
             result = mapper.readValue(jsonBytes, valueTypeRef);
         } catch (IOException e) {
@@ -294,7 +282,6 @@ public class JsonUtil {
     public static <T> T toBean(String json, Class<T> parametrized, Class... parameterClasses) {
         T result;
         try {
-            logger.trace("[Json]{} [parametrized]{} [parameterClasses]{}", json, parametrized, parameterClasses);
             ObjectMapper mapper = getInstance();
             JavaType javaType = getCollectionType(mapper, parametrized, parameterClasses);
             result = mapper.readValue(json, javaType);
@@ -316,7 +303,6 @@ public class JsonUtil {
     public static <T> T toBean(byte[] jsonBytes, Class<T> parametrized, Class... parameterClasses) {
         T result;
         try {
-            logger.trace("[Bytes]{} [parametrized]{} [parameterClasses]{}", jsonBytes, parametrized, parameterClasses);
             ObjectMapper mapper = getInstance();
             JavaType javaType = getCollectionType(mapper, parametrized, parameterClasses);
             result = mapper.readValue(jsonBytes, javaType);
@@ -340,7 +326,6 @@ public class JsonUtil {
     public static <T> List<T> toList(String json, Class<T> clazz) {
         List<T> result;
         try {
-            logger.trace("[Json]{} [Class]{}", json, clazz);
             ObjectMapper mapper = getInstance();
             JavaType javaType = getCollectionType(mapper, ArrayList.class, clazz);
             result = mapper.readValue(json, javaType);

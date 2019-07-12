@@ -35,4 +35,9 @@ public class TestIPUtil {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void getLocalSimpleInetAddress() {
+        System.out.println(IPUtil.getLocalSimpleInetAddress("eth9"));
+    }
 }

@@ -27,8 +27,6 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -52,8 +50,6 @@ import java.util.regex.Pattern;
  * Date of last commit:$Date$<br>
  */
 public class ApacheHttpClientTool extends HttpClientTool {
-
-    private static Logger logger = LoggerFactory.getLogger(ApacheHttpClientTool.class);
 
     private static final String REGEX_CONTENT_TYPE_CHARSET = "charset=([^\"\']+)";
 
@@ -123,7 +119,7 @@ public class ApacheHttpClientTool extends HttpClientTool {
      * @return List<Header>
      */
     public static List<Header> convertHeaders(Map<String, String> headers) {
-        logger.debug("HttpClient send >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [Headers]{}", headers);
+        Constant.LoggerAgglomeration.ApacheHttpClientLogger.debug("HttpClient send >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [Headers]{}", headers);
         List<Header> headerList = null;
         if (headers != null) {
             headerList = new ArrayList<Header>();
@@ -272,7 +268,7 @@ public class ApacheHttpClientTool extends HttpClientTool {
             IOUtil.close(inputStream);
             releaseConnection(httpResponse);
         }
-        logger.debug("HttpClient receive <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< [Content]{}", result);
+        Constant.LoggerAgglomeration.ApacheHttpClientLogger.debug("HttpClient receive <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< [Content]{}", result);
         return result;
     }
 
@@ -305,7 +301,7 @@ public class ApacheHttpClientTool extends HttpClientTool {
             throw new IllegalArgumentException("Http request is not found");
         }
         try {
-            logger.info("HttpClient send >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [Request]{} [HeaderList]{}", httpRequestBase, headerList);
+            Constant.LoggerAgglomeration.ApacheHttpClientLogger.info("HttpClient send >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [Request]{} [HeaderList]{}", httpRequestBase, headerList);
             httpRequestBase.setProtocolVersion(HttpVersion.HTTP_1_1);
             if (headerList != null) {
                 httpRequestBase.setHeaders(headerList.toArray(new Header[0]));
@@ -314,7 +310,7 @@ public class ApacheHttpClientTool extends HttpClientTool {
             HttpClient httpClient = getInstance();
             httpResponse = httpClient.execute(httpRequestBase);
 //                httpRequestBase.abort();
-            logger.info("HttpClient receive <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< [Response]{}", httpResponse);
+            Constant.LoggerAgglomeration.ApacheHttpClientLogger.info("HttpClient receive <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< [Response]{}", httpResponse);
         } catch (Exception e) {
             releaseConnection(httpResponse);
 
@@ -447,12 +443,12 @@ public class ApacheHttpClientTool extends HttpClientTool {
             httpResponse.setBytes(inputByteArray);
             httpResponse.setContent(httpResponse.getInputContent());
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            Constant.LoggerAgglomeration.ApacheHttpClientLogger.error(e.getMessage(), e);
             releaseConnection(response);
 //            } finally {
 //                releaseConnection(response);
         }
-        logger.debug("HttpClient receive <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< [ResponseJ]{}", httpResponse);
+        Constant.LoggerAgglomeration.ApacheHttpClientLogger.debug("HttpClient receive <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< [ResponseJ]{}", httpResponse);
         return httpResponse;
     }
 

@@ -5,8 +5,6 @@
 package net.lizhaoweb.common.util.base;
 
 import net.lizhaoweb.common.util.base.bean.HttpResponseJ;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -1217,8 +1215,6 @@ public final class HttpClientByURL {
      */
     public static class AnalogForm {
 
-        protected Logger logger = LoggerFactory.getLogger(this.getClass());
-
         private static final String END_FLAG = "\r\n";
         private static final String TWO_HYPHENS = "--";
         private static final String BOUNDARY = StringUtil.getRandomCode(13);
@@ -1502,7 +1498,6 @@ public final class HttpClientByURL {
                 StringBuffer temp = new StringBuffer();
                 temp.append(new String(bytes, this.encoding));
 
-                logger.debug("[InputString]{}", temp);
                 httpResponse.setInputContent(temp.toString());
                 httpResponse.setInputStream(new ByteArrayInputStream(bytes));
             }
@@ -1524,7 +1519,6 @@ public final class HttpClientByURL {
                 StringBuffer temp = new StringBuffer();
                 temp.append(new String(bytes, this.encoding));
 
-                logger.debug("[ErrorString]{}", temp);
                 httpResponse.setErrorContent(temp.toString());
                 httpResponse.setInputStream(new ByteArrayInputStream(bytes));
             }

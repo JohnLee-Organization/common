@@ -12,6 +12,8 @@ package net.lizhaoweb.common.util.base.bean;
 
 import lombok.Data;
 
+import java.net.InetAddress;
+
 /**
  * <h3>模型 - IP 简单封装</h3>
  *
@@ -24,6 +26,10 @@ import lombok.Data;
  */
 @Data
 public class SimpleInetAddress {
+
+    private InetAddress ipV4InetAddress;
+
+    private InetAddress ipV6InetAddress;
 
     /**
      * ipV4
@@ -45,4 +51,37 @@ public class SimpleInetAddress {
      * ipV6 mac
      */
     private String ipV6MAC;
+
+    /**
+     * 网卡名称
+     */
+    private String name;
+
+    /**
+     * 网卡显示名称
+     */
+    private String displayName;
+
+    /**
+     * 索引
+     */
+    private int index;
+
+    /**
+     * 通信术语 最大传输单元（Maximum Transmission Unit，MTU）
+     */
+    private int MTU;
+
+    public void setMTU(int MTU) {
+        this.MTU = MTU;
+    }
+
+    public int getMTU() {
+        return this.MTU;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("SimpleInetAddress(name=%s, index=%d, MTU=%d, ipV4=%s, ipV4MAC=%s, ipV6=%s, ipV6MAC=%s, displayName=%s)", name, index, MTU, ipV4, ipV4MAC, ipV6, ipV6MAC, displayName);
+    }
 }

@@ -7,9 +7,6 @@ package net.lizhaoweb.common.util.base;
  * StupidBird PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,8 +23,6 @@ import java.util.List;
  * @version ATC 1.0.0.1
  */
 public class FormatUtil {
-
-    protected static Logger logger = LoggerFactory.getLogger(FormatUtil.class);
 
     /**
      * 无参构造。
@@ -70,10 +65,6 @@ public class FormatUtil {
         } else if (number instanceof BigDecimal) {
             result = new StringBuffer().append(((BigDecimal) number).doubleValue());
         }
-        if (logger.isDebugEnabled()) {
-            logger.debug("转换前：{}", result);
-            logger.debug("浮点长度：{}", decimalPlaceLength);
-        }
         if (!StringUtil.isBlank(result.toString())) {
             int dotPlace = result.indexOf(".");
             if (decimalPlaceLength > 0) {
@@ -112,9 +103,6 @@ public class FormatUtil {
                     }
                 }
             }
-        }
-        if (logger.isDebugEnabled()) {
-            logger.debug("转换后：{}", result);
         }
         return result.toString();
     }
@@ -158,10 +146,6 @@ public class FormatUtil {
         } else if (number instanceof BigDecimal) {
             result = new StringBuffer().append(((BigDecimal) number).doubleValue());
         }
-        if (logger.isDebugEnabled()) {
-            logger.debug("转换前：{}", result);
-            logger.debug("整数部分长度：{}", length);
-        }
         if (!StringUtil.isBlank(result.toString())) {
             int dotPlace = result.indexOf(".");
             int zeroLength = 0;
@@ -177,9 +161,6 @@ public class FormatUtil {
                 }
                 result = temp.append(result);
             }
-        }
-        if (logger.isDebugEnabled()) {
-            logger.debug("转换后：{}", result);
         }
         return result.toString();
     }
@@ -305,11 +286,4 @@ public class FormatUtil {
         Long result = new BigDecimal(size).multiply(new BigDecimal(Math.pow(hourInDay, hourInDayIndex))).multiply(new BigDecimal(Math.pow(baseNumber, indexNumber))).multiply(new BigDecimal(millisecondInSecond)).longValue();
         return result;
     }
-
-    // public static void main(String[] args) {
-    // List<Long> list = turnMillisecond("12s,23M,1h,0.5d", ",");
-    // for (int index = 0; index < list.size(); index++) {
-    // System.out.println(list.get(index));
-    // }
-    // }
 }

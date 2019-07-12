@@ -11,8 +11,6 @@
 package net.lizhaoweb.common.util.base;
 
 import net.lizhaoweb.common.util.base.bean.SimpleInetAddress;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,8 +34,6 @@ public class IPUtil {
     //    public static String REGEX_IP138_IFRAME_URL = "<iframe .* src=\"(http(?!s)?://.+\\.ip138\\.com/ic\\.asp)\"";
     public static String REGEX_IP138_IFRAME_URL = "(http(?!s)?://.+\\.ip138\\.com/ic\\.asp)";
     public static String REGEX_IP138_IFRAME_CONTENT_IP = "\\[(.+)\\]";
-
-    private static Logger logger = LoggerFactory.getLogger(IPUtil.class);
 
     private IPUtil() {
         super();
@@ -128,11 +124,13 @@ public class IPUtil {
         String macAddr = "";
         try {
             NetworkInterface NIC = NetworkInterface.getByName(networkInterfaceName);
-            byte[] mac = NIC.getHardwareAddress();
-            String macString = byteToStringForMac(mac);
+            if (NIC == null) {
+                return macAddr;
+            }
+            String macString = byteToStringForMac(NIC.getHardwareAddress());
             macAddr = macString.toUpperCase();
-        } catch (SocketException e) {
-            logger.error(e.getMessage(), e);
+        } catch (NullPointerException | SocketException e) {
+            throw new RuntimeException(e);
         }
         return macAddr;
     }
@@ -148,11 +146,10 @@ public class IPUtil {
         try {
             //获得网络接口对象（即网卡），并得到mac地址，mac地址存在于一个byte数组中。
             byte[] mac = NetworkInterface.getByInetAddress(inetAddress).getHardwareAddress();
-            logger.debug("[MAC-Bytes]{}", mac);
             String macString = byteToStringForMac(mac);
             macAddr = macString.toUpperCase();
         } catch (SocketException e) {
-            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
         }
         return macAddr;
     }
@@ -160,79 +157,100 @@ public class IPUtil {
     /**
      * 获取本地某个网上的 IP 地址
      *
-     * @param networkInterfaceNames 网卡名列表，多个中间中半角逗号分割(,)
+     * @param networkInterfaceName 网卡名
      * @return String
      */
-    public static SimpleInetAddress getLocalSimpleInetAddress(String networkInterfaceNames) {
-        if (StringUtil.isBlank(networkInterfaceNames)) {
+    public static SimpleInetAddress getLocalSimpleInetAddress(String networkInterfaceName) {
+        if (StringUtil.isBlank(networkInterfaceName)) {
             throw new IllegalArgumentException("Argument 'networkInterfaceNames' is null");
         }
         try {
-            logger.trace("networkInterfaceNames : {}", networkInterfaceNames);
-            String[] networkInterfaceNameArray = networkInterfaceNames.split(",");
-
             Map<String, SimpleInetAddress> simpleInetAddressMap = new ConcurrentHashMap<>();
             Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
             while (networkInterfaces.hasMoreElements()) {
                 NetworkInterface networkInterface = networkInterfaces.nextElement();
-
-                // IP V4
-                String ipV4 = null, inet4MacAddress = null;
-                InetAddress inet4Address = getInet4Address(networkInterface);
-                if (inet4Address != null) {
-                    ipV4 = inet4Address.getHostAddress();
-                    inet4MacAddress = getMacAddr(networkInterfaceNames);
-//                    inet4MacAddress = getMACAddress(inet4Address);
+                if (!networkInterface.isUp()) {// 过滤未启动的网卡
+                    continue;
                 }
-
-                // IP V6
-                String ipV6 = null, inet6MacAddress = null;
-                InetAddress inet6Address = getInet6Address(networkInterface);
-                if (inet6Address != null) {
-                    ipV6 = inet6Address.getHostAddress();
-                    inet6MacAddress = getMacAddr(networkInterfaceNames);
-//                    inet6MacAddress = getMACAddress(inet6Address);
+                if (networkInterface.isVirtual()) {// 虚拟网卡
+                    continue;
                 }
-
-                // 设置 MAC 地址
-                if (StringUtil.isBlank(inet4MacAddress) && StringUtil.isNotBlank(inet6MacAddress)) {
-                    inet4MacAddress = inet6MacAddress;
-                } else if (StringUtil.isNotBlank(inet4MacAddress) && StringUtil.isBlank(inet6MacAddress)) {
-                    inet6MacAddress = inet4MacAddress;
+                if (networkInterface.isPointToPoint()) {// 点对点网卡
+                    continue;
                 }
-
-                // 判定数据是否完整
-                boolean isFullIPV4 = StringUtil.isNotBlank(ipV4) && StringUtil.isNotBlank(inet4MacAddress);
-                boolean isFullIPV6 = StringUtil.isNotBlank(ipV6) && StringUtil.isNotBlank(inet6MacAddress);
-                if (!isFullIPV4 && !isFullIPV6) {
+                if (networkInterface.isLoopback()) {// 过滤回环地址
                     continue;
                 }
 
-                // 组装数据对象
                 SimpleInetAddress simpleInetAddress = new SimpleInetAddress();
-                simpleInetAddress.setIpV4(ipV4);
-                simpleInetAddress.setIpV4MAC(inet4MacAddress);
-                simpleInetAddress.setIpV6(ipV6);
-                simpleInetAddress.setIpV6MAC(inet6MacAddress);
+                Enumeration<InetAddress> inetAddressEnumeration = networkInterface.getInetAddresses();
+                while (inetAddressEnumeration.hasMoreElements()) {
+                    InetAddress inetAddress = inetAddressEnumeration.nextElement();
+                    if (inetAddress instanceof Inet4Address) {
+                        simpleInetAddress.setIpV4InetAddress(inetAddress);
+                        simpleInetAddress.setIpV4(inetAddress.getHostAddress());
+                        simpleInetAddress.setIpV4MAC(byteToStringForMac(networkInterface.getHardwareAddress()).toUpperCase());
+                    } else if (inetAddress instanceof Inet6Address) {
+                        simpleInetAddress.setIpV6InetAddress(inetAddress);
+                        simpleInetAddress.setIpV6(inetAddress.getHostAddress());
+                        simpleInetAddress.setIpV6MAC(byteToStringForMac(networkInterface.getHardwareAddress()).toUpperCase());
+                    }
+                }
+
+//                // IP V4
+//                String ipV4 = null, inet4MacAddress = null;
+//                InetAddress inet4Address = getInet4Address(networkInterface);
+//                if (inet4Address != null) {
+//                    ipV4 = inet4Address.getHostAddress();
+//                    inet4MacAddress = getMacAddr(networkInterfaceName);
+////                    inet4MacAddress = getMACAddress(inet4Address);
+//                }
+//
+//                // IP V6
+//                String ipV6 = null, inet6MacAddress = null;
+//                InetAddress inet6Address = getInet6Address(networkInterface);
+//                if (inet6Address != null) {
+//                    ipV6 = inet6Address.getHostAddress();
+//                    inet6MacAddress = getMacAddr(networkInterfaceName);
+////                    inet6MacAddress = getMACAddress(inet6Address);
+//                }
+
+                // 设置 MAC 地址
+                if (StringUtil.isBlank(simpleInetAddress.getIpV4MAC()) && StringUtil.isNotBlank(simpleInetAddress.getIpV6MAC())) {
+                    simpleInetAddress.setIpV4MAC(simpleInetAddress.getIpV6MAC());
+                } else if (StringUtil.isNotBlank(simpleInetAddress.getIpV4MAC()) && StringUtil.isBlank(simpleInetAddress.getIpV4MAC())) {
+                    simpleInetAddress.setIpV6MAC(simpleInetAddress.getIpV4MAC());
+                }
+
+                // 判定数据是否完整
+                boolean isFullIPV4 = StringUtil.isNotBlank(simpleInetAddress.getIpV4()) && StringUtil.isNotBlank(simpleInetAddress.getIpV4MAC());
+                boolean isFullIPV6 = StringUtil.isNotBlank(simpleInetAddress.getIpV6()) && StringUtil.isNotBlank(simpleInetAddress.getIpV6MAC());
+                if (!isFullIPV4 && !isFullIPV6) {
+                    continue;
+                }
+                simpleInetAddress.setName(networkInterface.getName());
+                simpleInetAddress.setIndex(networkInterface.getIndex());
+                simpleInetAddress.setMTU(networkInterface.getMTU());
+                simpleInetAddress.setDisplayName(networkInterface.getDisplayName());
+
 
                 simpleInetAddressMap.put(networkInterface.getName(), simpleInetAddress);
             }
 
-            for (String networkInterfaceName : networkInterfaceNameArray) {
-                SimpleInetAddress simpleInetAddress = simpleInetAddressMap.get(networkInterfaceName);
-                if (simpleInetAddress != null) {
-                    return simpleInetAddress;
-                }
+            System.out.println(simpleInetAddressMap);
+            SimpleInetAddress simpleInetAddress = simpleInetAddressMap.get(networkInterfaceName);
+            if (simpleInetAddress != null) {
+                return simpleInetAddress;
             }
         } catch (SocketException e) {
-            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
         }
         return null;
     }
 
     // 将 mac 字节数组转为字符串
     private static String byteToStringForMac(byte[] mac) {
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuffer = new StringBuilder();
         for (int index = 0; index < mac.length; index++) {
             if (index != 0) {
                 stringBuffer.append("-");
@@ -249,8 +267,7 @@ public class IPUtil {
         char[] ob = new char[2];
         ob[0] = Digit[(iByte >>> 4) & 0X0F];
         ob[1] = Digit[iByte & 0X0F];
-        String hex = new String(ob);
-        return hex;
+        return new String(ob);
     }
 
     // 获取 IPV4 地址

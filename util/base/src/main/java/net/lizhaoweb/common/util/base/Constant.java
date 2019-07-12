@@ -5,6 +5,8 @@
 package net.lizhaoweb.common.util.base;
 
 import net.lizhaoweb.common.util.base.date.DateConstant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <h3>常量类</h3>
@@ -26,6 +28,11 @@ import net.lizhaoweb.common.util.base.date.DateConstant;
  * <p/>
  */
 public interface Constant extends DateConstant {
+
+    public static interface LoggerAgglomeration {
+        public static Logger UtilBasicLogger = LoggerFactory.getLogger("net.lizhaoweb.util");
+        public static Logger ApacheHttpClientLogger = LoggerFactory.getLogger("net.lizhaoweb.util.ApacheHttpClientTool");
+    }
 
     /**
      * 项目基本信息。

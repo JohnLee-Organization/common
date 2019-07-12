@@ -22,8 +22,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.*;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.charset.Charset;
 import java.util.List;
@@ -46,8 +44,6 @@ import java.util.regex.Pattern;
  * <p/>
  */
 public class HttpClientUtil {
-
-    private static Logger logger = LoggerFactory.getLogger(HttpClientUtil.class);
 
     public static Pattern URI_PATTERN = Pattern.compile("^([^?]+)(\\?[^?]+)?$");
 
