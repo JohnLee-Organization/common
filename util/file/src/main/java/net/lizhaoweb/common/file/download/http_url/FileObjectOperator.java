@@ -159,16 +159,82 @@ public class FileObjectOperator implements IFileObjectOperator {
         FileObjectMetadata fileObjectMeta = new FileObjectMetadata();
         Map<String, List<String>> headerMap = connection.getHeaderFields();
 
+        List<String> ETagValue = headerMap.get("ETag");
+        if (ETagValue != null && ETagValue.size() > 0) {
+            String value = ETagValue.get(0);
+            fileObjectMeta.setETag(value);
+        }
+
+        List<String> ObjectTypeValue = headerMap.get("x-oss-object-type");
+        if (ObjectTypeValue != null && ObjectTypeValue.size() > 0) {
+            String value = ObjectTypeValue.get(0);
+            fileObjectMeta.setObjectType(value);
+        }
+
+        List<String> ContentMD5Value = headerMap.get("Content-MD5");
+        if (ContentMD5Value != null && ContentMD5Value.size() > 0) {
+            String value = ContentMD5Value.get(0);
+            fileObjectMeta.setContentMD5(value);
+        }
+
+        List<String> ContentTypeValue = headerMap.get("Content-Type");
+        if (ContentTypeValue != null && ContentTypeValue.size() > 0) {
+            String value = ContentTypeValue.get(0);
+            fileObjectMeta.setContentType(value);
+        }
+
+        List<String> ContentEncodingValue = headerMap.get("Content-Encoding");
+        if (ContentEncodingValue != null && ContentEncodingValue.size() > 0) {
+            String value = ContentEncodingValue.get(0);
+            fileObjectMeta.setContentEncoding(value);
+        }
+
+        List<String> CacheControlValue = headerMap.get("Cache-Control");
+        if (CacheControlValue != null && CacheControlValue.size() > 0) {
+            String value = CacheControlValue.get(0);
+            fileObjectMeta.setCacheControl(value);
+        }
+
+        List<String> ContentDispositionValue = headerMap.get("Content-Disposition");
+        if (ContentDispositionValue != null && ContentDispositionValue.size() > 0) {
+            String value = ContentDispositionValue.get(0);
+            fileObjectMeta.setContentDisposition(value);
+        }
+
+        List<String> ServerSideEncryptionValue = headerMap.get("x-oss-server-side-encryption");
+        if (ServerSideEncryptionValue != null && ServerSideEncryptionValue.size() > 0) {
+            String value = ServerSideEncryptionValue.get(0);
+            fileObjectMeta.setServerSideEncryption(value);
+        }
+
+        List<String> ServerSideEncryptionKeyIdValue = headerMap.get("x-oss-server-side-encryption-key-id");
+        if (ServerSideEncryptionKeyIdValue != null && ServerSideEncryptionKeyIdValue.size() > 0) {
+            String value = ServerSideEncryptionKeyIdValue.get(0);
+            fileObjectMeta.setServerSideEncryptionKeyId(value);
+        }
+
+        List<String> RequestIdValue = headerMap.get("x-oss-request-id");
+        if (RequestIdValue != null && RequestIdValue.size() > 0) {
+            String value = RequestIdValue.get(0);
+            fileObjectMeta.setRequestId(value);
+        }
+
         List<String> ContentLengthValue = headerMap.get("Content-Length");
         if (ContentLengthValue != null && ContentLengthValue.size() > 0) {
-            String ContentLength = ContentLengthValue.get(0);
-            fileObjectMeta.setSize(Long.valueOf(ContentLength));
+            String value = ContentLengthValue.get(0);
+            fileObjectMeta.setSize(Long.valueOf(value));
         }
 
         List<String> LastModifiedValue = headerMap.get("Last-Modified");
         if (LastModifiedValue != null && LastModifiedValue.size() > 0) {
-            String ContentLength = LastModifiedValue.get(0);
-            fileObjectMeta.setLastModified(new Date(ContentLength));
+            String value = LastModifiedValue.get(0);
+            fileObjectMeta.setLastModified(new Date(value));
+        }
+
+        List<String> ExpirationTimeValue = headerMap.get("Expires");
+        if (ExpirationTimeValue != null && ExpirationTimeValue.size() > 0) {
+            String value = ExpirationTimeValue.get(0);
+            fileObjectMeta.setExpirationTime(new Date(value));
         }
         return fileObjectMeta;
     }

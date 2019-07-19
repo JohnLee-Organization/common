@@ -27,11 +27,17 @@ import java.util.Date;
  */
 @Data
 public class FileObjectMetadata {
+    private String contentMD5;
+    private String eTag;
+    private String objectType;
+    private String requestId;
+    private String serverSideEncryption;
+    private String serverSideEncryptionKeyId;
+    private String cacheControl;
+    private String contentDisposition;
+    private String contentEncoding;
+    private String contentType;
     private long size;
     private Date lastModified;
-
-    @Override
-    public String toString() {
-        return "ObjectMeta [Size=" + this.size + ", LastModified=" + getLastModified() + "]";
-    }
+    private Date expirationTime;
 }
