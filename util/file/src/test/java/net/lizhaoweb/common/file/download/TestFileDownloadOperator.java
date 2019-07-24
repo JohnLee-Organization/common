@@ -32,7 +32,8 @@ public class TestFileDownloadOperator {
     @Before
     public void init() {
         FileObjectOperator fileObjectOperator = new FileObjectOperator();
-        fileObjectOperator.setEndPoint("http://oss.littlehotspot.com");
+//        fileObjectOperator.setEndPoint("http://oss.littlehotspot.com");
+        fileObjectOperator.setEndPoint("http://dev-oss.littlehotspot.cn");
         fileObjectOperator.setConnectTimeout(30000);
         fileObjectOperator.setReadTimeout(5000);
 
@@ -66,7 +67,7 @@ public class TestFileDownloadOperator {
             // http://oss.littlehotspot.com//media/resource/GdxeRaKasX.mp4
             DownloadFileRequest downloadFileRequest = new DownloadFileRequest();
             downloadFileRequest.setDownloadFile("D:\\httpDownload.mp4");
-            downloadFileRequest.setUri("media/resource/GdxeRaKasX.mp4");
+            downloadFileRequest.setUri("media/resource/ZY7r4D7AZa.mp4");
             downloadFileRequest.setQueryString("");
             downloadFileRequest.setTaskNum(10);
             downloadFileRequest.setPartSize(1 * 1024 * 1024);
