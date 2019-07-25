@@ -111,6 +111,7 @@ public class FileObjectOperator implements IFileObjectOperator {
 
             connection = new HttpURLClient(this.endPoint, this.connectTimeout, this.readTimeout).send(getFileObjectRequest, "GET", requestHeaderMap);
             fileObject.setObjectMetadata(this.setFileObjectMeta(connection));
+
             InputStream inputStream = connection.getInputStream();
             ProgressInputStream progressInputStream = new ProgressInputStream(inputStream, listener) {
                 @Override
@@ -132,12 +133,15 @@ public class FileObjectOperator implements IFileObjectOperator {
             }
             fileObject = this.getFileObject(getFileObjectRequest, ++tryCount, maxCount);
         } finally {
-            this.closeHttpURLConnection(connection);
+//            this.closeHttpURLConnection(connection);
         }
         return fileObject;
     }
 
-    private byte[] readStream(InputStream inputStream) throws IOException {
+    private byte[] readStreamAsByteArray(InputStream inputStream) throws IOException {
+        if (inputStream == null) {
+            return new byte[0];
+        }
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         try {
 //            byte[] buffer = new byte[1024];
@@ -145,6 +149,7 @@ public class FileObjectOperator implements IFileObjectOperator {
 //            while ((len = inputStream.read(buffer)) != -1) {
 //                outStream.write(buffer, 0, len);
 //            }
+//            outStream.flush();
             IOUtils.copy(inputStream, outStream, 1024);
         } finally {
 //            outStream.close();
