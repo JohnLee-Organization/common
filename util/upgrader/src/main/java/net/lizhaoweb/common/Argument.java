@@ -25,9 +25,10 @@ public enum Argument {
     CommandForServerStart("serverStart", String.class, "服务器启动命令"),
     CommandForServerStop("serverStop", String.class, "服务器停止命令"),
     ProcessIdForServer("serverPid", String.class, "服务器进程号"),
-//    PortForServer("serverPort", String.class, "服务器端口号"),
+    //    PortForServer("serverPort", String.class, "服务器端口号"),
     PathForAppFrom("appFrom", String.class, "服务程序保存位置"),
-    PathForAppTo("appTo", String.class, "服务程序部署位置");
+    PathForAppTo("appTo", String.class, "服务程序部署位置"),
+    PathForDelete("delPath", String.class, "要删除的目录");
 
     private String name;
     private String describe;

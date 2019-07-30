@@ -10,8 +10,14 @@
  */
 package net.lizhaoweb.common;
 
+import sun.management.VMManagement;
+
 import java.awt.*;
 import java.io.*;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,70 +55,147 @@ public class Upgrader {
     }
 
     public int deploy(String[] args) {
+        FileWriter fileWriter = null;
+        RandomAccessFile readRandomAccessFile = null, writeRandomAccessFile = null;
         try {
             Map<String, Object> argsMap = ArgumentParser.parse(args);
             String serverStart = ArgumentParser.getStringOption(Argument.CommandForServerStart);
             if (serverStart == null) {
-                throw new IllegalComponentStateException("The command for start server is not found.");
+                throw new IllegalComponentStateException("The command for start server is not found. Argument name is '" + Argument.CommandForServerStart.getName() + "'.");
             }
             String serverStop = ArgumentParser.getStringOption(Argument.CommandForServerStop);
             if (serverStop == null) {
-                throw new IllegalComponentStateException("The command for stop server is not found.");
+                throw new IllegalComponentStateException("The command for stop server is not found. Argument name is '" + Argument.CommandForServerStop.getName() + "'.");
             }
             String serverPid = ArgumentParser.getStringOption(Argument.ProcessIdForServer);
             if (serverPid == null) {
-                throw new IllegalComponentStateException("The command for stop server is not found.");
+                throw new IllegalComponentStateException("The command for stop server is not found. Argument name is '" + Argument.ProcessIdForServer.getName() + "'.");
             }
             String appFrom = ArgumentParser.getStringOption(Argument.PathForAppFrom);
             if (appFrom == null) {
-                throw new IllegalComponentStateException("The path for application-package-from is not found.");
+                throw new IllegalComponentStateException("The path for application-package-from is not found. Argument name is '" + Argument.PathForAppFrom.getName() + "'.");
             }
             File srcFile = new File(appFrom);
             if (!srcFile.exists()) {
-                throw new IllegalComponentStateException("The path for application-package-from is not exists.");
+                throw new IllegalComponentStateException("The path '" + srcFile.getCanonicalPath() + "' for application-package-from is not exists.");
             }
             if (!srcFile.canRead()) {
-                throw new IllegalComponentStateException("The path for application-package-from can not read.");
+                throw new IllegalComponentStateException("The path '" + srcFile.getCanonicalPath() + "' for application-package-from can not read.");
             }
             String appTo = ArgumentParser.getStringOption(Argument.PathForAppTo);
             if (appTo == null) {
-                throw new IllegalComponentStateException("The path for application-package-to is not found.");
+                throw new IllegalComponentStateException("The path for application-package-to is not found. Argument name is '" + Argument.PathForAppTo.getName() + "'.");
             }
             File tarFile = new File(appTo);
             if (!tarFile.getParentFile().exists()) {
-                throw new IllegalComponentStateException("The directory for application-package-to is not exists.");
+                throw new IllegalComponentStateException("The directory '" + tarFile.getParentFile().getCanonicalPath() + "' for application-package-to is not exists.");
             }
             if (!tarFile.getParentFile().isDirectory()) {
-                throw new IllegalComponentStateException("The directory for application-package-to is not a directory.");
+                throw new IllegalComponentStateException("The directory '" + tarFile.getParentFile().getCanonicalPath() + "' for application-package-to is not a directory.");
             }
             if (!tarFile.getParentFile().canWrite()) {
-                throw new IllegalComponentStateException("The path for application-package-to can not write.");
+                throw new IllegalComponentStateException("The path '" + tarFile.getParentFile().getCanonicalPath() + "' for application-package-to can not write.");
             }
+            String[] delPathArray = ArgumentParser.getOptions(Argument.PathForDelete);
+            int tryCount = 0;
+
+            String tmpFolder = System.getProperty("java.io.tmpdir");
+            File runConfigFile = new File(tmpFolder, "john-lee-upgrader-my.pid");
+            boolean runConfigFileExists = runConfigFile.exists();
+            if (runConfigFileExists) {
+                runConfigFile.delete();
+            }
+            fileWriter = new FileWriter(runConfigFile, true);
+            readRandomAccessFile = new RandomAccessFile(runConfigFile, "r");
+//            if (runConfigFileExists) {
+//                String pid = readRandomAccessFile.readLine();
+//                writeRandomAccessFile = new RandomAccessFile(runConfigFile, "rw");
+//                writeRandomAccessFile.write((jvmPid() + "").getBytes(), 0, pid.length());
+//            } else {
+            fileWriter.write(jvmPid() + "\n");
+            fileWriter.flush();
+//            }
 
             // 1、停止服务器
+//            String _1 = readRandomAccessFile.readLine();
+//            if (_1 == null || !"step 1".equals(_1.trim())) {
+            System.out.println("Stop the server ...");
             this.execCommand(serverStop);
+            fileWriter.write("step 1 \n");
+            fileWriter.flush();
+//            }
 
             // 2、等待服务器真正停止
+//            String _2 = readRandomAccessFile.readLine();
+//            if (_2 == null || !"step 2".equals(_2.trim())) {
+            System.out.println("Waiting to stop the server ...");
             List<String> pidList = this.execCommand_2("jps -p");
+            tryCount = 0;
             while (pidList.contains(serverPid)) {
+                tryCount++;
+                System.out.printf("jps -p ==== %d \n", tryCount);
                 Thread.sleep(1000L);
             }
+            fileWriter.write("step 2\n");
+            fileWriter.flush();
+//            }
 
-            // 3、查看目标文件是否存在
+            // 3、删除相关文件或目录
+//            String _3 = readRandomAccessFile.readLine();
+//            if (_3 == null || !"step 3".equals(_3.trim())) {
+            System.out.println("Delete ...");
+            tryCount = 0;
             while (tarFile.exists()) {
-                tarFile.delete();
+                tryCount++;
+                System.out.printf("Delete [T] '%s' : %s ==== %d \n", tarFile, deleteTree(tarFile), tryCount);
                 Thread.sleep(1000L);
             }
+            if (delPathArray != null) {
+                tryCount = 0;
+                for (String delPath : delPathArray) {
+                    tryCount++;
+                    System.out.printf("Delete [D] '%s'", delPath);
+                    File file = new File(delPath);
+                    if (!file.exists()) {
+                        System.out.println("...");
+                        continue;
+                    }
+                    System.out.printf(" : %s ==== %d \n", deleteTree(file), tryCount);
+                }
+            }
+            fileWriter.write("step 3\n");
+            fileWriter.flush();
+//            }
 
             // 4、部署应用
+//            String _4 = readRandomAccessFile.readLine();
+//            if (_4 == null || !"step 4".equals(_4.trim())) {
+            System.out.println("Deploy the application ...");
             copy(srcFile, tarFile);
+            fileWriter.write("step 4\n");
+            fileWriter.flush();
+//            }
 
             // 5、启动服务器
+//            String _5 = readRandomAccessFile.readLine();
+//            if (_5 == null || "step 5".equals(_5.trim())) {
+            System.out.println("Start the server ...");
             this.execCommand(serverStart);
+            fileWriter.write("step 5\n");
+            fileWriter.flush();
+//            }
 
+
+//            runConfigFile.delete();
+
+            System.out.println("Done.");
             return 0;
         } catch (Throwable e) {
             e.printStackTrace();
+        } finally {
+            close(readRandomAccessFile);
+            close(writeRandomAccessFile);
+            close(fileWriter);
         }
         return -1;
     }
@@ -192,5 +275,32 @@ public class Upgrader {
 
     public static BufferedReader toBufferedReader(final Reader reader) {
         return reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader(reader);
+    }
+
+    public static final int jvmPid() {
+        try {
+            RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
+            Field jvm = runtime.getClass().getDeclaredField("jvm");
+            jvm.setAccessible(true);
+            VMManagement mgmt = (VMManagement) jvm.get(runtime);
+            Method pidMethod = mgmt.getClass().getDeclaredMethod("getProcessId");
+            pidMethod.setAccessible(true);
+            return (Integer) pidMethod.invoke(mgmt);
+        } catch (Throwable e) {
+            return -1;
+        }
+    }
+
+    public static boolean deleteTree(File tree) {
+        if (tree == null) {
+            throw new IllegalArgumentException("Argument 'fileOrDirectory' is null");
+        }
+        if (tree.isDirectory()) {
+            File[] fileArray = tree.listFiles();
+            for (int fileIndex = 0; fileIndex < fileArray.length; fileIndex++) {
+                deleteTree(fileArray[fileIndex]);
+            }
+        }
+        return tree.exists() ? tree.delete() : true;
     }
 }
