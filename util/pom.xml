@@ -24,6 +24,7 @@
         <module>operating-system</module>
         <module>slf4j</module>
         <module>file</module>
+        <module>upgrader</module>
     </modules>
 
 </project>

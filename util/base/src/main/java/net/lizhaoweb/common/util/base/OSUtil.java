@@ -13,8 +13,13 @@ package net.lizhaoweb.common.util.base;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.lizhaoweb.common.util.base.bean.OSPlatform;
+import sun.management.VMManagement;
 
 import java.io.*;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 /**
  * <h1>工具 - 操作系统</h1>
@@ -265,6 +270,38 @@ public class OSUtil {
         }
     }
 
+    /**
+     * 获取当前程序的进程号
+     *
+     * @return 进程号(INT)
+     */
+    public static final int jvmPid() {
+        try {
+            RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
+            Field jvm = runtime.getClass().getDeclaredField("jvm");
+            jvm.setAccessible(true);
+            VMManagement mgmt = (VMManagement) jvm.get(runtime);
+            Method pidMethod = mgmt.getClass().getDeclaredMethod("getProcessId");
+            pidMethod.setAccessible(true);
+            return (Integer) pidMethod.invoke(mgmt);
+        } catch (Throwable e) {
+            return -1;
+        }
+    }
+
+    /**
+     * 获取当前程序的进程名
+     *
+     * @return 进程名
+     */
+    public static final String jvmProcessName() {
+        RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
+        return runtime.getName();
+    }
+
+    /**
+     * 操作系统的回车换行
+     */
     public static class CRLF {
         public static final String WINDOWS = "\r\n";
         public static final String LINUX = "\r";

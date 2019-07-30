@@ -34,4 +34,14 @@ public class TestOSUtil {
         String url = "http://mobile.littlehotspot.com/systemtime.php";
         OSUtil.correctingOSTimeForWindows(url);
     }
+
+    @Test
+    public void jvmPid() {
+        System.out.println(OSUtil.jvmPid());
+    }
+
+    @Test
+    public void jvmProcessName() {
+        System.out.println(OSUtil.jvmProcessName());
+    }
 }
