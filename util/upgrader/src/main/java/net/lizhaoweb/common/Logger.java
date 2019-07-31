@@ -11,6 +11,7 @@
 package net.lizhaoweb.common;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -46,7 +47,7 @@ public class Logger {
         if (Utils.isBlank(levelName)) {
             this.level = Level.OFF;
         } else {
-            this.level = Level.getLevel(levelName);
+            this.level = Level.getLevel(levelName.toUpperCase(this.locale));
         }
 
         File loggerFile = null;
@@ -61,7 +62,10 @@ public class Logger {
             loggerFile = new File(loggerFileName);
         }
         try {
-            this.printStream = new PrintStream(loggerFile, Utils.DEFAULT_CHARSET_STRING);
+            boolean appendWrite = true;
+            boolean autoFlush = true;
+            FileOutputStream fileOutputStream = new FileOutputStream(loggerFile, appendWrite);
+            this.printStream = new PrintStream(fileOutputStream, autoFlush, Utils.DEFAULT_CHARSET_STRING);
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
@@ -102,6 +106,7 @@ public class Logger {
             this.printStream.printf(locale, this.getMessageFormat("ERROR", format), args);
         }
         e.printStackTrace(this.printStream);
+        this.printStream.flush();
     }
 
     public void fatal(String format, Object... args) {
