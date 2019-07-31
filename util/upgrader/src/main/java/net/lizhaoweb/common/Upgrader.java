@@ -10,16 +10,9 @@
  */
 package net.lizhaoweb.common;
 
-import sun.management.VMManagement;
-
 import java.awt.*;
-import java.io.*;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -36,27 +29,14 @@ import java.util.Map;
  */
 public class Upgrader {
 
-    public static final int EOF = -1;
-    private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
+    private Logger logger;
 
-    /**
-     * 程序升级器
-     *
-     * @param args 命令。
-     *             serverStart -- 服务器启动命令
-     *             serverStop  -- 服务器停止命令
-     *             serverPid   -- 服务器进程号
-     *             appFrom     -- 服务程序保存位置
-     *             appTo       -- 服务程序部署位置
-     */
-    public static void main(String[] args) {
-        Upgrader upgrader = new Upgrader();
-        upgrader.deploy(args);
+    public Upgrader() {
+        super();
+        this.logger = new Logger();
     }
 
     public int deploy(String[] args) {
-        FileWriter fileWriter = null;
-        RandomAccessFile readRandomAccessFile = null, writeRandomAccessFile = null;
         try {
             Map<String, Object> argsMap = ArgumentParser.parse(args);
             String serverStart = ArgumentParser.getStringOption(Argument.CommandForServerStart);
@@ -99,103 +79,55 @@ public class Upgrader {
             String[] delPathArray = ArgumentParser.getOptions(Argument.PathForDelete);
             int tryCount = 0;
 
-            String tmpFolder = System.getProperty("java.io.tmpdir");
-            File runConfigFile = new File(tmpFolder, "john-lee-upgrader-my.pid");
-            boolean runConfigFileExists = runConfigFile.exists();
-            if (runConfigFileExists) {
-                runConfigFile.delete();
-            }
-            fileWriter = new FileWriter(runConfigFile, true);
-            readRandomAccessFile = new RandomAccessFile(runConfigFile, "r");
-//            if (runConfigFileExists) {
-//                String pid = readRandomAccessFile.readLine();
-//                writeRandomAccessFile = new RandomAccessFile(runConfigFile, "rw");
-//                writeRandomAccessFile.write((jvmPid() + "").getBytes(), 0, pid.length());
-//            } else {
-            fileWriter.write(jvmPid() + "\n");
-            fileWriter.flush();
-//            }
-
             // 1、停止服务器
-//            String _1 = readRandomAccessFile.readLine();
-//            if (_1 == null || !"step 1".equals(_1.trim())) {
-            System.out.println("Stop the server ...");
+            this.logger.info("Stop the server ...");
             this.execCommand(serverStop);
-            fileWriter.write("step 1 \n");
-            fileWriter.flush();
-//            }
 
             // 2、等待服务器真正停止
-//            String _2 = readRandomAccessFile.readLine();
-//            if (_2 == null || !"step 2".equals(_2.trim())) {
-            System.out.println("Waiting to stop the server ...");
+            this.logger.info("Waiting to stop the server ...");
             List<String> pidList = this.execCommand_2("jps -p");
             tryCount = 0;
             while (pidList.contains(serverPid)) {
                 tryCount++;
-                System.out.printf("jps -p ==== %d \n", tryCount);
+                this.logger.debug("jps -p ==== %d", tryCount);
                 Thread.sleep(1000L);
             }
-            fileWriter.write("step 2\n");
-            fileWriter.flush();
-//            }
 
             // 3、删除相关文件或目录
-//            String _3 = readRandomAccessFile.readLine();
-//            if (_3 == null || !"step 3".equals(_3.trim())) {
-            System.out.println("Delete ...");
+            this.logger.info("Delete ...");
             tryCount = 0;
             while (tarFile.exists()) {
                 tryCount++;
-                System.out.printf("Delete [T] '%s' : %s ==== %d \n", tarFile, deleteTree(tarFile), tryCount);
+                this.logger.debug("Delete [Target] '%s' : %s ==== %d", tarFile, Utils.deleteTree(tarFile), tryCount);
                 Thread.sleep(1000L);
             }
             if (delPathArray != null) {
                 tryCount = 0;
                 for (String delPath : delPathArray) {
                     tryCount++;
-                    System.out.printf("Delete [D] '%s'", delPath);
+                    this.logger.debug("Delete [Appoint] '%s'", delPath);
                     File file = new File(delPath);
                     if (!file.exists()) {
-                        System.out.println("...");
+                        this.logger.info("...");
                         continue;
                     }
-                    System.out.printf(" : %s ==== %d \n", deleteTree(file), tryCount);
+                    this.logger.debug("Delete [Appoint] '%s' : %s ==== %d", delPath, Utils.deleteTree(file), tryCount);
                 }
             }
-            fileWriter.write("step 3\n");
-            fileWriter.flush();
-//            }
 
             // 4、部署应用
-//            String _4 = readRandomAccessFile.readLine();
-//            if (_4 == null || !"step 4".equals(_4.trim())) {
-            System.out.println("Deploy the application ...");
-            copy(srcFile, tarFile);
-            fileWriter.write("step 4\n");
-            fileWriter.flush();
-//            }
+            this.logger.info("Deploy the application ...");
+            Utils.copyFile(srcFile, tarFile);
 
             // 5、启动服务器
-//            String _5 = readRandomAccessFile.readLine();
-//            if (_5 == null || "step 5".equals(_5.trim())) {
-            System.out.println("Start the server ...");
+            this.logger.info("Start the server ...");
             this.execCommand(serverStart);
-            fileWriter.write("step 5\n");
-            fileWriter.flush();
-//            }
 
-
-//            runConfigFile.delete();
-
-            System.out.println("Done.");
             return 0;
         } catch (Throwable e) {
             e.printStackTrace();
         } finally {
-            close(readRandomAccessFile);
-            close(writeRandomAccessFile);
-            close(fileWriter);
+            this.logger.fatal("Done.");
         }
         return -1;
     }
@@ -208,99 +140,21 @@ public class Upgrader {
     private java.util.List<String> execCommand_2(String command) throws IOException, InterruptedException {
         Process process = Runtime.getRuntime().exec(command);
         process.waitFor();
-        return readLines(process.getInputStream(), "UTF-8");
+        return Utils.readLines(process.getInputStream(), Utils.DEFAULT_CHARSET);
     }
 
-    public static boolean copy(File srcFile, File targetFile) {
-        boolean success = false;
-        if (srcFile.exists()) { //文件存在时
-            InputStream inputStream = null;
-            OutputStream outputStream = null;
-            try {
-                inputStream = new FileInputStream(srcFile); //读入原文件
-                outputStream = new FileOutputStream(targetFile);
-                long copied = copyLarge(inputStream, outputStream, new byte[DEFAULT_BUFFER_SIZE]);
-
-                success = copied > -1;
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            } finally {
-                close(outputStream);
-                close(inputStream);
-            }
-        }
-        return success;
-    }
-
-    public static long copyLarge(final InputStream input, final OutputStream output, final byte[] buffer) throws IOException {
-        long count = 0;
-        int n;
-        while (EOF != (n = input.read(buffer))) {
-            output.write(buffer, 0, n);
-            count += n;
-        }
-        return count;
-    }
-
-    public static final void close(Closeable closeable) {
-        try {
-            if (closeable != null) {
-                closeable.close();
-                closeable = null;
-            }
-        } catch (final IOException ioe) {
-            // ignore
-        }
-    }
-
-    public static List<String> readLines(final InputStream input, final String encoding) throws IOException {
-        return readLines(input, Charset.forName(encoding));
-    }
-
-    public static List<String> readLines(final InputStream input, final Charset encoding) throws IOException {
-        final InputStreamReader reader = new InputStreamReader(input, encoding);
-        return readLines(reader);
-    }
-
-    public static List<String> readLines(final Reader input) throws IOException {
-        final BufferedReader reader = toBufferedReader(input);
-        final List<String> list = new ArrayList<String>();
-        String line = reader.readLine();
-        while (line != null) {
-            list.add(line);
-            line = reader.readLine();
-        }
-        return list;
-    }
-
-    public static BufferedReader toBufferedReader(final Reader reader) {
-        return reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader(reader);
-    }
-
-    public static final int jvmPid() {
-        try {
-            RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
-            Field jvm = runtime.getClass().getDeclaredField("jvm");
-            jvm.setAccessible(true);
-            VMManagement mgmt = (VMManagement) jvm.get(runtime);
-            Method pidMethod = mgmt.getClass().getDeclaredMethod("getProcessId");
-            pidMethod.setAccessible(true);
-            return (Integer) pidMethod.invoke(mgmt);
-        } catch (Throwable e) {
-            return -1;
-        }
-    }
-
-    public static boolean deleteTree(File tree) {
-        if (tree == null) {
-            throw new IllegalArgumentException("Argument 'fileOrDirectory' is null");
-        }
-        if (tree.isDirectory()) {
-            File[] fileArray = tree.listFiles();
-            for (int fileIndex = 0; fileIndex < fileArray.length; fileIndex++) {
-                deleteTree(fileArray[fileIndex]);
-            }
-        }
-        return tree.exists() ? tree.delete() : true;
+    /**
+     * 程序升级器
+     *
+     * @param args 命令。
+     *             serverStart -- 服务器启动命令
+     *             serverStop  -- 服务器停止命令
+     *             serverPid   -- 服务器进程号
+     *             appFrom     -- 服务程序保存位置
+     *             appTo       -- 服务程序部署位置
+     */
+    public static void main(String[] args) {
+        Upgrader upgrader = new Upgrader();
+        upgrader.deploy(args);
     }
 }
