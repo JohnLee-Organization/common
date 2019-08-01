@@ -64,6 +64,9 @@ public class Logger {
         try {
             boolean appendWrite = true;
             boolean autoFlush = true;
+            if (!loggerFile.getParentFile().exists()) {
+                loggerFile.getParentFile().mkdirs();
+            }
             FileOutputStream fileOutputStream = new FileOutputStream(loggerFile, appendWrite);
             this.printStream = new PrintStream(fileOutputStream, autoFlush, Utils.DEFAULT_CHARSET_STRING);
         } catch (Throwable e) {
