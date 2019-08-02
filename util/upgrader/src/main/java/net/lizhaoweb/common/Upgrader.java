@@ -29,11 +29,10 @@ import java.util.Map;
  */
 public class Upgrader {
 
-    private Logger logger;
+    private static Logger logger = new Logger();
 
     public Upgrader() {
         super();
-        this.logger = new Logger();
     }
 
     public int deploy(String[] args) {
@@ -80,64 +79,66 @@ public class Upgrader {
             int tryCount = 0;
 
             // 1、停止服务器
-            this.logger.info("Stop the server ...");
+            logger.info("Stop the server ...");
             this.execCommand(serverStop);
 
             // 2、等待服务器真正停止
-            this.logger.info("Waiting to stop the server ...");
+            logger.info("Waiting to stop the server ...");
             List<String> pidList = this.execCommand_2("jps -p");
             tryCount = 0;
             while (pidList.contains(serverPid)) {
                 tryCount++;
-                this.logger.debug("jps -p ==== %d", tryCount);
+                logger.debug("jps -p ==== %d", tryCount);
                 Thread.sleep(1000L);
             }
 
             // 3、删除相关文件或目录
-            this.logger.info("Delete ...");
+            logger.info("Delete ...");
             tryCount = 0;
             while (tarFile.exists()) {
                 tryCount++;
-                this.logger.debug("Delete [Target] '%s' : %s ==== %d", tarFile, Utils.deleteTree(tarFile), tryCount);
+                logger.debug("Delete [Target] '%s' : %s ==== %d", tarFile, Utils.deleteTree(tarFile), tryCount);
                 Thread.sleep(1000L);
             }
             if (delPathArray != null) {
                 tryCount = 0;
                 for (String delPath : delPathArray) {
                     tryCount++;
-                    this.logger.debug("Delete [Appoint] '%s'", delPath);
+                    logger.debug("Delete [Appoint] '%s'", delPath);
                     File file = new File(delPath);
                     if (!file.exists()) {
-                        this.logger.info("...");
+                        logger.info("...");
                         continue;
                     }
-                    this.logger.debug("Delete [Appoint] '%s' : %s ==== %d", delPath, Utils.deleteTree(file), tryCount);
+                    logger.debug("Delete [Appoint] '%s' : %s ==== %d", delPath, Utils.deleteTree(file), tryCount);
                 }
             }
 
             // 4、部署应用
-            this.logger.info("Deploy the application ...");
+            logger.info("Deploy the application ...");
             Utils.copyFile(srcFile, tarFile);
 
             // 5、启动服务器
-            this.logger.info("Start the server ...");
+            logger.info("Start the server ...");
             this.execCommand(serverStart);
 
             return 0;
         } catch (Throwable e) {
-            e.printStackTrace();
+            logger.error(e, e.getMessage());
         } finally {
-            this.logger.fatal("Done.");
+            logger.fatal("Deploy done.");
         }
         return -1;
     }
 
     private void execCommand(String command) throws IOException, InterruptedException {
+        logger.debug("Execute command : %s", command);
         Process process = Runtime.getRuntime().exec(command);
         process.waitFor();
     }
 
     private java.util.List<String> execCommand_2(String command) throws IOException, InterruptedException {
+        logger.debug("Execute command : %s", command);
         Process process = Runtime.getRuntime().exec(command);
         process.waitFor();
         return Utils.readLines(process.getInputStream(), Utils.DEFAULT_CHARSET);
@@ -154,7 +155,24 @@ public class Upgrader {
      *             appTo       -- 服务程序部署位置
      */
     public static void main(String[] args) {
+        logger.fatal("Upgrade service ...");
         Upgrader upgrader = new Upgrader();
-        upgrader.deploy(args);
+        int tryCount = 0, maxRetry = 5, upgrade;
+        while ((upgrade = upgrader.deploy(args)) != 0) {
+            logger.error("Try upgrade server for %s times.", ++tryCount);
+            if (tryCount >= maxRetry) {
+                break;
+            }
+            try {
+                Thread.sleep(3000L);
+            } catch (InterruptedException e) {
+                logger.error(e, e.getMessage());
+            }
+        }
+        if (upgrade == 0) {
+            logger.fatal("Upgrade service success.\n");
+        } else {
+            logger.fatal("Upgrade service fail.\n");
+        }
     }
 }

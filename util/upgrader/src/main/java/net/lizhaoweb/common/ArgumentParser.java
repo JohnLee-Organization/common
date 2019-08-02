@@ -28,6 +28,8 @@ import java.util.Map;
  */
 public class ArgumentParser {
 
+    protected static Logger logger = new Logger();
+
     public static final String OPTION = "option";
     public static final String ARGUMENT = "argument";
 
@@ -50,7 +52,9 @@ public class ArgumentParser {
         if (args == null) {
             throw new IllegalArgumentException("Arguments is null");
         }
+        logger.fatal("Analysis arguments ...");
         for (String argument : args) {
+            logger.fatal("Input argument : %s", argument);
             if (argument == null || argument.trim().length() < 1) {
                 continue;
             }
@@ -75,6 +79,8 @@ public class ArgumentParser {
                 ARGUMENTS.add(argument);
             }
         }
+        logger.debug("Options : %s,   Arguments : %s", OPTIONS, ARGUMENTS);
+        logger.fatal("Analysis arguments done.");
         return new HashMap<String, Object>() {
             {
                 put(OPTION, OPTIONS);
