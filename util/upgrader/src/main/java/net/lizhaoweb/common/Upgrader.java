@@ -35,7 +35,7 @@ public class Upgrader {
         super();
     }
 
-    public int deploy(String[] args) {
+    private int deploy(String[] args) {
         try {
             Map<String, Object> argsMap = ArgumentParser.parse(args);
             String serverStart = ArgumentParser.getStringOption(Argument.CommandForServerStart);

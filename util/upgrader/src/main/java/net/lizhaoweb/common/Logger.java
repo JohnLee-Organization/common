@@ -36,11 +36,11 @@ public class Logger {
     private SimpleDateFormat simpleDateFormat;
     private int level;
 
-    public Logger() {
+    Logger() {
         this(Locale.CHINESE);
     }
 
-    public Logger(Locale locale) {
+    Logger(Locale locale) {
         this.locale = locale;
         this.simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", this.locale);
         String levelName = System.getProperty("cn.lizhaoweb.common.upgrader.log.level");
@@ -74,37 +74,37 @@ public class Logger {
         }
     }
 
-    public void trace(String format, Object... args) {
+    void trace(String format, Object... args) {
         if (this.level <= Level.TRACE) {
             this.printStream.printf(locale, this.getMessageFormat("TRACE", format), args);
         }
     }
 
-    public void debug(String format, Object... args) {
+    void debug(String format, Object... args) {
         if (this.level <= Level.DEBUG) {
             this.printStream.printf(locale, this.getMessageFormat("DEBUG", format), args);
         }
     }
 
-    public void info(String format, Object... args) {
+    void info(String format, Object... args) {
         if (this.level <= Level.INFO) {
             this.printStream.printf(locale, this.getMessageFormat("INFO", format), args);
         }
     }
 
-    public void warn(String format, Object... args) {
+    void warn(String format, Object... args) {
         if (this.level <= Level.WARN) {
             this.printStream.printf(locale, this.getMessageFormat("WARN", format), args);
         }
     }
 
-    public void error(String format, Object... args) {
+    void error(String format, Object... args) {
         if (this.level <= Level.ERROR) {
             this.printStream.printf(locale, this.getMessageFormat("ERROR", format), args);
         }
     }
 
-    public void error(Throwable e, String format, Object... args) {
+    void error(Throwable e, String format, Object... args) {
         if (this.level <= Level.ERROR) {
             this.printStream.printf(locale, this.getMessageFormat("ERROR", format), args);
         }
@@ -112,7 +112,7 @@ public class Logger {
         this.printStream.flush();
     }
 
-    public void fatal(String format, Object... args) {
+    void fatal(String format, Object... args) {
         if (this.level <= Level.FATAL) {
             this.printStream.printf(locale, this.getMessageFormat("FATAL", format), args);
         }
@@ -121,31 +121,42 @@ public class Logger {
     private synchronized String getMessageFormat(String levelName, String format) {
         return String.format("[%s] %s %s%s", this.simpleDateFormat.format(new Date()), levelName, format, NEW_LINE);
     }
+}
 
-    public static class Level {
+/**
+ * 日志级别模型
+ *
+ * @author <a href="http://www.lizhaoweb.cn">李召(John.Lee)</a>
+ * @version 1.0.0.0.1
+ * @EMAIL 404644381@qq.com
+ * @notes Created on 2019年07月30日<br>
+ * Revision of last commit:$Revision$<br>
+ * Author of last commit:$Author$<br>
+ * Date of last commit:$Date$<br>
+ */
+class Level {
 
-        public static final int OFF = 10000;
-        public static final int TRACE = 1000;
-        public static final int DEBUG = 2000;
-        public static final int INFO = 3000;
-        public static final int WARN = 4000;
-        public static final int ERROR = 5000;
-        public static final int FATAL = 6000;
-        private static Map<String, Integer> LEVEL_MAP = new HashMap<>();
+    static final int OFF = 10000;
+    static final int TRACE = 1000;
+    static final int DEBUG = 2000;
+    static final int INFO = 3000;
+    static final int WARN = 4000;
+    static final int ERROR = 5000;
+    static final int FATAL = 6000;
+    private static Map<String, Integer> LEVEL_MAP = new HashMap<>();
 
-        static {
-            LEVEL_MAP.put("TRACE", TRACE);
-            LEVEL_MAP.put("DEBUG", DEBUG);
-            LEVEL_MAP.put("INFO", INFO);
-            LEVEL_MAP.put("WARN", WARN);
-            LEVEL_MAP.put("ERROR", ERROR);
-            LEVEL_MAP.put("FATAL", FATAL);
-            LEVEL_MAP.put("OFF", OFF);
-        }
+    static {
+        LEVEL_MAP.put("TRACE", TRACE);
+        LEVEL_MAP.put("DEBUG", DEBUG);
+        LEVEL_MAP.put("INFO", INFO);
+        LEVEL_MAP.put("WARN", WARN);
+        LEVEL_MAP.put("ERROR", ERROR);
+        LEVEL_MAP.put("FATAL", FATAL);
+        LEVEL_MAP.put("OFF", OFF);
+    }
 
-        public static int getLevel(String levelName) {
-            Integer level = LEVEL_MAP.get(levelName);
-            return (level == null) ? OFF : level;
-        }
+    static int getLevel(String levelName) {
+        Integer level = LEVEL_MAP.get(levelName);
+        return (level == null) ? OFF : level;
     }
 }

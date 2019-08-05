@@ -30,15 +30,15 @@ import java.util.List;
  * Author of last commit:$Author$<br>
  * Date of last commit:$Date$<br>
  */
-public class Utils {
+class Utils {
 
     private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
-    public static final String DEFAULT_CHARSET_STRING = "UTF-8";
-    public static final Charset DEFAULT_CHARSET = Charset.forName(DEFAULT_CHARSET_STRING);
-    public static final int EOF = -1;
+    static final String DEFAULT_CHARSET_STRING = "UTF-8";
+    static final Charset DEFAULT_CHARSET = Charset.forName(DEFAULT_CHARSET_STRING);
+    private static final int EOF = -1;
 
-    public static boolean copyFile(File srcFile, File targetFile) {
+    static boolean copyFile(File srcFile, File targetFile) {
         boolean success = false;
         if (srcFile.exists()) { //文件存在时
             InputStream inputStream = null;
@@ -59,7 +59,7 @@ public class Utils {
         return success;
     }
 
-    public static long copyLarge(final InputStream input, final OutputStream output, final byte[] buffer) throws IOException {
+    static long copyLarge(final InputStream input, final OutputStream output, final byte[] buffer) throws IOException {
         long count = 0;
         int n;
         while (EOF != (n = input.read(buffer))) {
@@ -69,7 +69,7 @@ public class Utils {
         return count;
     }
 
-    public static final void close(Closeable closeable) {
+    static void close(Closeable closeable) {
         try {
             if (closeable != null) {
                 closeable.close();
@@ -80,16 +80,16 @@ public class Utils {
         }
     }
 
-    public static List<String> readLines(final InputStream input, final String encoding) throws IOException {
+    static List<String> readLines(final InputStream input, final String encoding) throws IOException {
         return readLines(input, Charset.forName(encoding));
     }
 
-    public static List<String> readLines(final InputStream input, final Charset encoding) throws IOException {
+    static List<String> readLines(final InputStream input, final Charset encoding) throws IOException {
         final InputStreamReader reader = new InputStreamReader(input, encoding);
         return readLines(reader);
     }
 
-    public static List<String> readLines(final Reader input) throws IOException {
+    static List<String> readLines(final Reader input) throws IOException {
         final BufferedReader reader = toBufferedReader(input);
         final List<String> list = new ArrayList<String>();
         String line = reader.readLine();
@@ -100,11 +100,11 @@ public class Utils {
         return list;
     }
 
-    public static BufferedReader toBufferedReader(final Reader reader) {
+    static BufferedReader toBufferedReader(final Reader reader) {
         return reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader(reader);
     }
 
-    public static final int jvmPid() {
+    static int jvmPid() {
         try {
             RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
             Field jvm = runtime.getClass().getDeclaredField("jvm");
@@ -118,7 +118,7 @@ public class Utils {
         }
     }
 
-    public static boolean deleteTree(File tree) {
+    static boolean deleteTree(File tree) {
         if (tree == null) {
             throw new IllegalArgumentException("Argument 'fileOrDirectory' is null");
         }
@@ -131,7 +131,7 @@ public class Utils {
         return tree.exists() ? tree.delete() : true;
     }
 
-    public static boolean isBlank(String str) {
+    static boolean isBlank(String str) {
         int strLen;
         if (str == null || (strLen = str.length()) == 0) {
             return true;
@@ -144,7 +144,7 @@ public class Utils {
         return true;
     }
 
-    public static boolean isNotBlank(String str) {
+    static boolean isNotBlank(String str) {
         return !isBlank(str);
     }
 }
