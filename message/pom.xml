@@ -1,0 +1,20 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>common</artifactId>
+        <groupId>net.lizhaoweb</groupId>
+        <version>JL.COMMON.0.0.0.0.1.0.1-SNAPSHOT</version>
+    </parent>
+    <groupId>net.lizhaoweb.common</groupId>
+    <artifactId>message</artifactId>
+    <version>JL.COMMON.3.0.0.0.1.0.1-SNAPSHOT</version>
+
+    <name>Commons Message</name>
+    <description>李召(John.Lee) 个人消息项目组</description>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>send</module>
+    </modules>
+</project>
