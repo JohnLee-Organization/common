@@ -10,7 +10,9 @@
  */
 package net.lizhaoweb.message;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * <H1>模型 - 消息</H1>
@@ -24,10 +26,26 @@ import lombok.Data;
  * Date of last commit:$Date$<br>
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Message {
     private String from;// 来源
     private String to;// 目的地
+    private String cc;// 抄送
+    private String bcc;// 密送
     private String title;// 标题
     private String content;// 内容
     private String enclosure;// 附件
+
+    public Message(String from, String to, String title, String content, String enclosure) {
+        this(from, to, null, null, title, content, enclosure);
+    }
+
+    public Message(String from, String to, String title, String content) {
+        this(from, to, null, null, title, content, null);
+    }
+
+    public Message(String to, String title, String content) {
+        this(null, to, null, null, title, content, null);
+    }
 }
