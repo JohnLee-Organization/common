@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>net.lizhaoweb.common</groupId>
+        <artifactId>flink</artifactId>
+        <version>JL.COMMON.6.0.0.0.1.0.1-SNAPSHOT</version>
+    </parent>
+
+    <groupId>net.lizhaoweb.flink</groupId>
+    <artifactId>flink-aliyun</artifactId>
+    <version>JL.COMMON.6.1.0.0.1.0.1-SNAPSHOT</version>
+
+    <name>Commons Flink ALiYun</name>
+    <description>李召(John.Lee) Flink项目组阿里云插件</description>
+    <packaging>pom</packaging>
+
+    <properties>
+        <aliyun.oss.version>3.0.0</aliyun.oss.version>
+        <aliyun.mns.version>1.1.9</aliyun.mns.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+
+            <!--AliYun-->
+            <dependency>
+                <groupId>com.aliyun.oss</groupId>
+                <artifactId>aliyun-sdk-oss</artifactId>
+                <version>${aliyun.oss.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun.mns</groupId>
+                <artifactId>aliyun-sdk-mns</artifactId>
+                <version>${aliyun.mns.version}</version>
+                <!--<classifier>jar-with-dependencies</classifier>-->
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <modules>
+        <module>mns</module>
+    </modules>
+</project>

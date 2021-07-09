@@ -146,5 +146,6 @@
         <module>third</module>
         <module>aliyun</module>
         <module>message</module>
+        <module>flink</module>
     </modules>
 </project>
