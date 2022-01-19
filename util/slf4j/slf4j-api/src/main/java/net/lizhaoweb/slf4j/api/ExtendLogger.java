@@ -43,7 +43,7 @@ public interface ExtendLogger extends Logger {
     /**
      * Log a message at the TOP level according to the specified format
      * and argument.
-     * <p/>
+     * <p></p>
      * <p>This form avoids superfluous object creation when the logger
      * is disabled for the TOP level. </p>
      *
@@ -55,7 +55,7 @@ public interface ExtendLogger extends Logger {
     /**
      * Log a message at the TOP level according to the specified format
      * and arguments.
-     * <p/>
+     * <p></p>
      * <p>This form avoids superfluous object creation when the logger
      * is disabled for the TOP level. </p>
      *
@@ -68,7 +68,7 @@ public interface ExtendLogger extends Logger {
     /**
      * Log a message at the TOP level according to the specified format
      * and arguments.
-     * <p/>
+     * <p></p>
      * <p>This form avoids superfluous string concatenation when the logger
      * is disabled for the TOP level. However, this variant incurs the hidden
      * (and relatively small) cost of creating an <code>Object[]</code> before invoking the method,

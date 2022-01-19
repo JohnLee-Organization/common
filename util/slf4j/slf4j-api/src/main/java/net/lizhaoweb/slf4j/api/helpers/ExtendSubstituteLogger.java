@@ -5,7 +5,7 @@
  * @Project : common
  * @Package : net.lizhaoweb.slf4j.api.helpers
  * @author <a href="http://www.lizhaoweb.net">李召(John.Lee)</a>
- * @EMAIL 404644381@qq.com
+ * @email 404644381@qq.com
  * @Time : 10:52
  */
 package net.lizhaoweb.slf4j.api.helpers;
@@ -357,7 +357,7 @@ public class ExtendSubstituteLogger implements ExtendLogger {
     }
 
     /**
-     * Typically called after the {@link ExtendLoggerFactory} initialization phase is completed.
+     * Typically called after the {@link ExtendSubstituteLoggerFactory} initialization phase is completed.
      *
      * @param delegate
      */

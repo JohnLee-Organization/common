@@ -32,7 +32,7 @@ import java.util.zip.Checksum;
  * Author of last commit:$Author: lizhao $<br>
  * Date of last commit:$Date: 2014-10-23 14:37:28 +0800 (Thu, 23 Oct
  * 2014) $<br>
- * <p/>
+ * <p></p>
  */
 public class IOUtil extends IOUtils {
 

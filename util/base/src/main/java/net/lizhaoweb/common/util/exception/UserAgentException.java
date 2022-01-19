@@ -13,7 +13,7 @@ package net.lizhaoweb.common.util.exception;
  * Revision of last commit:$Revision$<br>
  * Author of last commit:$Author$<br>
  * Date of last commit:$Date$<br>
- * <p/>
+ * <p></p>
  */
 public class UserAgentException extends Exception {
 

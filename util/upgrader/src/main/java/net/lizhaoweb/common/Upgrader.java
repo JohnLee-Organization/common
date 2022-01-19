@@ -5,7 +5,7 @@
  * @Project : common
  * @Package : net.lizhaoweb.common
  * @author <a href="http://www.lizhaoweb.net">李召(John.Lee)</a>
- * @EMAIL 404644381@qq.com
+ * @email 404644381@qq.com
  * @Time : 10:22
  */
 package net.lizhaoweb.common;

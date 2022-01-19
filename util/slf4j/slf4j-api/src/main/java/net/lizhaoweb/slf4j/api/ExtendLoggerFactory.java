@@ -56,8 +56,8 @@ public final class ExtendLoggerFactory {
     /**
      * It is LoggerFactory's responsibility to track version changes and manage
      * the compatibility list.
-     * <p/>
-     * <p/>
+     * <p></p>
+     * <p></p>
      * It is assumed that all versions in the 1.6 are mutually compatible.
      */
     static private final String[] API_COMPATIBILITY_LIST = new String[]{"1.6", "1.7"};
@@ -68,13 +68,13 @@ public final class ExtendLoggerFactory {
 
     /**
      * Force LoggerFactory to consider itself uninitialized.
-     * <p/>
-     * <p/>
+     * <p></p>
+     * <p></p>
      * This method is intended to be called by classes (in the same package) for
      * testing purposes. This method is internal. It can be modified, renamed or
      * removed at any time without notice.
-     * <p/>
-     * <p/>
+     * <p></p>
+     * <p></p>
      * You are strongly discouraged from calling this method in production code.
      */
     static void reset() {
@@ -267,8 +267,8 @@ public final class ExtendLoggerFactory {
 
     /**
      * Return the {@link IExtendLoggerFactory} instance in use.
-     * <p/>
-     * <p/>
+     * <p></p>
+     * <p></p>
      * ILoggerFactory instance is bound with this class at compile time.
      *
      * @return the ILoggerFactory instance in use

@@ -11,7 +11,7 @@
 package net.lizhaoweb.message;
 
 /**
- * <1>接口 -  发送消息</H1>
+ * <H1>接口 -  发送消息</H1>
  *
  * @author <a href="http://www.lizhaoweb.cn">李召(John.Lee)</a>
  * @version 1.0.0.0.1

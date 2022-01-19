@@ -52,7 +52,7 @@ import java.util.Random;
  * random number) from the resulting GUIDs as the MD5 hash algorithm
  * provides one way encryption.
  * <p>
- * ----> Security of RandomGUID: <-----
+ * ----&gt; Security of RandomGUID: &lt;-----
  * RandomGUID can be called one of two ways -- with the basic java Random
  * number generator or a cryptographically strong random generator
  * (SecureRandom).  The choice is offered because the secure random
@@ -86,7 +86,7 @@ import java.util.Random;
  *
  * @author <a href="http://www.lizhaoweb.cn">李召(John.Lee)</a>
  * @version 1.0.0.0.1
- * @EMAIL 404644381@qq.com
+ * @email 404644381@qq.com
  * @notes Created on 2018年11月02日<br>
  * Revision of last commit:$Revision$<br>
  * Author of last commit:$Author$<br>

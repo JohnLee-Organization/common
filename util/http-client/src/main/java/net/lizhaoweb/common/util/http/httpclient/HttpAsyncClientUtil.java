@@ -50,7 +50,6 @@ public class HttpAsyncClientUtil extends AbstractHttpClientUtil {
      * 请求资源或服务
      *
      * @param config
-     * @return
      * @throws HttpProcessException
      */
     public static void send(HttpConfig config) throws HttpProcessException {
@@ -70,7 +69,6 @@ public class HttpAsyncClientUtil extends AbstractHttpClientUtil {
      * @param context  http上下文，用于cookie操作
      * @param encoding 编码
      * @param handler  回调处理对象
-     * @return 返回处理结果
      * @throws HttpProcessException
      */
     public static void get(CloseableHttpAsyncClient client, String url, Header[] headers, HttpContext context, String encoding, IHandler handler) throws HttpProcessException {
@@ -97,7 +95,6 @@ public class HttpAsyncClientUtil extends AbstractHttpClientUtil {
      * @param context  http上下文，用于cookie操作
      * @param encoding 编码
      * @param handler  回调处理对象
-     * @return 返回处理结果
      * @throws HttpProcessException
      */
     public static void post(CloseableHttpAsyncClient client, String url, Map<String, Object> parasMap, Header[] headers, HttpContext context, String encoding, IHandler handler) throws HttpProcessException {
@@ -124,7 +121,6 @@ public class HttpAsyncClientUtil extends AbstractHttpClientUtil {
      * @param context  http上下文，用于cookie操作
      * @param encoding 编码
      * @param handler  回调处理对象
-     * @return 返回处理结果
      * @throws HttpProcessException
      */
     public static void put(CloseableHttpAsyncClient client, String url, Map<String, Object> parasMap, Header[] headers, HttpContext context, String encoding, IHandler handler) throws HttpProcessException {
@@ -150,7 +146,6 @@ public class HttpAsyncClientUtil extends AbstractHttpClientUtil {
      * @param context  http上下文，用于cookie操作
      * @param encoding 编码
      * @param handler  回调处理对象
-     * @return 返回处理结果
      * @throws HttpProcessException
      */
     public static void delete(CloseableHttpAsyncClient client, String url, Header[] headers, HttpContext context, String encoding, IHandler handler) throws HttpProcessException {
@@ -176,7 +171,6 @@ public class HttpAsyncClientUtil extends AbstractHttpClientUtil {
      * @param context  http上下文，用于cookie操作
      * @param encoding 编码
      * @param handler  回调处理对象
-     * @return 返回处理结果
      * @throws HttpProcessException
      */
     public static void patch(CloseableHttpAsyncClient client, String url, Map<String, Object> parasMap, Header[] headers, HttpContext context, String encoding, IHandler handler) throws HttpProcessException {

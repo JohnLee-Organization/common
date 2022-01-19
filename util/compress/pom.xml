@@ -83,7 +83,6 @@
             <artifactId>ostermillerutils</artifactId>
             <version>1.08.02</version>
         </dependency>
-
     </dependencies>
 
 </project>

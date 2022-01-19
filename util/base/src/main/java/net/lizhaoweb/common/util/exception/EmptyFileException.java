@@ -5,7 +5,7 @@
  * @Project : common
  * @Package : net.lizhaoweb.common.util.exception
  * @author <a href="http://www.lizhaoweb.net">李召(John.Lee)</a>
- * @EMAIL 404644381@qq.com
+ * @email 404644381@qq.com
  * @Time : 15:06
  */
 package net.lizhaoweb.common.util.exception;

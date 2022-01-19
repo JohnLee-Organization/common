@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  * Revision of last commit:$Revision$<br>
  * Author of last commit:$Author$<br>
  * Date of last commit:$Date$<br>
- * <p/>
+ * <p></p>
  */
 public class HttpUtil {
 
@@ -562,7 +562,7 @@ public class HttpUtil {
 
     /**
      * 将字符串形式的请求参数，转换为 Map 形式的请求参数。
-     * 参数格式“k1=v1&k2=v2”
+     * 参数格式“k1=v1&amp;k2=v2”
      *
      * @param stringParameters 字符串形式的请求参数
      * @return Map

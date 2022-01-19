@@ -31,7 +31,7 @@ import java.util.Properties;
  * Author of last commit:$Author: lizhao $<br>
  * Date of last commit:$Date: 2014-10-23 14:37:28 +0800 (Thu, 23 Oct
  * 2014) $<br>
- * <p/>
+ * <p></p>
  */
 public class PropertiesUtil {
 
@@ -58,7 +58,6 @@ public class PropertiesUtil {
      *
      * @param file 文件对象。
      * @return 返回Properties对象。
-     * @throws IOException 异常
      */
     public static final Properties load(File file) {
         Properties properties = null;
@@ -77,7 +76,6 @@ public class PropertiesUtil {
      *
      * @param fileName 文件名字符串。
      * @return 返回Properties对象。
-     * @throws IOException 异常
      */
     public static final Properties load(String fileName) {
         File file = new File(fileName);
@@ -141,7 +139,7 @@ public class PropertiesUtil {
     protected static Properties defaultProp = null;
 
     /**
-     * 所有读取过的属性集合 文件名 <-> 属性集合
+     * 所有读取过的属性集合 文件名 &lt;-&gt; 属性集合
      */
     protected static Map<String, Properties> allProps = new HashMap<String, Properties>();
 
@@ -192,6 +190,7 @@ public class PropertiesUtil {
 
     /**
      * 从指定的属性文件中获取某一属性值 如果属性文件不存在该属性则返回 null
+     * @return String
      */
     public static String getProperty(String fileName, String name) {
         return getProperties(fileName).getProperty(name);

@@ -198,7 +198,7 @@ public class FormatUtil {
      *
      * @param fileSize  带有分割符的字符串的文件大小。如：“12k,23M,1g,0.5t”、“12k 23M 1g 0.5t”。
      * @param splitChar 指定分割符号是什么。如“,”、“ ”。
-     * @return 文件字节数列表，List<Long>型。
+     * @return 文件字节数列表，List&lt;Long&gt;型。
      */
     public static final List<Long> turnFileByteSize(String fileSize, String splitChar) {
         fileSize = fileSize.trim();
@@ -243,7 +243,7 @@ public class FormatUtil {
      *
      * @param time      带有分割符的字符串的时间。如：“12s,23M,1h,0.5d”、“12s 23M 1h 0.5d”。
      * @param splitChar 指定分割符号是什么。如“,”、“ ”。
-     * @return 毫秒数列表，List<Long>型。
+     * @return 毫秒数列表，List&lt;Long&gt;型。
      */
     public static final List<Long> turnMillisecond(String time, String splitChar) {
         time = time.trim();

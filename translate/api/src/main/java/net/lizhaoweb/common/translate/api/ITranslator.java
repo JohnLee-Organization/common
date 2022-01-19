@@ -22,7 +22,7 @@ import net.lizhaoweb.common.translate.model.TranslationResponse;
  * Revision of last commit:$Revision$<br>
  * Author of last commit:$Author$<br>
  * Date of last commit:$Date$<br>
- * <p/>
+ * <p></p>
  */
 public interface ITranslator {
 

@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
  * Revision of last commit:$Revision$<br>
  * Author of last commit:$Author$<br>
  * Date of last commit:$Date$<br>
- * <p/>
+ * <p></p>
  */
 public final class StringUtil extends StringUtils {
 
@@ -115,9 +115,9 @@ public final class StringUtil extends StringUtils {
     }
 
     /**
-     * 字符串转 Byte 数组。<br/>
-     * 如果分隔后的字符串去两端空白后，是 null 或空字符串，则对应位置的元素为 null 。<br/>
-     * 如果分隔后的字符串去两端空白后，不是 Byte 类型的字符串，则抛出异常。<br/>
+     * 字符串转 Byte 数组。<br>
+     * 如果分隔后的字符串去两端空白后，是 null 或空字符串，则对应位置的元素为 null 。<br>
+     * 如果分隔后的字符串去两端空白后，不是 Byte 类型的字符串，则抛出异常。<br>
      *
      * @param string 源字符串。
      * @param regex  正则表达式的定义。
@@ -144,9 +144,9 @@ public final class StringUtil extends StringUtils {
     }
 
     /**
-     * 字符串转 Short 数组。<br/>
-     * 如果分隔后的字符串去两端空白后，是 null 或空字符串，则对应位置的元素为 null 。<br/>
-     * 如果分隔后的字符串去两端空白后，不是 Short 类型的字符串，则抛出异常。<br/>
+     * 字符串转 Short 数组。<br>
+     * 如果分隔后的字符串去两端空白后，是 null 或空字符串，则对应位置的元素为 null 。<br>
+     * 如果分隔后的字符串去两端空白后，不是 Short 类型的字符串，则抛出异常。<br>
      *
      * @param string 源字符串。
      * @param regex  正则表达式的定义。
@@ -173,9 +173,9 @@ public final class StringUtil extends StringUtils {
     }
 
     /**
-     * 字符串转 Integer 数组。<br/>
-     * 如果分隔后的字符串去两端空白后，是 null 或空字符串，则对应位置的元素为 null 。<br/>
-     * 如果分隔后的字符串去两端空白后，不是 Integer 类型的字符串，则抛出异常。<br/>
+     * 字符串转 Integer 数组。<br>
+     * 如果分隔后的字符串去两端空白后，是 null 或空字符串，则对应位置的元素为 null 。<br>
+     * 如果分隔后的字符串去两端空白后，不是 Integer 类型的字符串，则抛出异常。<br>
      *
      * @param string 源字符串。
      * @param regex  正则表达式的定义。
@@ -202,9 +202,9 @@ public final class StringUtil extends StringUtils {
     }
 
     /**
-     * 字符串转 Long 数组。<br/>
-     * 如果分隔后的字符串去两端空白后，是 null 或空字符串，则对应位置的元素为 null 。<br/>
-     * 如果分隔后的字符串去两端空白后，不是 Long 类型的字符串，则抛出异常。<br/>
+     * 字符串转 Long 数组。<br>
+     * 如果分隔后的字符串去两端空白后，是 null 或空字符串，则对应位置的元素为 null 。<br>
+     * 如果分隔后的字符串去两端空白后，不是 Long 类型的字符串，则抛出异常。<br>
      *
      * @param string 源字符串。
      * @param regex  正则表达式的定义。
@@ -231,9 +231,9 @@ public final class StringUtil extends StringUtils {
     }
 
     /**
-     * 字符串转 Float 数组。<br/>
-     * 如果分隔后的字符串去两端空白后，是 null 或空字符串，则对应位置的元素为 null 。<br/>
-     * 如果分隔后的字符串去两端空白后，不是 Float 类型的字符串，则抛出异常。<br/>
+     * 字符串转 Float 数组。<br>
+     * 如果分隔后的字符串去两端空白后，是 null 或空字符串，则对应位置的元素为 null 。<br>
+     * 如果分隔后的字符串去两端空白后，不是 Float 类型的字符串，则抛出异常。<br>
      *
      * @param string 源字符串。
      * @param regex  正则表达式的定义。
@@ -260,9 +260,9 @@ public final class StringUtil extends StringUtils {
     }
 
     /**
-     * 字符串转 Double 数组。<br/>
-     * 如果分隔后的字符串去两端空白后，是 null 或空字符串，则对应位置的元素为 null 。<br/>
-     * 如果分隔后的字符串去两端空白后，不是 Double 类型的字符串，则抛出异常。<br/>
+     * 字符串转 Double 数组。<br>
+     * 如果分隔后的字符串去两端空白后，是 null 或空字符串，则对应位置的元素为 null 。<br>
+     * 如果分隔后的字符串去两端空白后，不是 Double 类型的字符串，则抛出异常。<br>
      *
      * @param string 源字符串。
      * @param regex  正则表达式的定义。
@@ -289,9 +289,9 @@ public final class StringUtil extends StringUtils {
     }
 
     /**
-     * 字符串转 Boolean 数组。<br/>
-     * 如果分隔后的字符串去两端空白后，是 null 或空字符串，则对应位置的元素为 null 。<br/>
-     * 如果分隔后的字符串去两端空白后，不是 Boolean 类型的字符串，则抛出异常。<br/>
+     * 字符串转 Boolean 数组。<br>
+     * 如果分隔后的字符串去两端空白后，是 null 或空字符串，则对应位置的元素为 null 。<br>
+     * 如果分隔后的字符串去两端空白后，不是 Boolean 类型的字符串，则抛出异常。<br>
      *
      * @param string 源字符串。
      * @param regex  正则表达式的定义。
@@ -318,9 +318,9 @@ public final class StringUtil extends StringUtils {
     }
 
     /**
-     * 字符串转 Character 数组。<br/>
-     * 如果分隔后的字符串去两端空白后，是 null 或空字符串，则对应位置的元素为 null 。<br/>
-     * 如果分隔后的字符串去两端空白后，不是 Character 类型的字符串，则抛出异常。<br/>
+     * 字符串转 Character 数组。<br>
+     * 如果分隔后的字符串去两端空白后，是 null 或空字符串，则对应位置的元素为 null 。<br>
+     * 如果分隔后的字符串去两端空白后，不是 Character 类型的字符串，则抛出异常。<br>
      *
      * @param string 源字符串。
      * @param regex  正则表达式的定义。

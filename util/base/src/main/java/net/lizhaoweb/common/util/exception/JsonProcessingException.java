@@ -5,7 +5,7 @@
  * @Project : common
  * @Package : net.lizhaoweb.common.util.exception
  * @author <a href="http://www.lizhaoweb.net">李召(John.Lee)</a>
- * @EMAIL 404644381@qq.com
+ * @email 404644381@qq.com
  * @Time : 8:35
  */
 package net.lizhaoweb.common.util.exception;
@@ -19,7 +19,7 @@ package net.lizhaoweb.common.util.exception;
  * Revision of last commit:$Revision$<br>
  * Author of last commit:$Author$<br>
  * Date of last commit:$Date$<br>
- * <p/>
+ * <p></p>
  */
 public class JsonProcessingException extends RuntimeException {
 

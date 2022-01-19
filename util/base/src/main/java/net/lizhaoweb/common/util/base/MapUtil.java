@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  * Author of last commit:$Author: lizhao $<br>
  * Date of last commit:$Date: 2014-08-27 13:48:18 +0800 (Wed, 27 Aug
  * 2014) $<br>
- * <p/>
+ * <p></p>
  */
 public class MapUtil {
 

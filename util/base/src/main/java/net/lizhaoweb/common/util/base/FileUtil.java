@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  * Revision of last commit:$Revision$<br>
  * Author of last commit:$Author$<br>
  * Date of last commit:$Date$<br>
- * <p/>
+ * <p></p>
  */
 public final class FileUtil extends FileUtils {
 
@@ -505,13 +505,6 @@ public final class FileUtil extends FileUtils {
      *
      * @return The canonical pathname string denoting the same file or
      * directory as this abstract pathname
-     * @throws IOException       If an I/O error occurs, which is possible because the
-     *                           construction of the canonical pathname may require
-     *                           filesystem queries
-     * @throws SecurityException If a required system property value cannot be accessed, or
-     *                           if a security manager exists and its <code>{@link
-     *                           java.lang.SecurityManager#checkRead}</code> method denies
-     *                           read access to the file
      * @see Path#toRealPath
      * @since JDK1.1
      */

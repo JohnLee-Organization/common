@@ -23,7 +23,7 @@ package net.lizhaoweb.common.util.base;
  * Revision of last commit:$Revision$<br>
  * Author of last commit:$Author$<br>
  * Date of last commit:$Date$<br>
- * <p/>
+ * <p></p>
  */
 public class IPConvert {
     private static final int IPV6Length = 8; // IPV6地址的分段

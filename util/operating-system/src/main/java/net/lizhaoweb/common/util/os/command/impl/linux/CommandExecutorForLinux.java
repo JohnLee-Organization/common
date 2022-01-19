@@ -54,7 +54,7 @@ public class CommandExecutorForLinux extends CommandExecutor {
      * 获取 Linux 分区信息
      *
      * @param partition 分区目录
-     * @return List<Partition>
+     * @return List&lt;Partition&gt;
      */
     public static List<Partition> partitionInfo(String partition) {
         Calendar.getInstance();

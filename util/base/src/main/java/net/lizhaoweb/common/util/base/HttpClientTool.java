@@ -56,7 +56,7 @@ public class HttpClientTool {
     /**
      * 将请求 URL 字符串转为请求参数
      *
-     * @param urlString 请求 URL 字符串。xxx?arg1=val1&arg2=val2... 或 ?arg1=val1&arg2=val2...
+     * @param urlString 请求 URL 字符串。xxx?arg1=val1&amp;arg2=val2... 或 ?arg1=val1&amp;arg2=val2...
      * @return 请求参数
      */
     public static Map<String, String[]> stringToParameters(String urlString) {

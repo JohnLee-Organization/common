@@ -14,17 +14,14 @@ import com.sun.mail.util.MailSSLSocketFactory;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.lizhaoweb.message.ISendMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.security.GeneralSecurityException;
 import java.util.Properties;
 
 /**
- * <1>接口 -  发送纯文本邮件</H1>
+ * <H1>接口 -  发送纯文本邮件</H1>
  *
  * @author <a href="http://www.lizhaoweb.cn">李召(John.Lee)</a>
  * @version 1.0.0.0.1

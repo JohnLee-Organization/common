@@ -40,7 +40,7 @@ public class ArgumentUtil {
      * <p>
      * 将参数数组解析成参数 MAP
      * 如：
-     * ["a1=con1","b=con2","a1=con3"]  ====>  {"a1"=["con1","con3"],"b"=["con2"]}
+     * ["a1=con1","b=con2","a1=con3"]  ====&gt;  {"a1"=["con1","con3"],"b"=["con2"]}
      *
      * @param argumentArray 参数数组
      * @return Map

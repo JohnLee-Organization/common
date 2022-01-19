@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  * Revision of last commit:$Revision$<br>
  * Author of last commit:$Author$<br>
  * Date of last commit:$Date$<br>
- * <p/>
+ * <p></p>
  */
 public interface Constant extends DateConstant {
 
@@ -47,11 +47,11 @@ public interface Constant extends DateConstant {
      *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
      *          .
      *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-     * @notes Created on 2015-3-30<br/>
-     * Revision of last commit:$Revision$<br/>
-     * Author of last commit:$Author$<br/>
-     * Date of last commit:$Date$<br/>
-     * <p/>
+     * @notes Created on 2015-3-30<br>
+     * Revision of last commit:$Revision$<br>
+     * Author of last commit:$Author$<br>
+     * Date of last commit:$Date$<br>
+     * <p></p>
      */
     public static interface Product {
         public static final int COM_VERSION = 1;
@@ -74,11 +74,11 @@ public interface Constant extends DateConstant {
      *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
      *          .
      *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-     * @notes Created on 2015-3-30<br/>
-     * Revision of last commit:$Revision$<br/>
-     * Author of last commit:$Author$<br/>
-     * Date of last commit:$Date$<br/>
-     * <p/>
+     * @notes Created on 2015-3-30<br>
+     * Revision of last commit:$Revision$<br>
+     * Author of last commit:$Author$<br>
+     * Date of last commit:$Date$<br>
+     * <p></p>
      */
     public static interface Regex {
         /**
@@ -256,11 +256,11 @@ public interface Constant extends DateConstant {
      *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
      *          .
      *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-     * @notes Created on 2015-3-30<br/>
-     * Revision of last commit:$Revision$<br/>
-     * Author of last commit:$Author$<br/>
-     * Date of last commit:$Date$<br/>
-     * <p/>
+     * @notes Created on 2015-3-30<br>
+     * Revision of last commit:$Revision$<br>
+     * Author of last commit:$Author$<br>
+     * Date of last commit:$Date$<br>
+     * <p></p>
      */
     public static interface Array {
         /**
@@ -276,11 +276,11 @@ public interface Constant extends DateConstant {
          *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
          *          .
          *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-         * @notes Created on 2015-3-30<br/>
-         * Revision of last commit:$Revision$<br/>
-         * Author of last commit:$Author$<br/>
-         * Date of last commit:$Date$<br/>
-         * <p/>
+         * @notes Created on 2015-3-30<br>
+         * Revision of last commit:$Revision$<br>
+         * Author of last commit:$Author$<br>
+         * Date of last commit:$Date$<br>
+         * <p></p>
          */
         public static interface Char {
             /**
@@ -306,11 +306,11 @@ public interface Constant extends DateConstant {
      *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
      *          .
      *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-     * @notes Created on 2015-3-30<br/>
-     * Revision of last commit:$Revision$<br/>
-     * Author of last commit:$Author$<br/>
-     * Date of last commit:$Date$<br/>
-     * <p/>
+     * @notes Created on 2015-3-30<br>
+     * Revision of last commit:$Revision$<br>
+     * Author of last commit:$Author$<br>
+     * Date of last commit:$Date$<br>
+     * <p></p>
      */
     public static interface Charset {
         /**
@@ -360,11 +360,11 @@ public interface Constant extends DateConstant {
      *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
      *          .
      *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-     * @notes Created on 2015-3-30<br/>
-     * Revision of last commit:$Revision$<br/>
-     * Author of last commit:$Author$<br/>
-     * Date of last commit:$Date$<br/>
-     * <p/>
+     * @notes Created on 2015-3-30<br>
+     * Revision of last commit:$Revision$<br>
+     * Author of last commit:$Author$<br>
+     * Date of last commit:$Date$<br>
+     * <p></p>
      */
     public static interface Config {
         /**
@@ -385,11 +385,11 @@ public interface Constant extends DateConstant {
          *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
          *          .
          *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-         * @notes Created on 2015-3-30<br/>
-         * Revision of last commit:$Revision$<br/>
-         * Author of last commit:$Author$<br/>
-         * Date of last commit:$Date$<br/>
-         * <p/>
+         * @notes Created on 2015-3-30<br>
+         * Revision of last commit:$Revision$<br>
+         * Author of last commit:$Author$<br>
+         * Date of last commit:$Date$<br>
+         * <p></p>
          */
         public static interface Email {
             /**
@@ -415,11 +415,11 @@ public interface Constant extends DateConstant {
          *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
          *          .
          *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-         * @notes Created on 2015-3-30<br/>
-         * Revision of last commit:$Revision$<br/>
-         * Author of last commit:$Author$<br/>
-         * Date of last commit:$Date$<br/>
-         * <p/>
+         * @notes Created on 2015-3-30<br>
+         * Revision of last commit:$Revision$<br>
+         * Author of last commit:$Author$<br>
+         * Date of last commit:$Date$<br>
+         * <p></p>
          */
         public static interface IM4J {
             /**
@@ -442,11 +442,11 @@ public interface Constant extends DateConstant {
      *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
      *          .
      *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-     * @notes Created on 2015-3-30<br/>
-     * Revision of last commit:$Revision$<br/>
-     * Author of last commit:$Author$<br/>
-     * Date of last commit:$Date$<br/>
-     * <p/>
+     * @notes Created on 2015-3-30<br>
+     * Revision of last commit:$Revision$<br>
+     * Author of last commit:$Author$<br>
+     * Date of last commit:$Date$<br>
+     * <p></p>
      */
     public static interface HTTP {
         /**
@@ -462,11 +462,11 @@ public interface Constant extends DateConstant {
          *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
          *          .
          *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-         * @notes Created on 2015-3-30<br/>
-         * Revision of last commit:$Revision$<br/>
-         * Author of last commit:$Author$<br/>
-         * Date of last commit:$Date$<br/>
-         * <p/>
+         * @notes Created on 2015-3-30<br>
+         * Revision of last commit:$Revision$<br>
+         * Author of last commit:$Author$<br>
+         * Date of last commit:$Date$<br>
+         * <p></p>
          */
         public static interface Method {
             /**
@@ -524,11 +524,11 @@ public interface Constant extends DateConstant {
          *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
          *          .
          *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-         * @notes Created on 2015-3-30<br/>
-         * Revision of last commit:$Revision$<br/>
-         * Author of last commit:$Author$<br/>
-         * Date of last commit:$Date$<br/>
-         * <p/>
+         * @notes Created on 2015-3-30<br>
+         * Revision of last commit:$Revision$<br>
+         * Author of last commit:$Author$<br>
+         * Date of last commit:$Date$<br>
+         * <p></p>
          */
         public static interface Timeout {
             /**
@@ -555,11 +555,11 @@ public interface Constant extends DateConstant {
      *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
      *          .
      *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-     * @notes Created on 2015-3-30<br/>
-     * Revision of last commit:$Revision$<br/>
-     * Author of last commit:$Author$<br/>
-     * Date of last commit:$Date$<br/>
-     * <p/>
+     * @notes Created on 2015-3-30<br>
+     * Revision of last commit:$Revision$<br>
+     * Author of last commit:$Author$<br>
+     * Date of last commit:$Date$<br>
+     * <p></p>
      */
     public static interface XML {
     }
@@ -577,11 +577,11 @@ public interface Constant extends DateConstant {
      *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
      *          .
      *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-     * @notes Created on 2015-3-30<br/>
-     * Revision of last commit:$Revision$<br/>
-     * Author of last commit:$Author$<br/>
-     * Date of last commit:$Date$<br/>
-     * <p/>
+     * @notes Created on 2015-3-30<br>
+     * Revision of last commit:$Revision$<br>
+     * Author of last commit:$Author$<br>
+     * Date of last commit:$Date$<br>
+     * <p></p>
      */
     public static interface OS {
         /**
@@ -597,11 +597,11 @@ public interface Constant extends DateConstant {
          *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
          *          .
          *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-         * @notes Created on 2015-3-30<br/>
-         * Revision of last commit:$Revision$<br/>
-         * Author of last commit:$Author$<br/>
-         * Date of last commit:$Date$<br/>
-         * <p/>
+         * @notes Created on 2015-3-30<br>
+         * Revision of last commit:$Revision$<br>
+         * Author of last commit:$Author$<br>
+         * Date of last commit:$Date$<br>
+         * <p></p>
          */
         public static interface id {
             /**
@@ -622,11 +622,11 @@ public interface Constant extends DateConstant {
              *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
              *          .
              *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-             * @notes Created on 2015-3-30<br/>
-             * Revision of last commit:$Revision$<br/>
-             * Author of last commit:$Author$<br/>
-             * Date of last commit:$Date$<br/>
-             * <p/>
+             * @notes Created on 2015-3-30<br>
+             * Revision of last commit:$Revision$<br>
+             * Author of last commit:$Author$<br>
+             * Date of last commit:$Date$<br>
+             * <p></p>
              */
             public static interface Linux {
                 /**
@@ -656,11 +656,11 @@ public interface Constant extends DateConstant {
              *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
              *          .
              *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-             * @notes Created on 2015-3-30<br/>
-             * Revision of last commit:$Revision$<br/>
-             * Author of last commit:$Author$<br/>
-             * Date of last commit:$Date$<br/>
-             * <p/>
+             * @notes Created on 2015-3-30<br>
+             * Revision of last commit:$Revision$<br>
+             * Author of last commit:$Author$<br>
+             * Date of last commit:$Date$<br>
+             * <p></p>
              */
             public static interface Windows {
                 /**
@@ -694,11 +694,11 @@ public interface Constant extends DateConstant {
              *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
              *          .
              *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-             * @notes Created on 2015-3-30<br/>
-             * Revision of last commit:$Revision$<br/>
-             * Author of last commit:$Author$<br/>
-             * Date of last commit:$Date$<br/>
-             * <p/>
+             * @notes Created on 2015-3-30<br>
+             * Revision of last commit:$Revision$<br>
+             * Author of last commit:$Author$<br>
+             * Date of last commit:$Date$<br>
+             * <p></p>
              */
             public static interface MAC {
                 /**
@@ -720,11 +720,11 @@ public interface Constant extends DateConstant {
              *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
              *          .
              *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-             * @notes Created on 2015-3-30<br/>
-             * Revision of last commit:$Revision$<br/>
-             * Author of last commit:$Author$<br/>
-             * Date of last commit:$Date$<br/>
-             * <p/>
+             * @notes Created on 2015-3-30<br>
+             * Revision of last commit:$Revision$<br>
+             * Author of last commit:$Author$<br>
+             * Date of last commit:$Date$<br>
+             * <p></p>
              */
             public static interface Android {
                 /**
@@ -746,11 +746,11 @@ public interface Constant extends DateConstant {
              *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
              *          .
              *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-             * @notes Created on 2015-3-30<br/>
-             * Revision of last commit:$Revision$<br/>
-             * Author of last commit:$Author$<br/>
-             * Date of last commit:$Date$<br/>
-             * <p/>
+             * @notes Created on 2015-3-30<br>
+             * Revision of last commit:$Revision$<br>
+             * Author of last commit:$Author$<br>
+             * Date of last commit:$Date$<br>
+             * <p></p>
              */
             public static interface IOS {
                 /**
@@ -773,11 +773,11 @@ public interface Constant extends DateConstant {
          *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
          *          .
          *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-         * @notes Created on 2015-3-30<br/>
-         * Revision of last commit:$Revision$<br/>
-         * Author of last commit:$Author$<br/>
-         * Date of last commit:$Date$<br/>
-         * <p/>
+         * @notes Created on 2015-3-30<br>
+         * Revision of last commit:$Revision$<br>
+         * Author of last commit:$Author$<br>
+         * Date of last commit:$Date$<br>
+         * <p></p>
          */
         public static interface name {
             /**
@@ -798,11 +798,11 @@ public interface Constant extends DateConstant {
              *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
              *          .
              *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-             * @notes Created on 2015-3-30<br/>
-             * Revision of last commit:$Revision$<br/>
-             * Author of last commit:$Author$<br/>
-             * Date of last commit:$Date$<br/>
-             * <p/>
+             * @notes Created on 2015-3-30<br>
+             * Revision of last commit:$Revision$<br>
+             * Author of last commit:$Author$<br>
+             * Date of last commit:$Date$<br>
+             * <p></p>
              */
             public static interface Linux {
                 /**
@@ -832,11 +832,11 @@ public interface Constant extends DateConstant {
              *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
              *          .
              *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-             * @notes Created on 2015-3-30<br/>
-             * Revision of last commit:$Revision$<br/>
-             * Author of last commit:$Author$<br/>
-             * Date of last commit:$Date$<br/>
-             * <p/>
+             * @notes Created on 2015-3-30<br>
+             * Revision of last commit:$Revision$<br>
+             * Author of last commit:$Author$<br>
+             * Date of last commit:$Date$<br>
+             * <p></p>
              */
             public static interface Windows {
                 /**
@@ -870,11 +870,11 @@ public interface Constant extends DateConstant {
              *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
              *          .
              *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-             * @notes Created on 2015-3-30<br/>
-             * Revision of last commit:$Revision$<br/>
-             * Author of last commit:$Author$<br/>
-             * Date of last commit:$Date$<br/>
-             * <p/>
+             * @notes Created on 2015-3-30<br>
+             * Revision of last commit:$Revision$<br>
+             * Author of last commit:$Author$<br>
+             * Date of last commit:$Date$<br>
+             * <p></p>
              */
             public static interface MAC {
                 /**
@@ -909,11 +909,11 @@ public interface Constant extends DateConstant {
              *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
              *          .
              *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-             * @notes Created on 2015-3-30<br/>
-             * Revision of last commit:$Revision$<br/>
-             * Author of last commit:$Author$<br/>
-             * Date of last commit:$Date$<br/>
-             * <p/>
+             * @notes Created on 2015-3-30<br>
+             * Revision of last commit:$Revision$<br>
+             * Author of last commit:$Author$<br>
+             * Date of last commit:$Date$<br>
+             * <p></p>
              */
             public static interface IOS {
                 /**
@@ -937,11 +937,11 @@ public interface Constant extends DateConstant {
      *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
      *          .
      *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-     * @notes Created on 2015-3-30<br/>
-     * Revision of last commit:$Revision$<br/>
-     * Author of last commit:$Author$<br/>
-     * Date of last commit:$Date$<br/>
-     * <p/>
+     * @notes Created on 2015-3-30<br>
+     * Revision of last commit:$Revision$<br>
+     * Author of last commit:$Author$<br>
+     * Date of last commit:$Date$<br>
+     * <p></p>
      */
     public static interface Cookie {
         /**
@@ -957,11 +957,11 @@ public interface Constant extends DateConstant {
          *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
          *          .
          *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-         * @notes Created on 2015-3-30<br/>
-         * Revision of last commit:$Revision$<br/>
-         * Author of last commit:$Author$<br/>
-         * Date of last commit:$Date$<br/>
-         * <p/>
+         * @notes Created on 2015-3-30<br>
+         * Revision of last commit:$Revision$<br>
+         * Author of last commit:$Author$<br>
+         * Date of last commit:$Date$<br>
+         * <p></p>
          */
         public static interface Page {
             /**
@@ -977,11 +977,11 @@ public interface Constant extends DateConstant {
              *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
              *          .
              *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-             * @notes Created on 2015-3-30<br/>
-             * Revision of last commit:$Revision$<br/>
-             * Author of last commit:$Author$<br/>
-             * Date of last commit:$Date$<br/>
-             * <p/>
+             * @notes Created on 2015-3-30<br>
+             * Revision of last commit:$Revision$<br>
+             * Author of last commit:$Author$<br>
+             * Date of last commit:$Date$<br>
+             * <p></p>
              */
             public interface Size {
                 /**
@@ -1013,11 +1013,11 @@ public interface Constant extends DateConstant {
      *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
      *          .
      *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-     * @notes Created on 2015-3-30<br/>
-     * Revision of last commit:$Revision$<br/>
-     * Author of last commit:$Author$<br/>
-     * Date of last commit:$Date$<br/>
-     * <p/>
+     * @notes Created on 2015-3-30<br>
+     * Revision of last commit:$Revision$<br>
+     * Author of last commit:$Author$<br>
+     * Date of last commit:$Date$<br>
+     * <p></p>
      */
     public static interface File {
         public static final String TRANSFER_ENCODING = "binary";
@@ -1035,11 +1035,11 @@ public interface Constant extends DateConstant {
          *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
          *          .
          *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-         * @notes Created on 2015-3-30<br/>
-         * Revision of last commit:$Revision$<br/>
-         * Author of last commit:$Author$<br/>
-         * Date of last commit:$Date$<br/>
-         * <p/>
+         * @notes Created on 2015-3-30<br>
+         * Revision of last commit:$Revision$<br>
+         * Author of last commit:$Author$<br>
+         * Date of last commit:$Date$<br>
+         * <p></p>
          */
         public static interface Upload {
             /**
@@ -1055,11 +1055,11 @@ public interface Constant extends DateConstant {
              *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
              *          .
              *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-             * @notes Created on 2015-3-30<br/>
-             * Revision of last commit:$Revision$<br/>
-             * Author of last commit:$Author$<br/>
-             * Date of last commit:$Date$<br/>
-             * <p/>
+             * @notes Created on 2015-3-30<br>
+             * Revision of last commit:$Revision$<br>
+             * Author of last commit:$Author$<br>
+             * Date of last commit:$Date$<br>
+             * <p></p>
              */
             public static interface Block {
                 /**
@@ -1086,11 +1086,11 @@ public interface Constant extends DateConstant {
          *          {@value net.lizhaoweb.common.util.base.Constant.Product#BIG_VERSION}
          *          .
          *          {@value net.lizhaoweb.common.util.base.Constant.Product#SIM_VERSION}
-         * @notes Created on 2015-3-30<br/>
-         * Revision of last commit:$Revision$<br/>
-         * Author of last commit:$Author$<br/>
-         * Date of last commit:$Date$<br/>
-         * <p/>
+         * @notes Created on 2015-3-30<br>
+         * Revision of last commit:$Revision$<br>
+         * Author of last commit:$Author$<br>
+         * Date of last commit:$Date$<br>
+         * <p></p>
          */
         public static interface Permission {
             /**

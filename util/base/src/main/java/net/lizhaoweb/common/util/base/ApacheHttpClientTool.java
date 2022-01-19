@@ -81,8 +81,8 @@ public class ApacheHttpClientTool extends HttpClientTool {
     /**
      * 组装请求头
      *
-     * @param headers Map<String, String> headers
-     * @return List<Header>
+     * @param headers Map&lt;String, String&gt; headers
+     * @return List&lt;Header&gt;
      */
     public static List<Header> setHeaders(Map<String, String> headers) {
         if (headers == null) {
@@ -115,8 +115,8 @@ public class ApacheHttpClientTool extends HttpClientTool {
     /**
      * 转换头参数
      *
-     * @param headers Map<String, String> headers
-     * @return List<Header>
+     * @param headers Map&lt;String, String&gt; headers
+     * @return List&lt;Header&gt;
      */
     public static List<Header> convertHeaders(Map<String, String> headers) {
         Constant.LoggerAgglomeration.ApacheHttpClientLogger.debug("HttpClient send >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [Headers]{}", headers);
@@ -142,7 +142,7 @@ public class ApacheHttpClientTool extends HttpClientTool {
     /**
      * 转换请求参数
      *
-     * @param parameters Map<String, String[]> parameters
+     * @param parameters Map&lt;String, String[]&gt; parameters
      * @return HttpEntity
      */
     public static HttpEntity convertParameters(Map<String, String[]> parameters) {
