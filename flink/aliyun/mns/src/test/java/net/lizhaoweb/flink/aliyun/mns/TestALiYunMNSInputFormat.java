@@ -15,8 +15,8 @@ public class TestALiYunMNSInputFormat {
         DataStream<Message> dataResult = env.createInput(
                 ALiYunMNSInputFormat
                         .buildALiYunMNSInputFormat()
-                        .setAccessKeyId("LTAI6wH9atPRQAP1")
-                        .setAccessKeySecret("h6osGvAEEmCcKFG9uZowjhJSRxUwzQ")
+                        .setAccessKeyId("")
+                        .setAccessKeySecret("")
                         .setAccountEndpoint("https://1379506082945137.mns.cn-beijing.aliyuncs.com")
                         .setQueueName("queue-oss-log-box-put-dev")
                         .finish()
