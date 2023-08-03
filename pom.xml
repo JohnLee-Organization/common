@@ -91,5 +91,6 @@
         <module>aliyun</module>
         <module>message</module>
         <module>flink</module>
+        <module>licenses</module>
     </modules>
 </project>
