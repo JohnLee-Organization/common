@@ -10,7 +10,7 @@
     </parent>
 
     <groupId>net.lizhaoweb.lic</groupId>
-    <artifactId>truelicense</artifactId>
+    <artifactId>truelicense-common</artifactId>
     <version>JL.COMMON.7.1.0.0.0.0.1-SNAPSHOT</version>
 
     <name>Commons License [truelicense]</name>
@@ -18,13 +18,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.javadoc.skip>true</maven.javadoc.skip>
-        <maven.source.skip>true</maven.source.skip>
-
-        <fastjson.version>2.0.20</fastjson.version>
+        <truelicense.version>1.33</truelicense.version>
     </properties>
 
     <dependencies>
@@ -45,29 +39,29 @@
         </dependency>
 
         <dependency>
-            <groupId>de.schlichtherle.truelicense</groupId>
-            <artifactId>truelicense-core</artifactId>
-            <version>1.33</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.12.0</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>2.12.2</version>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>de.schlichtherle.truelicense</groupId>
+            <artifactId>truelicense-core</artifactId>
+            <version>${truelicense.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
+
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
