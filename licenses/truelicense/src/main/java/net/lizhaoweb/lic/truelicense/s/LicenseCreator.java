@@ -46,16 +46,21 @@ public class LicenseCreator {
      */
     public boolean generateLicense() {
         try {
-            LicenseManager licenseManager = new CustomLicenseManager(initLicenseParam());
-            LicenseContent licenseContent = initLicenseContent();
-
-            licenseManager.store(licenseContent, new File(param.getLicensePath()));
-
+            this.generateLicense01();
             return true;
         } catch (Exception e) {
             log.error(MessageFormat.format("证书生成失败：{0}", param), e);
             return false;
         }
+    }
+
+    /**
+     * 生成License证书
+     */
+    public void generateLicense01() throws Exception {
+        LicenseManager licenseManager = new CustomLicenseManager(initLicenseParam());
+        LicenseContent licenseContent = initLicenseContent();
+        licenseManager.store(licenseContent, new File(param.getLicensePath()));
     }
 
     /**
@@ -69,16 +74,9 @@ public class LicenseCreator {
         //设置对证书内容加密的秘钥
         CipherParam cipherParam = new DefaultCipherParam(param.getStorePass());
 
-        KeyStoreParam privateStoreParam = new CustomKeyStoreParam(LicenseCreator.class
-                , param.getPrivateKeysStorePath()
-                , param.getPrivateAlias()
-                , param.getStorePass()
-                , param.getKeyPass());
+        KeyStoreParam privateStoreParam = new CustomKeyStoreParam(LicenseCreator.class, param.getPrivateKeysStorePath(), param.getPrivateAlias(), param.getStorePass(), param.getKeyPass());
 
-        LicenseParam licenseParam = new DefaultLicenseParam(param.getSubject()
-                , preferences
-                , privateStoreParam
-                , cipherParam);
+        LicenseParam licenseParam = new DefaultLicenseParam(param.getSubject(), preferences, privateStoreParam, cipherParam);
 
         return licenseParam;
     }
