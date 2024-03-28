@@ -59,10 +59,7 @@ public class CustomLicenseManager extends LicenseManager {
      * @throws Exception 创建时异常
      */
     @Override
-    protected synchronized byte[] create(
-            LicenseContent content,
-            LicenseNotary notary)
-            throws Exception {
+    protected synchronized byte[] create(LicenseContent content, LicenseNotary notary) throws Exception {
         initialize(content);
         this.validateCreate(content);
         final GenericCertificate certificate = notary.sign(content);
@@ -78,10 +75,7 @@ public class CustomLicenseManager extends LicenseManager {
      * @throws Exception 安装时异常
      */
     @Override
-    protected synchronized LicenseContent install(
-            final byte[] key,
-            final LicenseNotary notary)
-            throws Exception {
+    protected synchronized LicenseContent install(final byte[] key, final LicenseNotary notary) throws Exception {
         final GenericCertificate certificate = getPrivacyGuard().key2cert(key);
 
         notary.verify(certificate);
@@ -101,8 +95,7 @@ public class CustomLicenseManager extends LicenseManager {
      * @throws Exception 验证时异常
      */
     @Override
-    protected synchronized LicenseContent verify(final LicenseNotary notary)
-            throws Exception {
+    protected synchronized LicenseContent verify(final LicenseNotary notary) throws Exception {
         GenericCertificate certificate = getCertificate();
 
         // Load license key from preferences,
@@ -126,8 +119,7 @@ public class CustomLicenseManager extends LicenseManager {
      * @param content 证书正文
      * @throws LicenseContentException 证书异常
      */
-    protected synchronized void validateCreate(final LicenseContent content)
-            throws LicenseContentException {
+    protected synchronized void validateCreate(final LicenseContent content) throws LicenseContentException {
         final LicenseParam param = getLicenseParam();
 
         final Date now = new Date();
@@ -152,8 +144,7 @@ public class CustomLicenseManager extends LicenseManager {
      * @param content LicenseContent
      */
     @Override
-    protected synchronized void validate(final LicenseContent content)
-            throws LicenseContentException {
+    protected synchronized void validate(final LicenseContent content) throws LicenseContentException {
         //1. 首先调用父类的validate方法
         super.validate(content);
 
@@ -165,12 +156,12 @@ public class CustomLicenseManager extends LicenseManager {
 
         if (expectedCheckModel != null && serverCheckModel != null) {
             //校验IP地址
-            if (!checkIpAddress(expectedCheckModel.getIpAddress(), serverCheckModel.getIpAddress())) {
+            if (!checkAddress(expectedCheckModel.getIpAddress(), serverCheckModel.getIpAddress())) {
                 throw new LicenseContentException("当前服务器的IP没在授权范围内");
             }
 
             //校验Mac地址
-            if (!checkIpAddress(expectedCheckModel.getMacAddress(), serverCheckModel.getMacAddress())) {
+            if (!checkAddress(expectedCheckModel.getMacAddress(), serverCheckModel.getMacAddress())) {
                 throw new LicenseContentException("当前服务器的Mac地址没在授权范围内");
             }
 
@@ -252,7 +243,53 @@ public class CustomLicenseManager extends LicenseManager {
      * @param serverList   服务器的IP列表
      * @return boolean
      */
+    private boolean checkAddress(List<String> expectedList, List<String> serverList) {
+        if (expectedList != null && expectedList.size() > 0) {
+            if (serverList != null && serverList.size() > 0) {
+                for (String expected : expectedList) {
+                    if (serverList.contains(expected.trim())) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * 校验当前服务器的IP地址是否在可被允许的IP范围内<br>
+     * 如果存在IP在可被允许的IP地址范围内，则返回true
+     *
+     * @param expectedList 许可的IP列表
+     * @param serverList   服务器的IP列表
+     * @return boolean
+     */
     private boolean checkIpAddress(List<String> expectedList, List<String> serverList) {
+        if (expectedList != null && expectedList.size() > 0) {
+            if (serverList != null && serverList.size() > 0) {
+                for (String expected : expectedList) {
+                    if (serverList.contains(expected.trim())) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * 校验当前服务器的Mac地址是否在可被允许的Mac范围内<br>
+     * 如果存在Mac在可被允许的Mac地址范围内，则返回true
+     *
+     * @param expectedList 许可的Mac列表
+     * @param serverList   服务器的Mac列表
+     * @return boolean
+     */
+    private boolean checkMacAddress(List<String> expectedList, List<String> serverList) {
         if (expectedList != null && expectedList.size() > 0) {
             if (serverList != null && serverList.size() > 0) {
                 for (String expected : expectedList) {
@@ -278,11 +315,8 @@ public class CustomLicenseManager extends LicenseManager {
     private boolean checkSerial(String expectedSerial, String serverSerial) {
         if (StringUtils.isNotBlank(expectedSerial)) {
             if (StringUtils.isNotBlank(serverSerial)) {
-                if (expectedSerial.equals(serverSerial)) {
-                    return true;
-                }
+                return expectedSerial.equals(serverSerial);
             }
-
             return false;
         } else {
             return true;

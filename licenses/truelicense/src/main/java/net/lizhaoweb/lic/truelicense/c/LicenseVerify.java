@@ -37,6 +37,7 @@ public class LicenseVerify {
 
     /**
      * 安装License证书
+     *
      * @param param LicenseVerifyParam
      * @return LicenseContent
      */
@@ -71,7 +72,7 @@ public class LicenseVerify {
         try {
             LicenseContent licenseContent = licenseManager.verify();
 
-            log.info(MessageFormat.format("证书校验通过，证书有效期：{0} - {1}", format.format(licenseContent.getNotBefore()), format.format(licenseContent.getNotAfter())));
+            log.debug(MessageFormat.format("证书校验通过，证书有效期：{0} - {1}", format.format(licenseContent.getNotBefore()), format.format(licenseContent.getNotAfter())));
             return true;
         } catch (Exception e) {
             log.error("证书校验失败！", e);
@@ -90,16 +91,9 @@ public class LicenseVerify {
 
         CipherParam cipherParam = new DefaultCipherParam(param.getStorePass());
 
-        KeyStoreParam publicStoreParam = new CustomKeyStoreParam(LicenseVerify.class
-                , param.getPublicKeysStorePath()
-                , param.getPublicAlias()
-                , param.getStorePass()
-                , null);
+        KeyStoreParam publicStoreParam = new CustomKeyStoreParam(LicenseVerify.class, param.getPublicKeysStorePath(), param.getPublicAlias(), param.getStorePass(), null);
 
-        return new DefaultLicenseParam(param.getSubject()
-                , preferences
-                , publicStoreParam
-                , cipherParam);
+        return new DefaultLicenseParam(param.getSubject(), preferences, publicStoreParam, cipherParam);
     }
 
 }
