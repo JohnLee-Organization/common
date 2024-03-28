@@ -97,19 +97,18 @@ public abstract class AbstractServerInfos {
         List<InetAddress> result = new ArrayList<>(4);
 
         // 遍历所有的网络接口
-        for (Enumeration networkInterfaces = NetworkInterface.getNetworkInterfaces(); networkInterfaces.hasMoreElements(); ) {
-            NetworkInterface iface = (NetworkInterface) networkInterfaces.nextElement();
+        for (Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces(); networkInterfaces.hasMoreElements(); ) {
+            NetworkInterface networkInterface = networkInterfaces.nextElement();
             // 在所有的接口下再遍历IP
-            for (Enumeration inetAddresses = iface.getInetAddresses(); inetAddresses.hasMoreElements(); ) {
-                InetAddress inetAddr = (InetAddress) inetAddresses.nextElement();
+            for (Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses(); inetAddresses.hasMoreElements(); ) {
+                InetAddress inetAddress = inetAddresses.nextElement();
 
                 //排除LoopbackAddress、SiteLocalAddress、LinkLocalAddress、MulticastAddress类型的IP地址
-                if (!inetAddr.isLoopbackAddress() /*&& !inetAddr.isSiteLocalAddress()*/ && !inetAddr.isLinkLocalAddress() && !inetAddr.isMulticastAddress()) {
-                    result.add(inetAddr);
+                if (!inetAddress.isLoopbackAddress() /*&& !inetAddress.isSiteLocalAddress()*/ && !inetAddress.isLinkLocalAddress() && !inetAddress.isMulticastAddress()) {
+                    result.add(inetAddress);
                 }
             }
         }
-
         return result;
     }
 
@@ -122,7 +121,7 @@ public abstract class AbstractServerInfos {
     protected String getMacByInetAddress(InetAddress inetAddr) {
         try {
             byte[] mac = NetworkInterface.getByInetAddress(inetAddr).getHardwareAddress();
-            StringBuffer stringBuffer = new StringBuffer();
+            StringBuilder stringBuffer = new StringBuilder();
 
             for (int i = 0; i < mac.length; i++) {
                 if (i != 0) {
@@ -132,7 +131,7 @@ public abstract class AbstractServerInfos {
                 //将十六进制byte转化为字符串
                 String temp = Integer.toHexString(mac[i] & 0xff);
                 if (temp.length() == 1) {
-                    stringBuffer.append("0" + temp);
+                    stringBuffer.append("0").append(temp);
                 } else {
                     stringBuffer.append(temp);
                 }
