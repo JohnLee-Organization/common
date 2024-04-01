@@ -18,4 +18,9 @@
     <description>李召(John.Lee) 个人许可授权项目组</description>
     <packaging>jar</packaging>
 
+    <properties>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+        <maven.source.skip>true</maven.source.skip>
+    </properties>
+
 </project>

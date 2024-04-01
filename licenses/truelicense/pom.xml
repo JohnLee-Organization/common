@@ -19,6 +19,9 @@
     <packaging>jar</packaging>
 
     <properties>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+        <maven.source.skip>true</maven.source.skip>
+
         <truelicense.version>1.33</truelicense.version>
     </properties>
 
@@ -81,7 +84,6 @@
     <build>
         <plugins>
             <plugin>
-
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
