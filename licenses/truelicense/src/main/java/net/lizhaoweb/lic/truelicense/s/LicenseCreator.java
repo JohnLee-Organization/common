@@ -11,12 +11,12 @@
 package net.lizhaoweb.lic.truelicense.s;
 
 import de.schlichtherle.license.*;
+import de.schlichtherle.util.ObfuscatedString;
 import lombok.extern.slf4j.Slf4j;
 import net.lizhaoweb.lic.truelicense.vo.LicenseCreatorParam;
 
 import javax.security.auth.x500.X500Principal;
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.prefs.Preferences;
 
 /**
@@ -29,10 +29,15 @@ import java.util.prefs.Preferences;
  * @email 404644381@qq.com
  */
 @Slf4j
+@SuppressWarnings("unused")
 public class LicenseCreator {
 
-    //    private static Logger logger = LogManager.getLogger(LicenseCreator.class);
-    private final static X500Principal DEFAULT_HOLDER_AND_ISSUER = new X500Principal("CN=localhost, OU=localhost, O=localhost, L=SH, ST=SH, C=CN");
+    /** => "err.generateLicenseFail" */
+    private static final String ERR_GENERATE_LICENSE_FAIL = new ObfuscatedString(new long[] {0x3168AE4591209548L, 0x704E80FB3B720F0DL, 0xE953713A2FCFFD1DL, 0xE3DB3EDDA57F4580L}).toString();
+
+    private final static X500Principal DEFAULT_HOLDER_AND_ISSUER = new X500Principal(
+            new ObfuscatedString(new long[] {0x35D7BC995D99EBC1L, 0x8EBF86C000AA6C7AL, 0x8E49139AB18345L, 0xC0E1207F7C4CE804L, 0x256701550A79CC78L, 0x320B9DE551F27E29L, 0x803DE749C5C12026L, 0xD534617F8B24982BL, 0x5B1410DD384A0086L}).toString() /* => "CN=localhost, OU=localhost, O=localhost, L=SH, ST=SH, C=CN" */
+    );
     private LicenseCreatorParam param;
 
     public LicenseCreator(LicenseCreatorParam param) {
@@ -49,7 +54,7 @@ public class LicenseCreator {
             this.generateLicense01();
             return true;
         } catch (Exception e) {
-            log.error(MessageFormat.format("证书生成失败：{0}", param), e);
+            log.error(Resources.getString(ERR_GENERATE_LICENSE_FAIL, param), e);
             return false;
         }
     }
@@ -76,9 +81,7 @@ public class LicenseCreator {
 
         KeyStoreParam privateStoreParam = new CustomKeyStoreParam(LicenseCreator.class, param.getPrivateKeysStorePath(), param.getPrivateAlias(), param.getStorePass(), param.getKeyPass());
 
-        LicenseParam licenseParam = new DefaultLicenseParam(param.getSubject(), preferences, privateStoreParam, cipherParam);
-
-        return licenseParam;
+        return new DefaultLicenseParam(param.getSubject(), preferences, privateStoreParam, cipherParam);
     }
 
     /**

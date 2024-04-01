@@ -27,8 +27,6 @@ import java.util.List;
 @Data
 public class LicenseCheckModel implements Serializable {
 
-    private static final long serialVersionUID = -2314678441082223148L;
-
     /**
      * 可被允许的IP地址
      */

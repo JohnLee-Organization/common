@@ -12,6 +12,7 @@ package net.lizhaoweb.lic.truelicense.s;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.List;
@@ -28,6 +29,12 @@ import java.util.List;
 public class TestWindowsServerInfos {
 
     private WindowsServerInfos serverInfos;
+
+    @BeforeClass
+    public static void setUpBeforeClass() {
+        // 设置系统属性，指定logback配置文件位置
+        System.setProperty("logback.configurationFile", "classpath:logback.xml");
+    }
 
     @Before
     public void init() {

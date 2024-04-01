@@ -11,10 +11,13 @@
 package net.lizhaoweb.lic.truelicense.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import de.schlichtherle.util.ObfuscatedString;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+
+import static net.lizhaoweb.lic.utils.Constant.LICENSE_DATE_FORMAT_STRING;
 
 /**
  * [模型] License生成需要的参数的实体类
@@ -27,8 +30,6 @@ import java.util.Date;
  */
 @Data
 public class LicenseCreatorParam implements Serializable {
-
-    private static final long serialVersionUID = 2832129012982731724L;
 
     /**
      * 证书subject
@@ -63,19 +64,19 @@ public class LicenseCreatorParam implements Serializable {
     /**
      * 证书生效时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(pattern = LICENSE_DATE_FORMAT_STRING, timezone = "GMT+8")
     private Date issuedTime = new Date();
 
     /**
      * 证书失效时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(pattern = LICENSE_DATE_FORMAT_STRING, timezone = "GMT+8")
     private Date expiryTime;
 
     /**
      * 用户类型
      */
-    private String consumerType = "user";
+    private String consumerType = new ObfuscatedString(new long[]{0x5A20241C330EAD5FL, 0xAC904700624C24DBL}).toString(); /* => "user" */
 
     /**
      * 用户数量
@@ -85,7 +86,7 @@ public class LicenseCreatorParam implements Serializable {
     /**
      * 描述信息
      */
-    private String description = "";
+    private String description = new ObfuscatedString(new long[]{0xF750424C466E13AL}).toString(); /* => "" */
 
     /**
      * 额外的服务器硬件校验信息

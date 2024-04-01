@@ -10,6 +10,7 @@
  */
 package net.lizhaoweb.lic.truelicense.s;
 
+import de.schlichtherle.util.ObfuscatedString;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
@@ -61,10 +62,15 @@ public class LinuxServerInfos extends AbstractServerInfos {
     @Override
     protected String getCPUSerial() throws Exception {
         //序列号
-        String serialNumber = "";
+        /* => "" */
+        String serialNumber = new ObfuscatedString(new long[]{0xF750424C466E13AL}).toString();
 
         //使用dmidecode命令获取CPU序列号
-        String[] shell = {"/bin/bash", "-c", "dmidecode -t processor | grep 'ID' | awk -F ':' '{print $2}' | head -n 1"};
+        String[] shell = {
+                new ObfuscatedString(new long[]{0xBDFF9158959C88D6L, 0x98B2029062B28991L, 0xCE8D21E0D9DE241FL}).toString() /* => "/bin/bash" */,
+                new ObfuscatedString(new long[]{0x570380064C55A998L, 0x3D4D2298ECC95C02L}).toString() /* => "-c" */,
+                new ObfuscatedString(new long[]{0xF9ED8D2DE71FC5EL, 0xAACCAA15EB42CBA7L, 0xAC94C84DF59420D5L, 0xD8049339C5A96BBL, 0xAE1781F33457055FL, 0xC16AFC5566604F0BL, 0x5FB61F2058E51D46L, 0xB9EAA879BDBD3544L, 0x5BFF72CAAB398111L, 0x815E29E1D01056DCL}).toString() /* => "dmidecode -t processor | grep 'ID' | awk -F ':' '{print $2}' | head -n 1" */
+        };
         Process process = Runtime.getRuntime().exec(shell);
         process.getOutputStream().close();
 
@@ -82,10 +88,15 @@ public class LinuxServerInfos extends AbstractServerInfos {
     @Override
     protected String getMainBoardSerial() throws Exception {
         //序列号
-        String serialNumber = "";
+        /* => "" */
+        String serialNumber = new ObfuscatedString(new long[]{0xF750424C466E13AL}).toString();
 
         //使用dmidecode命令获取主板序列号
-        String[] shell = {"/bin/bash", "-c", "dmidecode | grep 'Serial Number' | awk -F ':' '{print $2}' | head -n 1"};
+        String[] shell = {
+                new ObfuscatedString(new long[]{0xBDFF9158959C88D6L, 0x98B2029062B28991L, 0xCE8D21E0D9DE241FL}).toString() /* => "/bin/bash" */,
+                new ObfuscatedString(new long[]{0x570380064C55A998L, 0x3D4D2298ECC95C02L}).toString() /* => "-c" */,
+                new ObfuscatedString(new long[]{0xD452ADC874709C1L, 0x93A0A17C4B0C8EEBL, 0x9DA0C572BEB47BD5L, 0x9AEA3BC2D3113829L, 0xDA91023A8F35B5CL, 0xA2F2DF36FB4FE225L, 0x8B78EE218E385461L, 0x5BB050BCAA6175C7L, 0xB77DB2C8E527AF05L, 0xBC47ACF3BCABA978L}).toString() /* => "dmidecode | grep 'Serial Number' | awk -F ':' '{print $2}' | head -n 1" */
+        };
         Process process = Runtime.getRuntime().exec(shell);
         process.getOutputStream().close();
 

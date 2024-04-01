@@ -11,8 +11,12 @@
 package net.lizhaoweb.lic.truelicense.s;
 
 import de.schlichtherle.license.AbstractKeyStoreParam;
+import lombok.Getter;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * 将公私钥存储文件存放到其他磁盘位置而不是项目中
@@ -29,8 +33,23 @@ public class CustomKeyStoreParam extends AbstractKeyStoreParam {
      * 公钥/私钥在磁盘上的存储路径
      */
     private String storePath;
+
+    /**
+     * 别名
+     */
+    @Getter
     private String alias;
+
+    /**
+     * 公钥口令
+     */
+    @Getter
     private String storePwd;
+
+    /**
+     * 私钥口令
+     */
+    @Getter
     private String keyPwd;
 
     public CustomKeyStoreParam(Class clazz, String resource, String alias, String storePwd, String keyPwd) {
@@ -42,21 +61,6 @@ public class CustomKeyStoreParam extends AbstractKeyStoreParam {
     }
 
 
-    @Override
-    public String getAlias() {
-        return alias;
-    }
-
-    @Override
-    public String getStorePwd() {
-        return storePwd;
-    }
-
-    @Override
-    public String getKeyPwd() {
-        return keyPwd;
-    }
-
     /**
      * 复写de.schlichtherle.license.AbstractKeyStoreParam的getStream()方法<br>
      * 用于将公私钥存储文件存放到其他磁盘位置而不是项目中
@@ -66,12 +70,12 @@ public class CustomKeyStoreParam extends AbstractKeyStoreParam {
      */
     @Override
     public InputStream getStream() throws IOException {
-        final InputStream in = new FileInputStream(new File(storePath));
-        if (null == in) {
-            throw new FileNotFoundException(storePath);
-        }
-
-        return in;
+//        InputStream inputStream = new FileInputStream(new File(storePath));
+//        if (null == inputStream) {
+//            throw new FileNotFoundException(storePath);
+//        }
+//        return inputStream;
+        return Files.newInputStream(Paths.get(storePath));
     }
 
 }

@@ -10,6 +10,8 @@
  */
 package net.lizhaoweb.lic.truelicense.s;
 
+import de.schlichtherle.util.ObfuscatedString;
+
 import java.net.InetAddress;
 import java.util.List;
 import java.util.Scanner;
@@ -58,10 +60,11 @@ public class WindowsServerInfos extends AbstractServerInfos {
     @Override
     protected String getCPUSerial() throws Exception {
         //序列号
-        String serialNumber = "";
+        /* => "" */
+        String serialNumber = new ObfuscatedString(new long[]{0xF750424C466E13AL}).toString();
 
         //使用WMIC获取CPU序列号
-        Process process = Runtime.getRuntime().exec("wmic cpu get processorid");
+        Process process = Runtime.getRuntime().exec(new ObfuscatedString(new long[]{0xDB707091F1D8AE16L, 0x2385EEE536B8C8E3L, 0x1552FB0EA4FF867L, 0xEB29EE4F8965EBFEL}).toString() /* => "wmic cpu get processorid" */);
         process.getOutputStream().close();
         Scanner scanner = new Scanner(process.getInputStream());
 
@@ -80,10 +83,11 @@ public class WindowsServerInfos extends AbstractServerInfos {
     @Override
     protected String getMainBoardSerial() throws Exception {
         //序列号
-        String serialNumber = "";
+        /* => "" */
+        String serialNumber = new ObfuscatedString(new long[]{0xF750424C466E13AL}).toString();
 
         //使用WMIC获取主板序列号
-        Process process = Runtime.getRuntime().exec("wmic baseboard get serialnumber");
+        Process process = Runtime.getRuntime().exec(new ObfuscatedString(new long[]{0xE51B5716301810E9L, 0xF73BEF56F71D04BFL, 0xDB848D173E7A9651L, 0x365280375F732645L, 0x5E3C4411022CBA32L}).toString() /* => "wmic baseboard get serialnumber" */);
         process.getOutputStream().close();
         Scanner scanner = new Scanner(process.getInputStream());
 

@@ -20,6 +20,7 @@
 
     <modules>
         <module>truelicense</module>
+        <module>license-commons</module>
     </modules>
 
 </project>
