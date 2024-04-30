@@ -60,7 +60,7 @@ public class LicenseClient {
             result = licenseManager.install(new File(param.getLicensePath()));
             log.info(Resources.getString(INFO_INSTALL_LICENSE_SUCCESS, new Object[]{LICENSE_DATE_FORMAT.format(result.getNotBefore()), LICENSE_DATE_FORMAT.format(result.getNotAfter())}));
         } catch (Exception e) {
-            log.error(Resources.getString(ERR_INSTALL_LICENSE_FAIL), e);
+            log.error(Resources.getString(ERR_INSTALL_LICENSE_FAIL, new Object[]{e.getLocalizedMessage()}), e);
         }
         return result;
     }
@@ -78,7 +78,7 @@ public class LicenseClient {
             log.debug(Resources.getString(DEBUG_VERIFY_LICENSE_SUCCESS, new Object[]{LICENSE_DATE_FORMAT.format(licenseContent.getNotBefore()), LICENSE_DATE_FORMAT.format(licenseContent.getNotAfter())}));
             return true;
         } catch (Exception e) {
-            log.error(Resources.getString(ERR_VERIFY_LICENSE_FAIL), e);
+            log.error(Resources.getString(ERR_VERIFY_LICENSE_FAIL, new Object[]{e.getLocalizedMessage()}), e);
             return false;
         }
     }

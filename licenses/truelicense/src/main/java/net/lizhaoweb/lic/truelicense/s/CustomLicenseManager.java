@@ -37,35 +37,55 @@ import java.util.List;
 @SuppressWarnings({"unused"})
 public class CustomLicenseManager extends LicenseManager {
 
-    /** => "exc.consumerTypeIsNull" */
+    /**
+     * => "exc.consumerTypeIsNull"
+     */
     private static final String EXC_CONSUMER_TYPE_IS_NULL = new ObfuscatedString(new long[]{0xD29019F7B1D95C66L, 0xE859C44ACC3EB2FEL, 0xF041027C9003B031L, 0x27E84AD8870D6063L}).toString();
 
-    /** => "exc.expiryTimeBeforeNow" */
+    /**
+     * => "exc.expiryTimeBeforeNow"
+     */
     private static final String EXC_EXPIRY_TIME_BEFORE_NOW = new ObfuscatedString(new long[]{0xF97A2F066F786C1EL, 0xE62C14C0E84386C6L, 0x43C48EBCA385E7B4L, 0xB25C478D68F22F98L}).toString();
 
-    /** => "exc.expiryTimeBeforeIssuedTime" */
+    /**
+     * => "exc.expiryTimeBeforeIssuedTime"
+     */
     private static final String EXC_EXPIRY_TIME_BEFORE_ISSUED_TIME = new ObfuscatedString(new long[]{0x7581DCEB66E3A419L, 0xA9879747922E5EEDL, 0x98A607EDBB0BD713L, 0x85F6C1B0E9C324CBL, 0xA51FEC3A6DB87BF9L}).toString();
 
-    /** => "exc.invalidIpAddress" */
+    /**
+     * => "exc.invalidIpAddress"
+     */
     private static final String EXC_INVALID_IP_ADDRESS = new ObfuscatedString(new long[]{0x9C3776E15C105EBAL, 0x1304C5B787D7D1CBL, 0xE8E42096CEDDCC74L, 0xA3CAC0A4D11CF969L}).toString();
 
-    /** => "exc.invalidMacAddress" */
+    /**
+     * => "exc.invalidMacAddress"
+     */
     private static final String EXC_INVALID_MAC_ADDRESS = new ObfuscatedString(new long[]{0xD2AD94595166D47FL, 0x18FD6503F17930F4L, 0x774DBD6D894B54F2L, 0x85C0D7D93E3128FAL}).toString();
 
-    /** => "exc.invalidCpuSerial" */
+    /**
+     * => "exc.invalidCpuSerial"
+     */
     private static final String EXC_INVALID_CPU_SERIAL = new ObfuscatedString(new long[]{0x4369E45467929BCBL, 0xA83506AF63EF0852L, 0xDBEABC1C5F67113FL, 0x53A64282BD3BB6CFL}).toString();
 
-    /** => "exc.invalidMainBoardSerial" */
+    /**
+     * => "exc.invalidMainBoardSerial"
+     */
     private static final String EXC_INVALID_MAIN_BOARD_SERIAL = new ObfuscatedString(new long[]{0x9CA0528EB8FAEB36L, 0x80B4EF2E151035BBL, 0xF24F71CC7A816BB8L, 0xC6C564278C571AEBL, 0xC95EA3B9812DFE84L}).toString();
 
-    /** => "exc.notGetHardwareInfo" */
+    /**
+     * => "exc.notGetHardwareInfo"
+     */
     private static final String EXC_NOT_GET_HARDWARE_INFO = new ObfuscatedString(new long[]{0x9D95147F2079DEEAL, 0x2B24CBA8685B8A52L, 0x48371729EFFE47BEL, 0x25E6A88AD60E299L}).toString();
 
-    /** => "err.xmlDecodeFail" */
+    /**
+     * => "err.xmlDecodeFail"
+     */
     private static final String ERR_XML_DECODE_FAIL = new ObfuscatedString(new long[]{0xE5394A192C923D9DL, 0x2FE277A559A24AA8L, 0x7BFCE9A626149C6AL, 0x99FFAC4ADDB757D9L}).toString();
 
     //XML编码
-    /** => "UTF-8" */
+    /**
+     * => "UTF-8"
+     */
     private static final String XML_CHARSET = new ObfuscatedString(new long[]{0xA58217325A19A396L, 0x66CB268A37803FF6L}).toString();
     //默认BUFSIZE
     private static final int DEFAULT_BUFSIZE = 8 * 1024;
@@ -221,7 +241,7 @@ public class CustomLicenseManager extends LicenseManager {
 
             return decoder.readObject();
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            log.error(Resources.getString(ERR_XML_DECODE_FAIL, new Object[]{e.getLocalizedMessage()}), e);
         } finally {
             try {
                 if (decoder != null) {
@@ -231,7 +251,7 @@ public class CustomLicenseManager extends LicenseManager {
                     inputStream.close();
                 }
             } catch (Exception e) {
-                log.error(Resources.getString(ERR_XML_DECODE_FAIL), e);
+                // Nothing
             }
         }
 

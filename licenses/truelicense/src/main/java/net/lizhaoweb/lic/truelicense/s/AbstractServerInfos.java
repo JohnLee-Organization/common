@@ -34,10 +34,14 @@ import java.util.List;
 @Slf4j
 public abstract class AbstractServerInfos {
 
-    /** => "err.getServerInfoFail" */
-    private static final String ERROR_GET_SERVER_INFO = new ObfuscatedString(new long[] {0x216399A12875350BL, 0x2F9EEC1329ECCBA2L, 0x4ED34D941270DA93L, 0xCE4FBA79E5C49E6BL}).toString();
+    /**
+     * => "err.getServerInfoFail"
+     */
+    private static final String ERROR_GET_SERVER_INFO = new ObfuscatedString(new long[]{0x216399A12875350BL, 0x2F9EEC1329ECCBA2L, 0x4ED34D941270DA93L, 0xCE4FBA79E5C49E6BL}).toString();
 
-    /** => "warn.getMacByInetAddress" */
+    /**
+     * => "warn.getMacByInetAddress"
+     */
     private static final String WARN_GET_MAC_BY_INET_ADDRESS = new ObfuscatedString(new long[]{0xC2D14A0798D2BF3EL, 0x6BC6587E050FCF2AL, 0xC2DB367C70BD511FL, 0x6251CD330473FC89L}).toString();
 
     /**
@@ -53,7 +57,7 @@ public abstract class AbstractServerInfos {
             result.setCpuSerial(this.getCPUSerial());
             result.setMainBoardSerial(this.getMainBoardSerial());
         } catch (Exception e) {
-            log.error(Resources.getString(ERROR_GET_SERVER_INFO), e);
+            log.error(Resources.getString(ERROR_GET_SERVER_INFO, new Object[]{e.getLocalizedMessage()}), e);
         }
         return result;
     }
@@ -141,8 +145,7 @@ public abstract class AbstractServerInfos {
             }
             return stringBuffer.toString().toUpperCase();
         } catch (SocketException e) {
-            e.printStackTrace();
-            log.warn(Resources.getString(WARN_GET_MAC_BY_INET_ADDRESS, e.getMessage()));
+            log.warn(Resources.getString(WARN_GET_MAC_BY_INET_ADDRESS, e.getLocalizedMessage()), e);
         }
         return null;
     }
