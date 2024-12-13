@@ -24,23 +24,27 @@ import java.util.concurrent.TimeUnit;
 public class M3u8MainTest {
 
     public static void main(String[] args) {
-
-        String filename = "test";
-        String M3U8URL = "https://youku.cdn-56.com/20180109/2SwCGxb4/index.m3u8";
+        try {
+            String m3u8Url = args[0];
+            String savePath = args[1];
+            String saveName = args[2];
+//            String filename = "";
+//            String urlEncodeFilename = URLEncoder.encode(filename, UTF_8);
+//        String m3u8Url = "https://youku.cdn-56.com/20180109/2SwCGxb4/index.m3u8";
+//            String savePath = "F://m3u8JavaTest";
 
 //        Map<String, Object> headersMap = new HashMap<>();
 //        headersMap.put("Content-Type", "text/html;charset=utf-8");
 
-        long[] startTime = {0, 0};
-
-        M3u8DownloadFactory.getInstance(M3U8URL) // 获取下载实例
-                .savePath("F://m3u8JavaTest") //设置生成目录
-                .filename(filename) //设置视频名称
-                .threadSize(10) //设置线程数
-                .retry(30) //设置重试次数
-                .timeout(10L, TimeUnit.SECONDS) //设置连接超时时间
-                .listenInterval(5L, TimeUnit.SECONDS) //设置监听器间隔
-                .withZeroCopy() // 启用零拷贝技术
+            long[] startTime = {0, 0};
+            M3u8DownloadFactory.getInstance(m3u8Url) // 获取下载实例
+                    .savePath(savePath) //设置生成目录
+                    .filename(saveName) //设置视频名称
+                    .threadSize(10) //设置线程数
+                    .retry(30) //设置重试次数
+                    .timeout(10L, TimeUnit.SECONDS) //设置连接超时时间
+                    .listenInterval(5L, TimeUnit.SECONDS) //设置监听器间隔
+                    .withZeroCopy() // 启用零拷贝技术
 
 //                //添加额外请求头
 //                .addRequestHeader("Content-Type", "text/html;charset=utf-8")
@@ -51,34 +55,37 @@ public class M3u8MainTest {
 //                .withProxy("172.50.60.3", 8090)
 //                .withProxy(Proxy.Type.HTTP, "172.50.60.3", 8090)
 
-                //添加监听器 - 开始
-                .addListener(new DownloadListener() {
-                    @Override
-                    public void onStart(DownloadStartEvent event) {
-                        startTime[0] = System.currentTimeMillis();
-                        System.out.println("开始下载！");
-                    }
+                    //添加监听器 - 开始
+                    .addListener(new DownloadListener() {
+                        @Override
+                        public void onStart(DownloadStartEvent event) {
+                            startTime[0] = System.currentTimeMillis();
+                            System.out.println("开始下载！");
+                        }
 
-                    @Override
-                    public void process(DownloadProcessEvent event) {
-                        System.out.println("\n下载网址：" + event.getDownloadUrl() + "\n已下载" + event.getFinished() + "个\t一共" + event.getTotal() + "个\t已完成" + event.getPercent() + "%\n");
-                    }
+                        @Override
+                        public void process(DownloadProcessEvent event) {
+                            System.out.println("\n下载网址：" + event.getDownloadUrl() + "\n已下载" + event.getFinished() + "个\t一共" + event.getTotal() + "个\t已完成" + event.getPercent() + "%\n");
+                        }
 
-                    @Override
-                    public void speed(DownloadSpeedEvent event) {
-                        System.out.printf("%s[%s] 下载速度：%s\n", Thread.currentThread().getName(), Thread.currentThread().getId(), event.speed());
-                    }
+                        @Override
+                        public void speed(DownloadSpeedEvent event) {
+                            System.out.printf("%s[%s] 下载速度：%s\n", Thread.currentThread().getName(), Thread.currentThread().getId(), event.speed());
+                        }
 
-                    @Override
-                    public void onEnd(DownloadEndEvent event) {
-                        System.out.println("下载完毕");
-                        startTime[1] = System.currentTimeMillis();
+                        @Override
+                        public void onEnd(DownloadEndEvent event) {
+                            System.out.println("下载完毕");
+                            startTime[1] = System.currentTimeMillis();
 
-                        System.out.printf("耗时 %f 秒", (startTime[1] - startTime[0]) / 1000.0);
-                    }
+                            System.out.printf("耗时 %f 秒", (startTime[1] - startTime[0]) / 1000.0);
+                        }
 
-                })//添加监听器 - 结束
+                    })//添加监听器 - 结束
 
-                .start();//开始下载
+                    .start();//开始下载
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 }
