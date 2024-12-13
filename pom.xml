@@ -105,5 +105,6 @@
         <module>message</module>
         <module>flink</module>
         <module>licenses</module>
+        <module>http-live-streaming</module>
     </modules>
 </project>
