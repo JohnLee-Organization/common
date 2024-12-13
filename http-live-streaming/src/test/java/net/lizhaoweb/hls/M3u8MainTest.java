@@ -25,6 +25,7 @@ public class M3u8MainTest {
 
     public static void main(String[] args) {
 
+        String filename = "test";
         String M3U8URL = "https://youku.cdn-56.com/20180109/2SwCGxb4/index.m3u8";
 
 //        Map<String, Object> headersMap = new HashMap<>();
@@ -34,7 +35,7 @@ public class M3u8MainTest {
 
         M3u8DownloadFactory.getInstance(M3U8URL) // 获取下载实例
                 .savePath("F://m3u8JavaTest") //设置生成目录
-                .filename("辣妹家庭教室，泉麻耶番号BT-99（丝袜）") //设置视频名称
+                .filename(filename) //设置视频名称
                 .threadSize(10) //设置线程数
                 .retry(30) //设置重试次数
                 .timeout(10L, TimeUnit.SECONDS) //设置连接超时时间
