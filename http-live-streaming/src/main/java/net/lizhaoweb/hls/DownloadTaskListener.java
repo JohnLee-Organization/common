@@ -21,6 +21,7 @@ import java.io.File;
  * @version 0.0.1
  * @email 404644381@qq.com
  */
+@SuppressWarnings({"unused"})
 public interface DownloadTaskListener {
 
     /**
@@ -68,7 +69,7 @@ public interface DownloadTaskListener {
     /**
      * [接口] 事件
      */
-    public static interface Event {
+    interface Event {
         /**
          * 获取事件类型
          *
@@ -80,7 +81,7 @@ public interface DownloadTaskListener {
     /**
      * [接口] 下载事件
      */
-    public static interface DownloadEvent extends Event {
+    interface DownloadEvent extends Event {
         /**
          * 下载地址
          *
@@ -92,7 +93,7 @@ public interface DownloadTaskListener {
     /**
      * [接口] 下载事件
      */
-    public static interface SaveFileEvent extends Event {
+    interface SaveFileEvent extends Event {
 
         /**
          * 已下载的分片数量
@@ -105,7 +106,7 @@ public interface DownloadTaskListener {
     /**
      * [接口] 下载事件
      */
-    public static interface DecryptEvent extends Event {
+    interface DecryptEvent extends Event {
 
         /**
          * 已下载的分片数量
@@ -118,10 +119,10 @@ public interface DownloadTaskListener {
     /**
      * [接口] 开始事件
      */
-    public static interface DownloadStartEvent extends DownloadEvent {
+    interface DownloadStartEvent extends DownloadEvent {
     }
 
-    public static abstract class AbstractDownloadStartEvent implements DownloadStartEvent {
+    abstract class AbstractDownloadTaskStartEvent implements DownloadStartEvent {
         @Override
         public EventType getType() {
             return EventType.START;
@@ -129,10 +130,10 @@ public interface DownloadTaskListener {
     }
 
 
-    public static interface BeginDownloadEvent extends SaveFileEvent {
+    interface BeginDownloadEvent extends SaveFileEvent {
     }
 
-    public static abstract class AbstractBeginDownloadEvent implements BeginDownloadEvent {
+    abstract class AbstractBeginDownloadEvent implements BeginDownloadEvent {
         @Override
         public EventType getType() {
             return EventType.BEGIN_DOWNLOAD;
@@ -142,10 +143,10 @@ public interface DownloadTaskListener {
     /**
      * [接口] 速度事件
      */
-    public static interface DoneDownloadEvent extends SaveFileEvent {
+    interface DoneDownloadEvent extends SaveFileEvent {
     }
 
-    public static abstract class AbstractDoneDownloadEvent implements DoneDownloadEvent {
+    abstract class AbstractDoneDownloadEvent implements DoneDownloadEvent {
         @Override
         public EventType getType() {
             return EventType.DONE_DOWNLOAD;
@@ -153,10 +154,10 @@ public interface DownloadTaskListener {
     }
 
 
-    public static interface BeginDecryptEvent extends DecryptEvent {
+    interface BeginDecryptEvent extends DecryptEvent {
     }
 
-    public static abstract class AbstractBeginDecryptEvent implements BeginDecryptEvent {
+    abstract class AbstractBeginDecryptEvent implements BeginDecryptEvent {
         @Override
         public EventType getType() {
             return EventType.BEGIN_DECRYPT;
@@ -166,11 +167,11 @@ public interface DownloadTaskListener {
     /**
      * [接口] 速度事件
      */
-    public static interface DoneDecryptEvent extends DecryptEvent {
+    interface DoneDecryptEvent extends DecryptEvent {
         File getDecryptFile();
     }
 
-    public static abstract class AbstractDoneDecryptEvent implements DoneDecryptEvent {
+    abstract class AbstractDoneDecryptEvent implements DoneDecryptEvent {
         @Override
         public EventType getType() {
             return EventType.DONE_DECRYPT;
@@ -181,17 +182,23 @@ public interface DownloadTaskListener {
     /**
      * [接口] 结束事件
      */
-    public static interface DownloadEndEvent extends DownloadEvent {
+    interface DownloadEndEvent extends DownloadEvent {
     }
 
-    public static abstract class AbstractDownloadEndEvent implements DownloadEndEvent {
+    abstract class AbstractDownloadTaskEndEvent implements DownloadEndEvent {
         @Override
         public EventType getType() {
             return EventType.END;
         }
     }
 
-    public static enum EventType {
-        START, BEGIN_DOWNLOAD, DONE_DOWNLOAD, BEGIN_DECRYPT, DONE_DECRYPT, END;
+    enum EventType {
+        START, // 开始下载任务
+        END, // 结束下载任务
+        BEGIN_DOWNLOAD, // 开始下载
+        DONE_DOWNLOAD, // 完成下载
+        BEGIN_DECRYPT, // 开始解密
+        DONE_DECRYPT, // 完成解密
     }
+
 }

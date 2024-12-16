@@ -11,8 +11,10 @@
 package net.lizhaoweb.hls;
 
 
-import java.util.HashSet;
-import java.util.Set;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 /**
  * 媒体类型
@@ -23,38 +25,42 @@ import java.util.Set;
  * @version 0.0.1
  * @email 404644381@qq.com
  */
-public class MediaFormat {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public enum MediaFormat {
+    mp4("mp4"), //
+    mkv("mkv"), //
+    webm("webm"), //
+    gif("gif"), //
+    mov("mov"), //
+    ogg("ogg"), //
+    flv("flv"), //
+    avi("avi"), //
+    m3gp("3gp"), //
+    wmv("wmv"), //
+    mpg("mpg"), //
+    vob("vob"), //
+    swf("swf"), //
+    m3u8("m3u8"), //
+    ;
 
-    private static Set<String> set = new HashSet<>();
+    @NonNull
+    private String name;
 
-    static {
-        set.add("mp4");
-        set.add("mkv");
-        set.add("webm");
-        set.add("gif");
-        set.add("mov");
-        set.add("ogg");
-        set.add("flv");
-        set.add("avi");
-        set.add("3gp");
-        set.add("wmv");
-        set.add("mpg");
-        set.add("vob");
-        set.add("swf");
-        set.add("m3u8");
-    }
-
-    private MediaFormat() {
-    }
-
-    public static String getMediaFormat(String url) {
-        if (!StringUtils.isUrl(url))
-            throw new M3u8Exception(url + "不是一个完整URL链接！");
-        url = url.substring(url.lastIndexOf("/") - 1);
-        for (String s : set) {
-            if (url.contains(s))
-                return s;
+    public static MediaFormat find(String name) {
+        for (MediaFormat format : values()) {
+            if (format.name.equals(name)) return format;
         }
-        throw new M3u8Exception("非视频链接！");
+        throw new M3u8Exception("非视频格式！");
     }
+
+    public static MediaFormat find4Url(String url) {
+        if (!StringUtils.isUrl(url)) {
+            throw new M3u8Exception(url + "不是一个完整URL链接！");
+        }
+//        url = url.substring(url.lastIndexOf("/") + 1);
+        url = url.substring(url.lastIndexOf(".") + 1);
+        return find(url);
+    }
+
 }

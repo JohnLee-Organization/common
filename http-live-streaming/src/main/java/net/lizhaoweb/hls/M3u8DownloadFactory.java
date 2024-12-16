@@ -13,6 +13,11 @@ package net.lizhaoweb.hls;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import net.lizhaoweb.hls.DownloadListener.AbstractDownloadEndEvent;
+import net.lizhaoweb.hls.DownloadListener.AbstractDownloadProcessEvent;
+import net.lizhaoweb.hls.DownloadListener.AbstractDownloadSpeedEvent;
+import net.lizhaoweb.hls.DownloadListener.AbstractDownloadStartEvent;
+import net.lizhaoweb.hls.DownloadTaskListener.*;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -40,6 +45,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static net.lizhaoweb.hls.Constant.*;
 
 
 /**
@@ -56,9 +62,7 @@ public class M3u8DownloadFactory {
 
     private static volatile M3u8Downloader downloader;
 
-    /**
-     * 解决java不支持AES/CBC/PKCS7Padding模式解密
-     */
+    /* 解决java不支持AES/CBC/PKCS7Padding模式解密 */
     static {
         Security.addProvider(new BouncyCastleProvider());
     }
@@ -85,7 +89,7 @@ public class M3u8DownloadFactory {
     public static void doNothing() {
     }
 
-    public static enum DownloadTsType {
+    public enum DownloadTsType {
         DECRYPTED, // 已解密
         CONTINUE, // 结束本次循环，继续
         VOID, // 无返回值
@@ -94,23 +98,22 @@ public class M3u8DownloadFactory {
         RETRY_MAX_COUNT, // 超过最大重试次数
         DECRYPT_FAIL, // 解密失败
         INTERRUPTED, // 中断
-        ;
     }
 
     @Slf4j
     public static class M3u8Downloader {
 
-        // 下载后未解密的文件名后缀
-        private static final String DOWNLOADED_FILE_SUFFIX = ".xy";
-
-        // 解密后的文件名后缀
-        private static final String DECODE_FILE_SUFFIX = ".xyz";
-
-        // 合并后的文件名后缀
-        private static final String FINAL_FILE_SUFFIX = ".mp4";
-
         //优化内存占用
         private static final BlockingQueue<byte[]> BLOCKING_QUEUE = new LinkedBlockingQueue<>();
+
+        // 下载后未解密的文件名后缀
+        private String downloadFileSuffix = DEFAULT_DOWNLOAD_FILE_SUFFIX;
+
+        // 解密后的文件名后缀
+        private String decodeFileSuffix = DEFAULT_DECODE_FILE_SUFFIX;
+
+        // 合并后的文件名后缀
+        private String videoFileSuffix = DEFAULT_VIDEO_FILE_SUFFIX;
 
         //要下载的m3u8链接
         @Getter
@@ -131,9 +134,13 @@ public class M3u8DownloadFactory {
         private long timeoutMillisecond = 1000L;
 
         //合并后的文件存储目录
-        @Setter
-        @Getter
-        private String dir;
+        private File dir;
+
+        // 文件从网络下载，保存的路径
+        private File downloadDir;
+
+        // 下载后的文件解密后的路径
+        private File decryptDir;
 
         //合并后的视频文件名称
         @Setter
@@ -163,12 +170,12 @@ public class M3u8DownloadFactory {
         private Set<String> tsSet = new LinkedHashSet<>();
 
         //解密后的片段
-        private Set<File> finishedFiles = new ConcurrentSkipListSet<>(Comparator.comparingInt(o -> Integer.parseInt(o.getName().replace(DECODE_FILE_SUFFIX, ""))));
+        private Set<File> finishedFiles = new ConcurrentSkipListSet<>(Comparator.comparingInt(o -> Integer.parseInt(o.getName().replace(decodeFileSuffix, ""))));
 
         //已经下载的文件大小
         private volatile long downloadBytes = 0L;
 
-        //监听间隔
+        //监听间隔，单位毫秒
         @Setter
         private volatile long interval = 0L;
 
@@ -266,14 +273,80 @@ public class M3u8DownloadFactory {
             return this;
         }
 
-        public M3u8Downloader savePath(String savePath) {
-            this.setDir(savePath);
-            return this;
+        public M3u8Downloader destDir(String destPath) {
+            return this.destDir(new File(destPath));
+        }
 
+        public M3u8Downloader destDir(File destPath) {
+            this.dir = destPath;
+            if (downloadDir == null) {
+                downloadDir = new File(dir, DEFAULT_DOWNLOAD_DIR_NAME);
+            }
+            if (decryptDir == null) {
+                decryptDir = new File(dir, DEFAULT_DECRYPT_DIR_NAME);
+            }
+            return this;
+        }
+
+        public M3u8Downloader downloadDir(String downloadDir) {
+            return this.downloadDir(new File(downloadDir));
+        }
+
+        public M3u8Downloader downloadDir(File downloadDir) {
+            this.downloadDir = downloadDir;
+            if (dir == null) {
+                dir = this.downloadDir.getParentFile();
+            }
+            if (decryptDir == null) {
+                decryptDir = new File(dir, DEFAULT_DECRYPT_DIR_NAME);
+            }
+            return this;
+        }
+
+        public M3u8Downloader decryptDir(String decryptDir) {
+            return this.decryptDir(new File(decryptDir));
+        }
+
+        public M3u8Downloader decryptDir(File decryptDir) {
+            this.decryptDir = decryptDir;
+            if (dir == null) {
+                dir = this.decryptDir.getParentFile();
+            }
+            if (downloadDir == null) {
+                downloadDir = new File(dir, DEFAULT_DOWNLOAD_DIR_NAME);
+            }
+            return this;
         }
 
         public M3u8Downloader filename(String filename) {
             this.setFilename(filename);
+            return this;
+        }
+
+        public M3u8Downloader downloadFileSuffix(String downloadFileSuffix) {
+            if (StringUtils.isEmpty(downloadFileSuffix)) {
+                if (log.isWarnEnabled()) log.warn("downloadFileSuffix can't be set empty");
+            } else if (downloadFileSuffix.equals(decodeFileSuffix)) {
+                if (log.isWarnEnabled()) log.warn("downloadFileSuffix can't be set {}", decodeFileSuffix);
+            } else {
+                this.downloadFileSuffix = downloadFileSuffix;
+            }
+            return this;
+        }
+
+        public M3u8Downloader decodeFileSuffix(String decodeFileSuffix) {
+            if (StringUtils.isEmpty(decodeFileSuffix)) {
+                if (log.isWarnEnabled()) log.warn("decodeFileSuffix can't be set empty");
+            } else if (decodeFileSuffix.equals(downloadFileSuffix)) {
+                if (log.isWarnEnabled()) log.warn("decodeFileSuffix can't be set {}", downloadFileSuffix);
+            } else {
+                this.decodeFileSuffix = decodeFileSuffix;
+            }
+            return this;
+        }
+
+        public M3u8Downloader videoFileSuffix(String videoFileSuffix) {
+            this.videoFileSuffix = videoFileSuffix;
             return this;
         }
 
@@ -328,16 +401,27 @@ public class M3u8DownloadFactory {
          */
         private void download() {
             //线程池
-            final ExecutorService downloadThreadPool = new ThreadPoolExecutor(threadCount, threadCount, 10L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(10000), r -> {
-                Thread thread = new Thread(r);
-                thread.setName("DOWNLOAD-TS-THREAD-" + thread.getId());
-                return thread;
-            }, new ThreadPoolExecutor.AbortPolicy());
+            final ExecutorService downloadThreadPool = new ThreadPoolExecutor( //
+                    threadCount, threadCount, // 线程数量
+                    10L, TimeUnit.MILLISECONDS, // 最大空闲时间
+                    new LinkedBlockingQueue<>(10000), // 工作队列
+                    r -> {
+                        Thread thread = new Thread(r);
+                        thread.setName("DOWNLOAD-TS-THREAD-" + thread.getId());
+                        return thread;
+                    }, // 线程工厂
+                    new ThreadPoolExecutor.AbortPolicy() // 取消策略
+            );
             int downloadIndex = 0;
             //如果生成目录不存在，则创建
-            File savePathRoot = new File(dir);
-            if (!savePathRoot.exists()) {
-                if (!savePathRoot.mkdirs()) throw new M3u8Exception("Failed to make dir: " + savePathRoot);
+            if (!dir.exists()) {
+                if (!dir.mkdirs()) throw new M3u8Exception("Failed to make directory: " + dir);
+            }
+            if (!downloadDir.exists()) {
+                if (!downloadDir.mkdirs()) throw new M3u8Exception("Failed to make download-directory: " + downloadDir);
+            }
+            if (!decryptDir.exists()) {
+                if (!decryptDir.mkdirs()) throw new M3u8Exception("Failed to make decryp-directory: " + decryptDir);
             }
             int len = tsSet.size();
             List<Future<M3u8DownloadFactory.DownloadTsType>> taskList = new ArrayList<>();
@@ -369,6 +453,10 @@ public class M3u8DownloadFactory {
             }
             if (log.isInfoEnabled()) log.info("下载完成，正在合并文件！共{}个！{}", finishedFiles.size(), StringUtils.convertToDownloadSpeed(new BigDecimal(downloadBytes), 3));
             mergeTs(); //开始合并视频
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException ignored) {
+            }
             deleteFiles(); //删除多余的ts片段
             if (log.isInfoEnabled()) log.info("视频合并完成，欢迎使用!");
         }
@@ -378,27 +466,27 @@ public class M3u8DownloadFactory {
                 for (DownloadListener downloadListener : listenerSet) {
                     try {
                         if (downloadListener == null) continue;
-                        downloadListener.onStart(new DownloadListener.AbstractDownloadStartEvent() {
+                        downloadListener.onStart(new AbstractDownloadStartEvent() {
                             @Override
                             public String getDownloadUrl() {
                                 return downloadUrl;
                             }
                         });
                     } catch (Throwable e) {
-                        log.warn("Listen on start: " + e.getMessage(), e);
+                        if (log.isWarnEnabled()) log.warn("Listen on start: {}", e.getMessage(), e);
                     }
                 }
                 //轮询是否下载成功
                 while (!fixedThreadPool.isTerminated()) {
                     try {
-                        Thread.sleep(interval);
+                        TimeUnit.MILLISECONDS.sleep(interval);
                     } catch (InterruptedException e) {
                         break;
                     }
                     for (DownloadListener downloadListener : listenerSet) {
                         try {
                             if (downloadListener == null) continue;
-                            downloadListener.process(new DownloadListener.AbstractDownloadProcessEvent() {
+                            downloadListener.process(new AbstractDownloadProcessEvent() {
                                 @Override
                                 public String getDownloadUrl() {
                                     return downloadUrl;
@@ -420,21 +508,21 @@ public class M3u8DownloadFactory {
                                 }
                             });
                         } catch (Throwable e) {
-                            log.warn("Listen on process: " + e.getMessage(), e);
+                            if (log.isWarnEnabled()) log.warn("Listen on process: {}", e.getMessage(), e);
                         }
                     }
                 }
                 for (DownloadListener downloadListener : listenerSet) {
                     try {
                         if (downloadListener == null) continue;
-                        downloadListener.onEnd(new DownloadListener.AbstractDownloadEndEvent() {
+                        downloadListener.onEnd(new AbstractDownloadEndEvent() {
                             @Override
                             public String getDownloadUrl() {
                                 return downloadUrl;
                             }
                         });
                     } catch (Throwable e) {
-                        log.warn("Listen on end: " + e.getMessage(), e);
+                        if (log.isWarnEnabled()) log.warn("Listen on end: {}", e.getMessage(), e);
                     }
                 }
             }, "DOWNLOAD-LISTENER-THREAD").start();
@@ -442,14 +530,14 @@ public class M3u8DownloadFactory {
                 while (!fixedThreadPool.isTerminated()) {
                     BigDecimal startSize = new BigDecimal(downloadBytes);
                     try {
-                        Thread.sleep(1000L);
+                        TimeUnit.SECONDS.sleep(1);
                     } catch (InterruptedException e) {
                         break;
                     }
                     try {
                         for (DownloadListener downloadListener : listenerSet) {
                             if (downloadListener == null) continue;
-                            downloadListener.speed(new DownloadListener.AbstractDownloadSpeedEvent() {
+                            downloadListener.speed(new AbstractDownloadSpeedEvent() {
                                 @Override
                                 public String getDownloadUrl() {
                                     return downloadUrl;
@@ -463,7 +551,7 @@ public class M3u8DownloadFactory {
                             });
                         }
                     } catch (Throwable e) {
-                        log.warn("Listen on speed: " + e.getMessage(), e);
+                        if (log.isWarnEnabled()) log.warn("Listen on speed: {}", e.getMessage(), e);
                     }
                 }
             }, "SPEED-LISTENER-THREAD").start();
@@ -481,7 +569,7 @@ public class M3u8DownloadFactory {
          */
         private void mergeTs() {
             try {
-                File videoFile = new File(dir, filename + FINAL_FILE_SUFFIX);
+                File videoFile = new File(dir, filename + videoFileSuffix);
                 System.gc();
                 if (videoFile.exists()) {
                     if (!videoFile.delete()) throw new M3u8Exception("Failed to delete file: " + videoFile);
@@ -551,11 +639,21 @@ public class M3u8DownloadFactory {
          * 删除下载好的片段
          */
         private void deleteFiles() {
-            File dirFile = new File(dir);
-            for (File delFile : Objects.requireNonNull(dirFile.listFiles(f -> f.getName().endsWith(DOWNLOADED_FILE_SUFFIX) || f.getName().endsWith(DECODE_FILE_SUFFIX)))) {
-                if (!delFile.delete()) {
-                    if (log.isWarnEnabled()) log.warn("文件{}删除失败", delFile);
-                }
+//            for (File delFile : Objects.requireNonNull(downloadDir.listFiles(f -> f.getName().endsWith(downloadFileSuffix)))) {
+//                if (!delFile.delete()) {
+//                    if (log.isWarnEnabled()) log.warn("下载原文{}删除失败", delFile);
+//                }
+//            }
+            if (downloadDir != null && downloadDir.exists() && !downloadDir.delete()) {
+                if (log.isErrorEnabled()) log.error("File to delete download-directory: {}", downloadDir);
+            }
+//            for (File delFile : Objects.requireNonNull(decryptDir.listFiles(f -> f.getName().endsWith(decodeFileSuffix)))) {
+//                if (!delFile.delete()) {
+//                    if (log.isWarnEnabled()) log.warn("解密文件{}删除失败", delFile);
+//                }
+//            }
+            if (decryptDir != null && decryptDir.exists() && !decryptDir.delete()) {
+                if (log.isErrorEnabled()) log.error("File to delete decrypt-directory: {}", decryptDir);
             }
         }
 
@@ -572,18 +670,18 @@ public class M3u8DownloadFactory {
                 for (DownloadTaskListener taskListener : taskListenerSet) {
                     try {
                         if (taskListener == null) continue;
-                        taskListener.onStart(new DownloadTaskListener.AbstractDownloadStartEvent() {
+                        taskListener.onStart(new AbstractDownloadTaskStartEvent() {
                             @Override
                             public String getDownloadUrl() {
                                 return tsUrl;
                             }
                         });
                     } catch (Throwable e) {
-                        log.warn("Listen on start: " + e.getMessage(), e);
+                        if (log.isWarnEnabled()) log.warn("Listen on start: {}", e.getMessage(), e);
                     }
                 }
                 //xy为未解密的ts片段，如果存在，则删除
-                File tsFile = new File(dir, index + DOWNLOADED_FILE_SUFFIX);
+                File tsFile = new File(downloadDir, index + downloadFileSuffix);
                 if (tsFile.exists()) {
                     if (!tsFile.delete()) {
                         if (log.isErrorEnabled()) log.error("删除分片文件失败：{}", tsFile);
@@ -631,19 +729,14 @@ public class M3u8DownloadFactory {
                         for (DownloadTaskListener taskListener : taskListenerSet) {
                             try {
                                 if (taskListener == null) continue;
-                                taskListener.onStart(new DownloadTaskListener.DownloadStartEvent() {
+                                taskListener.onStart(new AbstractDownloadTaskStartEvent() {
                                     @Override
                                     public String getDownloadUrl() {
                                         return tsUrl;
                                     }
-
-                                    @Override
-                                    public DownloadTaskListener.EventType getType() {
-                                        return DownloadTaskListener.EventType.START;
-                                    }
                                 });
                             } catch (Throwable e) {
-                                log.warn("Listen on start: " + e.getMessage(), e);
+                                if (log.isWarnEnabled()) log.warn("Listen on start in task: {}", e.getMessage(), e);
                             }
                         }
                         if (M3u8DownloadFactory.DownloadTsType.DECRYPTED == decryptPieceFileByStream(index, tsFile, bytes)) {
@@ -659,7 +752,7 @@ public class M3u8DownloadFactory {
                         if (log.isErrorEnabled()) log.error("视频文件解密失败：{}", tsFile);
                         return M3u8DownloadFactory.DownloadTsType.DECRYPT_FAIL;
                     } catch (Exception e) {
-                        log.debug("第{}获取链接重试！\t{}", count, tsUrl);
+                        if (log.isDebugEnabled()) log.debug("第{}下载链接重试！\t{}", count, tsUrl);
                         count++;
                     } finally {
                         try {
@@ -682,14 +775,14 @@ public class M3u8DownloadFactory {
                 for (DownloadTaskListener taskListener : taskListenerSet) {
                     try {
                         if (taskListener == null) continue;
-                        taskListener.onEnd(new DownloadTaskListener.AbstractDownloadEndEvent() {
+                        taskListener.onEnd(new AbstractDownloadTaskEndEvent() {
                             @Override
                             public String getDownloadUrl() {
                                 return tsUrl;
                             }
                         });
                     } catch (Throwable e) {
-                        log.warn("Listen on end: " + e.getMessage(), e);
+                        if (log.isWarnEnabled()) log.warn("Listen on end in task: {}", e.getMessage(), e);
                     }
                 }
                 return M3u8DownloadFactory.DownloadTsType.SUCCESS;
@@ -709,14 +802,14 @@ public class M3u8DownloadFactory {
             for (DownloadTaskListener taskListener : taskListenerSet) {
                 try {
                     if (taskListener == null) continue;
-                    taskListener.beginDownload(new DownloadTaskListener.AbstractBeginDownloadEvent() {
+                    taskListener.beginDownload(new AbstractBeginDownloadEvent() {
                         @Override
                         public File getSaveFile() {
                             return tsFile;
                         }
                     });
                 } catch (Throwable e) {
-                    log.warn("Listen on begin-download: " + e.getMessage(), e);
+                    if (log.isWarnEnabled()) log.warn("Listen on begin-download by zero-copy: {}", e.getMessage(), e);
                 }
             }
             FileOutputStream outputStream = null;
@@ -749,14 +842,14 @@ public class M3u8DownloadFactory {
             for (DownloadTaskListener taskListener : taskListenerSet) {
                 try {
                     if (taskListener == null) continue;
-                    taskListener.doneDownload(new DownloadTaskListener.AbstractDoneDownloadEvent() {
+                    taskListener.doneDownload(new AbstractDoneDownloadEvent() {
                         @Override
                         public File getSaveFile() {
                             return tsFile;
                         }
                     });
                 } catch (Throwable e) {
-                    log.warn("Listen on done-download: " + e.getMessage(), e);
+                    if (log.isWarnEnabled()) log.warn("Listen on done-download by zero-copy: {}", e.getMessage(), e);
                 }
             }
             return M3u8DownloadFactory.DownloadTsType.VOID;
@@ -776,14 +869,14 @@ public class M3u8DownloadFactory {
             for (DownloadTaskListener taskListener : taskListenerSet) {
                 try {
                     if (taskListener == null) continue;
-                    taskListener.beginDownload(new DownloadTaskListener.AbstractBeginDownloadEvent() {
+                    taskListener.beginDownload(new AbstractBeginDownloadEvent() {
                         @Override
                         public File getSaveFile() {
                             return tsFile;
                         }
                     });
                 } catch (Throwable e) {
-                    log.warn("Listen on begin-download: " + e.getMessage(), e);
+                    if (log.isWarnEnabled()) log.warn("Listen on begin-download by stream: {}", e.getMessage(), e);
                 }
             }
             FileOutputStream outputStream = null;
@@ -811,14 +904,14 @@ public class M3u8DownloadFactory {
             for (DownloadTaskListener taskListener : taskListenerSet) {
                 try {
                     if (taskListener == null) continue;
-                    taskListener.doneDownload(new DownloadTaskListener.AbstractDoneDownloadEvent() {
+                    taskListener.doneDownload(new AbstractDoneDownloadEvent() {
                         @Override
                         public File getSaveFile() {
                             return tsFile;
                         }
                     });
                 } catch (Throwable e) {
-                    log.warn("Listen on done-download: " + e.getMessage(), e);
+                    if (log.isWarnEnabled()) log.warn("Listen on done-download by stream: {}", e.getMessage(), e);
                 }
             }
             return M3u8DownloadFactory.DownloadTsType.VOID;
@@ -843,26 +936,25 @@ public class M3u8DownloadFactory {
             for (DownloadTaskListener taskListener : taskListenerSet) {
                 try {
                     if (taskListener == null) continue;
-                    taskListener.beginDecrypt(new DownloadTaskListener.AbstractBeginDecryptEvent() {
+                    taskListener.beginDecrypt(new AbstractBeginDecryptEvent() {
                         @Override
                         public File getCipherFile() {
                             return tsFile;
                         }
                     });
                 } catch (Throwable e) {
-                    log.warn("Listen on begin-download: " + e.getMessage(), e);
+                    if (log.isWarnEnabled()) log.warn("Listen on begin-download: {}", e.getMessage(), e);
                 }
             }
-            File decryptFile = null;
+            File decryptFile;
             FileInputStream inputStream = null;
             FileOutputStream outputStream = null;
-            boolean decrypt = false;
             try {
                 inputStream = new FileInputStream(tsFile);
                 int available = inputStream.available();
                 if (bytes.length < available) bytes = new byte[available];
                 int len = inputStream.read(bytes);
-                decryptFile = new File(dir, tsIndex + DECODE_FILE_SUFFIX);
+                decryptFile = new File(decryptDir, tsIndex + decodeFileSuffix);
                 outputStream = new FileOutputStream(decryptFile);
                 //开始解密ts片段，这里我们把ts后缀改为了xyz，改不改都一样
                 byte[] decryptBytes = decrypt(bytes, available, key, iv, method);
@@ -872,7 +964,6 @@ public class M3u8DownloadFactory {
                     outputStream.write(decryptBytes);
                 }
                 finishedFiles.add(decryptFile);
-                decrypt = true;
             } finally {
                 IOUtils.closeQuietly(inputStream);
                 IOUtils.closeQuietly(outputStream);
@@ -880,11 +971,10 @@ public class M3u8DownloadFactory {
             for (DownloadTaskListener taskListener : taskListenerSet) {
                 try {
                     if (taskListener == null) continue;
-                    File finalDecryptFile = decryptFile;
-                    taskListener.doneDecrypt(new DownloadTaskListener.AbstractDoneDecryptEvent() {
+                    taskListener.doneDecrypt(new AbstractDoneDecryptEvent() {
                         @Override
                         public File getDecryptFile() {
-                            return finalDecryptFile;
+                            return decryptFile;
                         }
 
                         @Override
@@ -893,10 +983,10 @@ public class M3u8DownloadFactory {
                         }
                     });
                 } catch (Throwable e) {
-                    log.warn("Listen on done-download: " + e.getMessage(), e);
+                    if (log.isWarnEnabled()) log.warn("Listen on done-download: {}", e.getMessage(), e);
                 }
             }
-            return decrypt ? M3u8DownloadFactory.DownloadTsType.DECRYPTED : M3u8DownloadFactory.DownloadTsType.VOID;
+            return M3u8DownloadFactory.DownloadTsType.DECRYPTED;
         }
 
         /**
@@ -978,7 +1068,7 @@ public class M3u8DownloadFactory {
                 String s = split[i];
                 if (s.contains("#EXTINF")) {
                     String s1 = split[++i];
-                    String en = null;
+                    String en;
                     try {
                         en = URLEncoder.encode(s1, com.sun.xml.internal.ws.commons.xmlutil.Converter.UTF_8);
                     } catch (UnsupportedEncodingException e) {
@@ -1044,7 +1134,7 @@ public class M3u8DownloadFactory {
                     if (log.isInfoEnabled()) log.info(content.toString());
                     break;
                 } catch (Exception e) {
-                    log.debug("第{}获取链接重试！\t{}", count, urlStr);
+                    if (log.isDebugEnabled()) log.debug("第{}获取链接重试！\t{}", count, urlStr);
                     count++;
                 } finally {
                     if (httpURLConnection != null) {
@@ -1088,11 +1178,13 @@ public class M3u8DownloadFactory {
          * 字段校验
          */
         private void checkField() {
-            if ("m3u8".compareTo(MediaFormat.getMediaFormat(downloadUrl)) != 0) throw new M3u8Exception(downloadUrl + "不是一个完整m3u8链接！");
+            if (MediaFormat.m3u8 != MediaFormat.find4Url(downloadUrl)) throw new M3u8Exception(downloadUrl + "不是一个完整m3u8链接！");
             if (threadCount <= 0) throw new M3u8Exception("同时下载线程数只能大于0！");
             if (retryCount < 0) throw new M3u8Exception("重试次数不能小于0！");
             if (timeoutMillisecond < 0) throw new M3u8Exception("超时时间不能小于0！");
-            if (StringUtils.isEmpty(dir)) throw new M3u8Exception("视频存储目录不能为空！");
+            if (dir == null) throw new M3u8Exception("视频存储目录不能为空！");
+            if (downloadDir == null) throw new M3u8Exception("视频存储目录不能为空！");
+            if (decryptDir == null) throw new M3u8Exception("视频存储目录不能为空！");
             if (StringUtils.isEmpty(filename)) throw new M3u8Exception("视频名称不能为空！");
             reset();
         }
@@ -1106,7 +1198,6 @@ public class M3u8DownloadFactory {
             iv = "";
             tsSet.clear();
             finishedFiles.clear();
-            // downloadBytes = new BigDecimal(0);
             downloadBytes = 0;
         }
 

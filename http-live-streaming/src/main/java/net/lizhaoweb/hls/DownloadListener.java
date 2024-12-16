@@ -19,6 +19,7 @@ package net.lizhaoweb.hls;
  * @version 0.0.1
  * @email 404644381@qq.com
  */
+@SuppressWarnings({"unused"})
 public interface DownloadListener {
 
     /**
@@ -52,7 +53,7 @@ public interface DownloadListener {
     /**
      * [接口] 事件
      */
-    public static interface Event {
+    interface Event {
         /**
          * 获取事件类型
          *
@@ -64,7 +65,7 @@ public interface DownloadListener {
     /**
      * [接口] 下载事件
      */
-    public static interface DownloadEvent extends Event {
+    interface DownloadEvent extends Event {
         /**
          * 下载地址
          *
@@ -76,17 +77,17 @@ public interface DownloadListener {
     /**
      * [接口] 开始事件
      */
-    public static interface DownloadStartEvent extends DownloadEvent {
+    interface DownloadStartEvent extends DownloadEvent {
     }
 
-    public static abstract class AbstractDownloadStartEvent implements DownloadStartEvent {
+    abstract class AbstractDownloadStartEvent implements DownloadStartEvent {
         @Override
         public DownloadListener.EventType getType() {
             return DownloadListener.EventType.START;
         }
     }
 
-    public static interface DownloadProcessEvent extends DownloadEvent {
+    interface DownloadProcessEvent extends DownloadEvent {
 
         /**
          * 已下载的分片数量
@@ -110,7 +111,7 @@ public interface DownloadListener {
         float getPercent();
     }
 
-    public static abstract class AbstractDownloadProcessEvent implements DownloadProcessEvent {
+    abstract class AbstractDownloadProcessEvent implements DownloadProcessEvent {
         @Override
         public DownloadListener.EventType getType() {
             return DownloadListener.EventType.PROGRESS;
@@ -120,7 +121,7 @@ public interface DownloadListener {
     /**
      * [接口] 速度事件
      */
-    public static interface DownloadSpeedEvent extends DownloadEvent {
+    interface DownloadSpeedEvent extends DownloadEvent {
         /**
          * 下载速度
          *
@@ -129,7 +130,7 @@ public interface DownloadListener {
         String speed();
     }
 
-    public static abstract class AbstractDownloadSpeedEvent implements DownloadSpeedEvent {
+    abstract class AbstractDownloadSpeedEvent implements DownloadSpeedEvent {
         @Override
         public DownloadListener.EventType getType() {
             return DownloadListener.EventType.SPEED;
@@ -139,18 +140,21 @@ public interface DownloadListener {
     /**
      * [接口] 结束事件
      */
-    public static interface DownloadEndEvent extends DownloadEvent {
+    interface DownloadEndEvent extends DownloadEvent {
     }
 
-    public static abstract class AbstractDownloadEndEvent implements DownloadEndEvent {
+    abstract class AbstractDownloadEndEvent implements DownloadEndEvent {
         @Override
         public EventType getType() {
             return EventType.END;
         }
     }
 
-    public static enum EventType {
-        START, PROGRESS, SPEED, END;
+    enum EventType {
+        START, // 开始
+        PROGRESS, // 进度
+        SPEED, // 速度
+        END, // 结束
     }
 
 }

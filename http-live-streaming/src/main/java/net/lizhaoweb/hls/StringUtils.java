@@ -38,31 +38,34 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         BigDecimal tb = new BigDecimal(1L << 40);
         BigDecimal pb = new BigDecimal(1L << 50);
         BigDecimal eb = new BigDecimal(1L << 60);
-        if (bigDecimal.divide(kb, scale, RoundingMode.HALF_UP).compareTo(unit) < 0)
-            return bigDecimal.divide(unit, scale, RoundingMode.HALF_UP).toString() + " B";
-        else if (bigDecimal.divide(mb, scale, RoundingMode.HALF_UP).compareTo(unit) < 0)
-            return bigDecimal.divide(kb, scale, RoundingMode.HALF_UP).toString() + " KB";
-        else if (bigDecimal.divide(gb, scale, RoundingMode.HALF_UP).compareTo(unit) < 0)
-            return bigDecimal.divide(mb, scale, RoundingMode.HALF_UP).toString() + " MB";
-        else if (bigDecimal.divide(tb, scale, RoundingMode.HALF_UP).compareTo(unit) < 0)
-            return bigDecimal.divide(gb, scale, RoundingMode.HALF_UP).toString() + " GB";
-        else if (bigDecimal.divide(pb, scale, RoundingMode.HALF_UP).compareTo(unit) < 0)
-            return bigDecimal.divide(tb, scale, RoundingMode.HALF_UP).toString() + " TB";
-        else if (bigDecimal.divide(eb, scale, RoundingMode.HALF_UP).compareTo(unit) < 0)
-            return bigDecimal.divide(pb, scale, RoundingMode.HALF_UP).toString() + " PB";
-        return bigDecimal.divide(eb, scale, RoundingMode.HALF_UP).toString() + " EB";
+        if (bigDecimal.divide(kb, scale, RoundingMode.HALF_UP).compareTo(unit) < 0) {
+            return bigDecimal.divide(unit, scale, RoundingMode.HALF_UP) + " B";
+        } else if (bigDecimal.divide(mb, scale, RoundingMode.HALF_UP).compareTo(unit) < 0) {
+            return bigDecimal.divide(kb, scale, RoundingMode.HALF_UP) + " KB";
+        } else if (bigDecimal.divide(gb, scale, RoundingMode.HALF_UP).compareTo(unit) < 0) {
+            return bigDecimal.divide(mb, scale, RoundingMode.HALF_UP) + " MB";
+        } else if (bigDecimal.divide(tb, scale, RoundingMode.HALF_UP).compareTo(unit) < 0) {
+            return bigDecimal.divide(gb, scale, RoundingMode.HALF_UP) + " GB";
+        } else if (bigDecimal.divide(pb, scale, RoundingMode.HALF_UP).compareTo(unit) < 0) {
+            return bigDecimal.divide(tb, scale, RoundingMode.HALF_UP) + " TB";
+        } else if (bigDecimal.divide(eb, scale, RoundingMode.HALF_UP).compareTo(unit) < 0) {
+            return bigDecimal.divide(pb, scale, RoundingMode.HALF_UP) + " PB";
+        }
+        return bigDecimal.divide(eb, scale, RoundingMode.HALF_UP) + " EB";
     }
 
-    public static byte[] hexStringToByteArray(String s) {
-        int len = s.length();
+    public static byte[] hexStringToByteArray(String str) {
+        int len = str.length();
         if ((len & 1) == 1) {
-            s = "0" + s;
+            str = "0" + str;
             len++;
         }
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
-            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-                    + Character.digit(s.charAt(i + 1), 16));
+            data[i / 2] = (byte) ( //
+                    (Character.digit(str.charAt(i), 16) << 4) //
+                            + Character.digit(str.charAt(i + 1), 16) //
+            );
         }
         return data;
     }

@@ -27,4 +27,10 @@ public class Constant {
     //默认文件每次读取字节数
     public static final int BYTE_COUNT = 40960;
 
+    public static final String DEFAULT_DOWNLOAD_FILE_SUFFIX = ".dow";
+    public static final String DEFAULT_DECODE_FILE_SUFFIX = ".dec";
+    public static final String DEFAULT_VIDEO_FILE_SUFFIX = ".mp4";
+    public static final String DEFAULT_DOWNLOAD_DIR_NAME = "download";
+    public static final String DEFAULT_DECRYPT_DIR_NAME = "decrypt";
+
 }

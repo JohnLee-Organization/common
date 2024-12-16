@@ -19,6 +19,7 @@ package net.lizhaoweb.hls;
  * @version 0.0.1
  * @email 404644381@qq.com
  */
+@SuppressWarnings({"unused"})
 public class M3u8Exception extends RuntimeException {
 
     public M3u8Exception() {
